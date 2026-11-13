@@ -8,14 +8,14 @@ const DEVICES = [
     label: "Celular",
     description: "Reparación y diagnóstico profesional de celulares y smartphones.",
     buttonLabel: "Seleccionar celular",
-    image: "/images/device-phone.jpg",
+    image: "/images/device-phone.webp",
   },
   {
     type: DEVICE_TYPE.COMPUTER,
     label: "Notebook / PC",
     description: "Mantenimiento, software, diagnóstico y reparación de computadoras.",
     buttonLabel: "Seleccionar notebook / PC",
-    image: "/images/device-laptop.jpg",
+    image: "/images/device-laptop.webp",
   },
 ];
 
