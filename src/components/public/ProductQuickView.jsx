@@ -80,7 +80,7 @@ export default function ProductQuickView({ product, onClose }) {
                 onClick={() => setCurrentImageIndex(idx)}
                 className={`w-16 h-16 rounded-md border-2 overflow-hidden flex-shrink-0 ${currentImageIndex === idx ? 'border-primary' : 'border-transparent'}`}
               >
-                <ProductImage image={img} type="catalog" className="w-full h-full object-cover" />
+                <ProductImage image={img} type="catalog" className="w-full h-full object-contain" />
               </button>
             ))}
           </div>

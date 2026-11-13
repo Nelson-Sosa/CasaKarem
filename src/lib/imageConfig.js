@@ -23,13 +23,13 @@ export const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024;
 export const IMAGE_TRANSFORMS = {
   /**
    * CATALOG — Cards del catálogo público y grids de productos.
-   * Objetivo: uniformidad visual + performance (imágenes livianas).
-   * c_fill: recorta al cuadrado exacto → todas las cards lucen iguales.
-   * g_auto: punto de recorte inteligente (face/saliency detection).
+   * Objetivo: uniformidad visual + mostrar producto completo.
+   * c_pad: NUNCA recorta. Agrega padding blanco para completar cuadrado.
+   * b_white: fondo blanco profesional (estándar en e-commerce).
    * q_auto:good: balance calidad/peso optimizado para grids.
    * f_auto: formato moderno (WebP/AVIF según soporte del browser).
    */
-  catalog: "c_fill,g_auto,w_600,h_600,q_auto:good,f_auto",
+  catalog: "c_pad,w_600,h_600,b_white,q_auto:good,f_auto",
 
   /**
    * DETAIL — Vista principal del producto.
