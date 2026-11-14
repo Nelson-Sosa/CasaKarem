@@ -102,6 +102,9 @@ export function getProductImage(image, type, thumbSize = 80) {
     case "catalog":
       return buildUrl(image, IMAGE_TRANSFORMS.catalog);
 
+    case "quickview_thumbnail":
+      return buildUrl(image, IMAGE_TRANSFORMS.quickview_thumbnail);
+
     case "detail":
       // CRÍTICO: c_limit → nunca hace crop, nunca amplía, respeta ratio original
       return buildUrl(image, IMAGE_TRANSFORMS.detail);

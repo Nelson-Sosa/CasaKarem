@@ -32,6 +32,17 @@ export const IMAGE_TRANSFORMS = {
   catalog: "c_pad,w_600,h_600,b_white,q_auto:good,f_auto",
 
   /**
+   * QUICKVIEW_THUMBNAIL — Miniaturas en vista rápida (pequeñas).
+   * Objetivo: mostrar producto completo sin recorte en espacios pequeños.
+   * c_pad: NUNCA recorta. Agrega padding blanco en miniaturas.
+   * w_120,h_120: tamaño fijo para miniaturas.
+   * b_white: fondo blanco profesional.
+   * q_auto:best: calidad buena para vista cercana.
+   * f_auto: formato optimizado.
+   */
+  quickview_thumbnail: "c_pad,w_120,h_120,b_white,q_auto:best,f_auto",
+
+  /**
    * DETAIL — Vista principal del producto.
    * Objetivo: máxima calidad, sin distorsión, contenedor cuadrado uniforme.
    *
