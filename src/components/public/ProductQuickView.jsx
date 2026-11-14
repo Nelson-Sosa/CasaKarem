@@ -78,7 +78,7 @@ export default function ProductQuickView({ product, onClose }) {
               <button 
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
-                className={`w-16 h-16 rounded-md border-2 overflow-hidden flex-shrink-0 bg-white ${currentImageIndex === idx ? 'border-primary' : 'border-gray-200'}`}
+                className={`w-16 h-16 rounded-md border-2 overflow-hidden flex-shrink-0 transition-all ${currentImageIndex === idx ? 'border-primary bg-primary-light' : 'border-gray-200 bg-gray-50'}`}
               >
                 <ProductImage image={img} type="quickview_thumbnail" className="w-full h-full object-contain" />
               </button>
