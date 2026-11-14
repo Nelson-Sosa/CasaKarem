@@ -55,8 +55,8 @@ export default function ProductQuickView({ product, onClose }) {
   const QuickViewContent = () => (
     <div className="flex h-full flex-col lg:flex-row lg:h-auto lg:max-h-[85vh] overflow-y-auto lg:overflow-hidden">
       {/* Left: Images */}
-      <div className="flex-shrink-0 lg:w-1/2 p-4 lg:p-8 flex flex-col bg-gray-50 items-center justify-center relative">
-        <div className="w-full max-w-[200px] sm:max-w-[250px] lg:max-w-[320px] aspect-square relative mb-4">
+      <div className="flex-shrink-0 lg:w-1/2 p-4 lg:p-8 flex flex-col bg-white items-center justify-center relative">
+        <div className="w-full max-w-[200px] sm:max-w-[250px] lg:max-w-[320px] aspect-square relative mb-4 bg-white rounded-xl">
            <ProductImage
               image={images[currentImageIndex]}
               type="catalog"
@@ -78,7 +78,7 @@ export default function ProductQuickView({ product, onClose }) {
               <button 
                 key={idx}
                 onClick={() => setCurrentImageIndex(idx)}
-                className={`w-16 h-16 rounded-md border-2 overflow-hidden flex-shrink-0 transition-all ${currentImageIndex === idx ? 'border-primary bg-primary-light' : 'border-gray-200 bg-gray-50'}`}
+                className={`w-16 h-16 rounded-md border-2 overflow-hidden flex-shrink-0 bg-white transition-all ${currentImageIndex === idx ? 'border-primary ring-2 ring-primary/20' : 'border-gray-300'}`}
               >
                 <ProductImage image={img} type="quickview_thumbnail" className="w-full h-full object-contain" />
               </button>
