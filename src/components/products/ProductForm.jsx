@@ -471,7 +471,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
           Variantes (Opcional)
         </h3>
         <p className="mt-1 text-xs text-gray-400">
-          Agrega variantes como Color, Capacidad, Tamaño, etc. En futuras fases podrán tener stock independiente.
+          Si tu producto tiene diferentes colores, agrega cada uno. En futuras fases podrán tener stock independiente.
         </p>
         <div className="mt-4">
           <ProductAttributes
