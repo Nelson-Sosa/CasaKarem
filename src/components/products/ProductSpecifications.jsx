@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Plus, X, GripVertical, Cpu } from "lucide-react";
+import { Plus, X, GripVertical, Cpu, Zap } from "lucide-react";
 import { sanitizeText } from "../../utils/productValidation";
 
 /**
@@ -25,26 +25,17 @@ function generateId() {
   return `spec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// Quick presets to help the vendor get started fast
-const SPEC_PRESETS = [
-  { name: "Pantalla", value: "" },
-  { name: "Procesador", value: "" },
-  { name: "Memoria RAM", value: "" },
-  { name: "Almacenamiento", value: "" },
-  { name: "Cámara Principal", value: "" },
-  { name: "Batería", value: "" },
-  { name: "Sistema Operativo", value: "" },
-  { name: "Conectividad", value: "" },
-  { name: "Dimensiones", value: "" },
-  { name: "Peso", value: "" },
+// Quick template for common specs (loaded all at once)
+const BASIC_TEMPLATE = [
+  { name: "Marca", value: "" },
+  { name: "Modelo", value: "" },
   { name: "Color", value: "" },
-  { name: "Material", value: "" },
-  { name: "Voltaje", value: "" },
+  { name: "Conectividad", value: "" },
+  { name: "Batería", value: "" },
   { name: "Garantía", value: "" },
 ];
 
 export default function ProductSpecifications({ specifications = [], onChange, errors }) {
-  const [showPresets, setShowPresets] = useState(false);
   const dragIndex = useRef(null);
   const dragOverIndex = useRef(null);
 
@@ -52,12 +43,15 @@ export default function ProductSpecifications({ specifications = [], onChange, e
 
   function addBlank() {
     onChange([...specifications, { id: generateId(), name: "", value: "" }]);
-    setShowPresets(false);
   }
 
-  function addPreset(preset) {
-    onChange([...specifications, { id: generateId(), name: preset.name, value: preset.value }]);
-    setShowPresets(false);
+  function loadBasicTemplate() {
+    const newSpecs = BASIC_TEMPLATE.map((preset) => ({
+      id: generateId(),
+      name: preset.name,
+      value: preset.value,
+    }));
+    onChange([...specifications, ...newSpecs]);
   }
 
   // ── Update ─────────────────────────────────────────────────────────────────
@@ -212,58 +206,33 @@ export default function ProductSpecifications({ specifications = [], onChange, e
       )}
 
       {/* Add controls */}
-      <div className="relative">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Show "Load template" button only when there are no specs */}
+        {specifications.length === 0 ? (
           <button
             type="button"
-            onClick={() => setShowPresets((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-primary hover:text-primary"
+            onClick={loadBasicTemplate}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
           >
-            <Plus className="h-4 w-4" />
-            Agregar especificación
+            <Zap className="h-4 w-4" />
+            Cargar plantilla básica
           </button>
+        ) : (
+          <>
+            {/* Show "Add more" button when template is already loaded */}
+            <button
+              type="button"
+              onClick={addBlank}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-primary hover:text-primary"
+            >
+              <Plus className="h-4 w-4" />
+              Agregar más campos
+            </button>
 
-          {specifications.length > 0 && (
             <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500">
               {specifications.length} especificación{specifications.length !== 1 ? "es" : ""}
             </span>
-          )}
-        </div>
-
-        {/* Presets dropdown */}
-        {showPresets && (
-          <div className="absolute left-0 top-full z-20 mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-gray-200">
-            {/* Blank row */}
-            <div className="border-b border-gray-100 p-2">
-              <button
-                type="button"
-                onClick={addBlank}
-                className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary-light"
-              >
-                <Plus className="h-4 w-4" />
-                Fila en blanco
-              </button>
-            </div>
-            {/* Preset list */}
-            <div className="p-2">
-              <p className="px-3 pb-1.5 pt-0.5 text-[11px] font-bold uppercase tracking-widest text-gray-400">
-                Campos comunes
-              </p>
-              <div className="max-h-52 overflow-y-auto">
-                {SPEC_PRESETS.map((p) => (
-                  <button
-                    key={p.name}
-                    type="button"
-                    onClick={() => addPreset(p)}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                  >
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/40" />
-                    {p.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          </>
         )}
       </div>
     </div>
