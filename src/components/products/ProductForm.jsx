@@ -450,8 +450,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               Especificaciones Técnicas
             </h3>
             <p className="mt-1 text-xs text-gray-400">
-              Ficha técnica del producto (ej: Conectividad, Batería, Capacidad, Notas de fragancia).
-              Se muestra como tabla en la vista pública.
+              Ficha técnica del producto. Se muestra como tabla en la vista pública.
               Usá el ícono <span className="inline-block align-middle">⠿</span> para reordenar.
             </p>
           </div>
@@ -461,6 +460,8 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
             specifications={form.specifications}
             onChange={handleSpecificationsChange}
             errors={errors.specifications}
+            categoryId={form.categoryId}
+            categoryList={categoryList}
           />
         </div>
       </div>

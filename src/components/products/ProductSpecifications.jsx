@@ -25,8 +25,8 @@ function generateId() {
   return `spec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// Quick template for common specs (loaded all at once)
-const BASIC_TEMPLATE = [
+// Quick template for electronics
+const TEMPLATE_ELECTRONICS = [
   { name: "Marca", value: "" },
   { name: "Modelo", value: "" },
   { name: "Color", value: "" },
@@ -35,9 +35,42 @@ const BASIC_TEMPLATE = [
   { name: "Garantía", value: "" },
 ];
 
-export default function ProductSpecifications({ specifications = [], onChange, errors }) {
+// Quick template for perfumes
+const TEMPLATE_PERFUMES = [
+  { name: "Marca", value: "" },
+  { name: "Fragancia", value: "" },
+  { name: "Género", value: "" },
+  { name: "Tamaño/Volumen", value: "" },
+  { name: "Notas de Salida", value: "" },
+  { name: "Tipo", value: "" },
+];
+
+export default function ProductSpecifications({ specifications = [], onChange, errors, categoryId, categoryList = [] }) {
   const dragIndex = useRef(null);
   const dragOverIndex = useRef(null);
+
+  // Detect category name to choose the right template
+  function getTemplateForCategory() {
+    if (!categoryId) return null; // No template if no category
+    const category = categoryList.find((c) => c.id === categoryId);
+    if (!category) return null;
+    // If category name contains "perfume" (case-insensitive), use perfume template
+    if (category.name.toLowerCase().includes("perfume")) {
+      return TEMPLATE_PERFUMES;
+    }
+    // If it's an electronics category, use electronics template
+    if (
+      category.name.toLowerCase().includes("electrónica") ||
+      category.name.toLowerCase().includes("electronica") ||
+      category.name.toLowerCase().includes("celular") ||
+      category.name.toLowerCase().includes("monitor") ||
+      category.name.toLowerCase().includes("accesorio")
+    ) {
+      return TEMPLATE_ELECTRONICS;
+    }
+    // For any other category (future categories like Joyas), return null (no template)
+    return null;
+  }
 
   // ── Add ────────────────────────────────────────────────────────────────────
 
@@ -46,12 +79,19 @@ export default function ProductSpecifications({ specifications = [], onChange, e
   }
 
   function loadBasicTemplate() {
-    const newSpecs = BASIC_TEMPLATE.map((preset) => ({
-      id: generateId(),
-      name: preset.name,
-      value: preset.value,
-    }));
-    onChange([...specifications, ...newSpecs]);
+    const template = getTemplateForCategory();
+    if (template) {
+      // If we have a template, load it with all fields
+      const newSpecs = template.map((preset) => ({
+        id: generateId(),
+        name: preset.name,
+        value: preset.value,
+      }));
+      onChange([...specifications, ...newSpecs]);
+    } else {
+      // If no template exists (new category), just add 1 blank row
+      onChange([...specifications, { id: generateId(), name: "", value: "" }]);
+    }
   }
 
   // ── Update ─────────────────────────────────────────────────────────────────
@@ -199,8 +239,7 @@ export default function ProductSpecifications({ specifications = [], onChange, e
             <Cpu className="h-4 w-4 text-primary" />
           </div>
           <p className="text-xs leading-relaxed text-gray-500">
-            Agregá las especificaciones técnicas del producto. Estas se muestran
-            como una tabla en la vista del cliente.
+            Carga la plantilla básica o agrega campos manualmente.
           </p>
         </div>
       )}

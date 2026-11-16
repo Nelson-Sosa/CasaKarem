@@ -183,8 +183,7 @@ export default function ProductAttributes({ attributes = [], onChange, errors })
             <Tag className="h-4 w-4 text-primary" />
           </div>
           <p className="text-xs leading-relaxed text-gray-500">
-            Las variantes son opcionales. Si tu producto tiene diferentes colores,
-            capacidades o tamaños, agrégalas aquí.
+            Agrega colores para tu producto.
           </p>
         </div>
       )}
