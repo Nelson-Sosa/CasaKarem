@@ -227,7 +227,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
                   ? "border-red-300 focus:border-red-400 focus:ring-red/20"
                   : "border-gray-200 focus:border-primary focus:ring-primary/20"
               }`}
-              placeholder="Ej: Remera Oversize"
+              placeholder="Ej: Auriculares Bluetooth Sony WH-1000XM5"
               autoFocus
             />
             {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
@@ -352,7 +352,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
                     ? "border-red-300 focus:border-red-400 focus:ring-red/20"
                     : "border-gray-200 focus:border-primary focus:ring-primary/20"
                 }`}
-                placeholder="Ej: REM-0001"
+                placeholder="Ej: AUD-SONY-001 o PERF-DIOR-001"
               />
               {errors.sku && <p className="mt-1 text-xs text-red-500">{errors.sku}</p>}
             </div>
@@ -450,7 +450,8 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               Especificaciones Técnicas
             </h3>
             <p className="mt-1 text-xs text-gray-400">
-              Ficha técnica del producto. Se muestra como tabla en la vista pública.
+              Ficha técnica del producto (ej: Conectividad, Batería, Capacidad, Notas de fragancia).
+              Se muestra como tabla en la vista pública.
               Usá el ícono <span className="inline-block align-middle">⠿</span> para reordenar.
             </p>
           </div>
@@ -470,7 +471,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
           Variantes (Opcional)
         </h3>
         <p className="mt-1 text-xs text-gray-400">
-          Agrega variantes como Color, Talle, Calce, etc. En futuras fases podrán tener stock independiente.
+          Agrega variantes como Color, Capacidad, Tamaño, etc. En futuras fases podrán tener stock independiente.
         </p>
         <div className="mt-4">
           <ProductAttributes
