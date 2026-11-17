@@ -70,7 +70,7 @@ function ProductCardBase({ product }) {
         <h3 className="line-clamp-2 text-xs font-semibold leading-relaxed text-gray-800 sm:text-[15px]">
           {product.name}
         </h3>
-        <p className="mt-1.5 text-sm font-bold text-primary sm:mt-2 sm:text-[17px]">
+        <p className="mt-1.5 text-sm font-bold text-gray-900 sm:mt-2 sm:text-[17px]">
           {formatCurrency(product.salePrice)}
         </p>
 

@@ -107,7 +107,7 @@ export default function ProductQuickView({ product, onClose }) {
            </div>
         </div>
 
-        <div className="text-2xl font-bold text-primary mb-4">
+        <div className="text-2xl font-bold text-gray-900 mb-4">
           {formatCurrency(product.salePrice)}
         </div>
 

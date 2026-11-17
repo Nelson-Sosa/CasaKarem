@@ -297,7 +297,7 @@ export default function ProductPublicDetail() {
             </h1>
 
             {/* Price */}
-            <p className="mt-3 text-3xl font-extrabold text-primary sm:text-4xl">
+            <p className="mt-3 text-3xl font-extrabold text-gray-900 sm:text-4xl">
               {formatCurrency(product.salePrice)}
             </p>
 
