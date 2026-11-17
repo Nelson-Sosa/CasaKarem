@@ -357,26 +357,23 @@ export default function ProductPublicDetail() {
             <div className="my-5 border-t border-gray-100" />
 
             {/* ── CTA Buttons ── */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
               {!isOutOfStock && (
-                <div className="flex-1">
-                  <AddToCartButton
-                    product={product}
-                    size="desktop"
-                    className="w-full justify-center rounded-xl py-3 text-sm font-bold"
-                  />
-                </div>
-              )}
-              <div className="flex-1">
-                <WhatsAppButton
-                  productName={product.name}
-                  productPrice={formatCurrency(product.salePrice)}
-                  variant="inline"
+                <AddToCartButton
+                  product={product}
+                  size="desktop"
+                  className="rounded-xl px-6 py-3 text-sm font-bold"
                 />
-              </div>
-              <div className="shrink-0 self-stretch rounded-xl border border-border bg-gray-50 px-3 flex items-center justify-center">
+              )}
+              <WhatsAppButton
+                productName={product.name}
+                productPrice={formatCurrency(product.salePrice)}
+                variant="inline"
+                className="rounded-xl px-6 py-3"
+              />
+              <button className="rounded-xl border-2 border-border bg-white p-3 transition-colors hover:border-primary hover:bg-primary-light">
                 <FavoriteButton product={product} size="desktop" />
-              </div>
+              </button>
             </div>
 
           </div>
