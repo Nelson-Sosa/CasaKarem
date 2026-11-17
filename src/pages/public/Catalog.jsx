@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { Search, SlidersHorizontal, X, Package } from "lucide-react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Search, SlidersHorizontal, X, Package, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { subscribeToActiveProducts } from "../../services/publicProductService";
+import { getActiveProductsPaginated, countActiveProducts } from "../../services/publicProductService";
 import ProductCard from "../../components/public/ProductCard";
 import ProductQuickView from "../../components/public/ProductQuickView";
 import BottomSheet from "../../components/ui/BottomSheet";
@@ -9,16 +9,20 @@ import PublicCatalogLayout from "../../components/public/catalog/PublicCatalogLa
 import FeaturedProducts from "../../components/public/catalog/FeaturedProducts";
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Más recientes" },
-  { value: "price-asc", label: "Menor precio" },
-  { value: "price-desc", label: "Mayor precio" },
+  { value: "newest", label: "Más recientes", sortBy: "createdAt", sortDirection: "desc" },
+  { value: "price-asc", label: "Menor precio", sortBy: "salePrice", sortDirection: "asc" },
+  { value: "price-desc", label: "Mayor precio", sortBy: "salePrice", sortDirection: "desc" },
 ];
+
+const PAGE_SIZE = 30;
 
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Para filtrado local
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   // Estados locales sincronizados con la URL
   const [search, setSearch] = useState(searchParams.get("q") || "");
@@ -26,23 +30,32 @@ export default function Catalog() {
   const [sort, setSort] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
   
-  const [visibleCount, setVisibleCount] = useState(20);
+  // Estados de paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [lastVisibleDoc, setLastVisibleDoc] = useState(null);
+  const [pageDocuments, setPageDocuments] = useState({}); // Cache de cursores por página
 
   // Referencias para evitar scroll en el montaje inicial
   const prevSearch = useRef(searchParams.get("q") || "");
   const prevCategory = useRef(searchParams.get("category") || "all");
+  const isInitialMount = useRef(true);
 
   // Efecto para el auto-scroll hacia los resultados
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const currentSearch = searchParams.get("q") || "";
     const currentCategory = searchParams.get("category") || "all";
     
-    // Solo scrollear si cambió la búsqueda o categoría después del montaje inicial
+    // Solo scrollear si cambió la búsqueda o categoría
     if (prevSearch.current !== currentSearch || prevCategory.current !== currentCategory) {
       prevSearch.current = currentSearch;
       prevCategory.current = currentCategory;
       
-      // Esperar brevemente a que el DOM se actualice con los nuevos resultados
       setTimeout(() => {
         const resultsSection = document.getElementById("catalogo-completo");
         if (resultsSection) {
@@ -61,8 +74,8 @@ export default function Catalog() {
   const quickviewId = searchParams.get("quickview");
   const quickviewProduct = useMemo(() => {
     if (!quickviewId) return null;
-    return products.find(p => p.id === quickviewId) || null;
-  }, [quickviewId, products]);
+    return displayProducts.find(p => p.id === quickviewId) || null;
+  }, [quickviewId, displayProducts]);
 
   // Actualizar URL cuando cambia la categoría desde la sidebar
   const handleSelectCategory = (cat) => {
@@ -75,26 +88,72 @@ export default function Catalog() {
     setSearchParams(searchParams);
   };
 
-  useEffect(() => {
+  // Cargar productos con paginación
+  const loadProducts = async (page = 1, resetCache = false) => {
     setLoading(true);
-    const unsubscribe = subscribeToActiveProducts(
-      (data) => {
-        setProducts(data);
-        const cats = [...new Set(data.map((p) => p.categoryName).filter(Boolean))];
-        setCategories(cats.sort());
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error subscribing to products:", error);
-        setLoading(false);
+    
+    try {
+      const sortOption = SORT_OPTIONS.find(opt => opt.value === sort) || SORT_OPTIONS[0];
+      
+      let lastDoc = null;
+      
+      // Si no es página 1 y no estamos reseteando, buscar el cursor de la página anterior
+      if (page > 1 && !resetCache && pageDocuments[page - 1]) {
+        lastDoc = pageDocuments[page - 1];
       }
-    );
 
-    return () => unsubscribe();
-  }, []);
+      const result = await getActiveProductsPaginated({
+        sortBy: sortOption.sortBy,
+        sortDirection: sortOption.sortDirection,
+        lastDoc,
+        pageSize: PAGE_SIZE
+      });
 
+      // Guardar todos los productos para filtrado local
+      setAllProducts(result.products);
+      setHasNextPage(result.hasMore);
+      
+      // Guardar cursor de esta página para navegación futura
+      if (result.lastVisible) {
+        setPageDocuments(prev => ({
+          ...(resetCache ? {} : prev),
+          [page]: result.lastVisible
+        }));
+        setLastVisibleDoc(result.lastVisible);
+      }
+
+      // Obtener total de productos activos
+      const total = await countActiveProducts();
+      setTotalProducts(total);
+
+      // Extraer categorías únicas de todos los productos cargados
+      const cats = [...new Set(result.products.map(p => p.categoryName).filter(Boolean))];
+      setCategories(cats.sort());
+      
+    } catch (error) {
+      console.error("Error loading products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Efecto inicial: cargar productos
+  useEffect(() => {
+    loadProducts(1, true);
+  }, [sort]);
+
+  // Reset paginación cuando cambian filtros o búsqueda
+  useEffect(() => {
+    if (!isInitialMount.current && currentPage !== 1) {
+      setCurrentPage(1);
+      setPageDocuments({});
+      loadProducts(1, true);
+    }
+  }, [search, selectedCategory, sort]);
+
+  // Filtrar productos localmente (búsqueda y categoría)
   const filtered = useMemo(() => {
-    let result = [...products];
+    let result = [...allProducts];
 
     if (search.trim()) {
       const q = search.toLowerCase().trim();
@@ -110,41 +169,44 @@ export default function Catalog() {
       result = result.filter((p) => p.categoryName === selectedCategory);
     }
 
-    switch (sort) {
-      case "price-asc":
-        result.sort((a, b) => (a.salePrice ?? 0) - (b.salePrice ?? 0));
-        break;
-      case "price-desc":
-        result.sort((a, b) => (b.salePrice ?? 0) - (a.salePrice ?? 0));
-        break;
-      default:
-        result.sort((a, b) => ((b.createdAt?.toMillis?.() ?? 0)) - ((a.createdAt?.toMillis?.() ?? 0)));
-    }
-
     return result;
-  }, [products, search, selectedCategory, sort]);
+  }, [allProducts, search, selectedCategory]);
 
-  // Infinite Scroll Observer
-  const observer = useRef();
-  const lastElementRef = useCallback((node) => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
-    
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && visibleCount < filtered.length) {
-        setVisibleCount(prev => prev + 20);
-      }
-    });
-    
-    if (node) observer.current.observe(node);
-  }, [loading, filtered.length, visibleCount]);
+  // Funciones de navegación de página
+  const handleNextPage = () => {
+    if (hasNextPage) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      loadProducts(nextPage, false);
+      
+      // Scroll suave al inicio
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
-  // Reset visibleCount when filters change
-  useEffect(() => {
-    setVisibleCount(20);
-  }, [search, selectedCategory, sort]);
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      loadProducts(prevPage, false);
+      
+      // Scroll suave al inicio
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
-  const visibleProducts = filtered.slice(0, visibleCount);
+  // Calcular información de paginación
+  // Si hay filtros activos (búsqueda o categoría), mostramos los filtrados
+  // Si no hay filtros, mostramos la paginación normal
+  const hasActiveFilters = search.trim() !== "" || selectedCategory !== "all";
+  const displayProducts = hasActiveFilters ? filtered : allProducts;
+  const displayTotal = hasActiveFilters ? filtered.length : totalProducts;
+  
+  const startIndex = hasActiveFilters ? 1 : (currentPage - 1) * PAGE_SIZE + 1;
+  const endIndex = hasActiveFilters ? filtered.length : Math.min(currentPage * PAGE_SIZE, displayTotal);
+  
+  // Solo mostrar paginación si no hay filtros activos Y hay más de 30 productos
+  const showPagination = !hasActiveFilters && displayTotal > PAGE_SIZE;
 
   return (
     <div className="space-y-8 sm:space-y-10">
@@ -175,7 +237,20 @@ export default function Catalog() {
           <div className="flex items-center justify-between gap-4">
             {/* Resultados info */}
             <div className="text-xs text-gray-500 hidden sm:block">
-              Mostrando <span className="font-semibold text-gray-800">{filtered.length}</span> resultados
+              {displayTotal > 0 ? (
+                hasActiveFilters ? (
+                  <>
+                    Mostrando <span className="font-semibold text-gray-800">{displayTotal}</span> {displayTotal === 1 ? 'resultado' : 'resultados'}
+                  </>
+                ) : (
+                  <>
+                    Mostrando <span className="font-semibold text-gray-800">{startIndex}–{endIndex}</span> de{" "}
+                    <span className="font-semibold text-gray-800">{displayTotal}</span> resultados
+                  </>
+                )
+              ) : (
+                <span>No hay resultados</span>
+              )}
             </div>
 
               {/* Botón Ordenar */}
@@ -290,7 +365,7 @@ export default function Catalog() {
         )}
 
         {/* Empty state */}
-        {!loading && filtered.length === 0 && (
+        {!loading && displayProducts.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 rounded-2xl border border-dashed border-gray-300 bg-gray-50">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
               {search || selectedCategory !== "all" ? (
@@ -326,27 +401,53 @@ export default function Catalog() {
         )}
 
         {/* Product grid */}
-        {!loading && filtered.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {visibleProducts.map((product, index) => {
-              if (visibleProducts.length === index + 1) {
-                return (
-                  <div ref={lastElementRef} key={product.id} className="h-full">
-                    <ProductCard product={product} />
-                  </div>
-                );
-              } else {
-                return <ProductCard key={product.id} product={product} />;
-              }
-            })}
-          </div>
-        )}
+        {!loading && displayProducts.length > 0 && (
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
 
-        {/* Loading more indicator */}
-        {!loading && visibleCount < filtered.length && (
-          <div className="flex justify-center py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent shadow-sm" />
-          </div>
+            {/* Pagination Controls - Solo se muestra si hay más de 30 productos */}
+            {showPagination && (
+              <div className="mt-8 flex items-center justify-center gap-2 sm:gap-4">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+                    currentPage === 1
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "bg-white text-gray-700 shadow-sm ring-1 ring-border hover:bg-primary hover:text-white hover:ring-primary"
+                  }`}
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Anterior</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <span className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm">
+                    Página {currentPage}
+                  </span>
+                </div>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={!hasNextPage}
+                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+                    !hasNextPage
+                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
+                      : "bg-white text-gray-700 shadow-sm ring-1 ring-border hover:bg-primary hover:text-white hover:ring-primary"
+                  }`}
+                  aria-label="Página siguiente"
+                >
+                  <span className="hidden sm:inline">Siguiente</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Quick View Modal */}
