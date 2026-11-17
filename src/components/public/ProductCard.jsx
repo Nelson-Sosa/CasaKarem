@@ -40,7 +40,7 @@ function ProductCardBase({ product }) {
 
         {/* Badge de categoría */}
         {product.categoryName && (
-          <span className="absolute left-2 top-2 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-gray-700 shadow-sm backdrop-blur-sm sm:px-3 sm:text-[11px]">
+          <span className="absolute bottom-2 left-2 z-10 rounded-full bg-black/30 px-2.5 py-1 text-[10px] font-semibold text-white shadow-sm backdrop-blur-md ring-1 ring-white/20 sm:px-3 sm:text-[11px]">
             {product.categoryName}
           </span>
         )}
