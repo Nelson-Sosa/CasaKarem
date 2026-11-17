@@ -18,7 +18,6 @@ const PAGE_SIZE = 30;
 
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]); // Para filtrado local
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +32,6 @@ export default function Catalog() {
   // Estados de paginación
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const [lastVisibleDoc, setLastVisibleDoc] = useState(null);
   const [pageDocuments, setPageDocuments] = useState({}); // Cache de cursores por página
 
   // Referencias para evitar scroll en el montaje inicial
@@ -70,12 +68,6 @@ export default function Catalog() {
     setSearch(searchParams.get("q") || "");
     setSelectedCategory(searchParams.get("category") || "all");
   }, [searchParams]);
-
-  const quickviewId = searchParams.get("quickview");
-  const quickviewProduct = useMemo(() => {
-    if (!quickviewId) return null;
-    return displayProducts.find(p => p.id === quickviewId) || null;
-  }, [quickviewId, displayProducts]);
 
   // Actualizar URL cuando cambia la categoría desde la sidebar
   const handleSelectCategory = (cat) => {
@@ -119,7 +111,6 @@ export default function Catalog() {
           ...(resetCache ? {} : prev),
           [page]: result.lastVisible
         }));
-        setLastVisibleDoc(result.lastVisible);
       }
 
       // Obtener total de productos activos
@@ -140,16 +131,19 @@ export default function Catalog() {
   // Efecto inicial: cargar productos
   useEffect(() => {
     loadProducts(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort]);
 
   // Reset paginación cuando cambian filtros o búsqueda
   useEffect(() => {
-    if (!isInitialMount.current && currentPage !== 1) {
+    const isInitial = isInitialMount.current;
+    if (!isInitial && currentPage !== 1) {
       setCurrentPage(1);
       setPageDocuments({});
       loadProducts(1, true);
     }
-  }, [search, selectedCategory, sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, selectedCategory]);
 
   // Filtrar productos localmente (búsqueda y categoría)
   const filtered = useMemo(() => {
@@ -207,6 +201,12 @@ export default function Catalog() {
   
   // Solo mostrar paginación si no hay filtros activos Y hay más de 30 productos
   const showPagination = !hasActiveFilters && displayTotal > PAGE_SIZE;
+
+  const quickviewId = searchParams.get("quickview");
+  const quickviewProduct = useMemo(() => {
+    if (!quickviewId) return null;
+    return displayProducts.find(p => p.id === quickviewId) || null;
+  }, [quickviewId, displayProducts]);
 
   return (
     <div className="space-y-8 sm:space-y-10">
@@ -464,4 +464,3 @@ export default function Catalog() {
     </div>
   );
 }
-
