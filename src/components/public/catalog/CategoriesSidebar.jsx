@@ -30,7 +30,7 @@ function SidebarItem({ label, icon: Icon, isActive, onClick, accent }) {
 function CategoriesSidebarBase({ categories, selectedCategory, onSelectCategory }) {
   return (
     <div className="hidden lg:flex lg:w-[220px] lg:shrink-0 lg:flex-col">
-      <div className="rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] ring-1 ring-border">
+      <div className="rounded-2xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] ring-1 ring-border transition-all duration-300 hover:shadow-lg">
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <Menu className="h-4 w-4 text-primary" />

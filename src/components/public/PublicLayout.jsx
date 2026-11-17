@@ -81,7 +81,7 @@ export default function PublicLayout() {
   
   return (
     <div className="min-h-screen bg-background-secondary">
-      <header className="sticky top-0 z-40 border-b border-border bg-white/80 shadow-sm backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 md:h-16 lg:h-20 max-w-[1600px] items-center justify-between px-3 md:px-6 lg:px-8">
           
           <div className="flex items-center gap-2 md:gap-4">

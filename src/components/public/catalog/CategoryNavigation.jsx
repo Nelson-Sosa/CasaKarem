@@ -20,7 +20,7 @@ function CategoryNavigationBase({ categories = [], selectedCategory, onSelectCat
   ];
 
   return (
-    <nav className="border-b border-border bg-white">
+    <nav className="sticky top-[56px] md:top-[64px] lg:top-[80px] z-40 border-b border-border bg-white shadow-sm">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="hide-scrollbar flex items-center gap-0.5 overflow-x-auto py-0">
           {navItems.map((item) => {

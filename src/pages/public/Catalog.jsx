@@ -170,8 +170,8 @@ export default function Catalog() {
           </p>
         </div>
 
-        {/* Sticky Filter bar */}
-        <div className="sticky top-[118px] sm:top-24 z-30 bg-white/95 pb-3 pt-2 backdrop-blur-sm">
+        {/* Filter bar (no sticky - desaparece al hacer scroll) */}
+        <div className="bg-white pb-3 pt-2">
           <div className="flex items-center justify-between gap-4">
             {/* Resultados info */}
             <div className="text-xs text-gray-500 hidden sm:block">
