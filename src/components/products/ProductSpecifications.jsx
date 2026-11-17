@@ -41,8 +41,6 @@ const TEMPLATE_PERFUMES = [
   { name: "Fragancia", value: "" },
   { name: "Género", value: "" },
   { name: "Tamaño/Volumen", value: "" },
-  { name: "Notas de Salida", value: "" },
-  { name: "Tipo", value: "" },
 ];
 
 export default function ProductSpecifications({ specifications = [], onChange, errors, categoryId, categoryList = [] }) {
