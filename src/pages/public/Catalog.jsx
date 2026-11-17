@@ -209,7 +209,7 @@ export default function Catalog() {
   }, [quickviewId, displayProducts]);
 
   return (
-    <div className="space-y-8 sm:space-y-10">
+    <div className="space-y-8 bg-white sm:space-y-10">
       
       {/* Nuevo Hero Layout con Sidebar y Service Card */}
       <PublicCatalogLayout
@@ -222,7 +222,7 @@ export default function Catalog() {
       {/* <FeaturedProducts products={products} loading={loading} /> */}
 
       {/* Catálogo Completo */}
-      <div id="catalogo-completo" className="scroll-mt-32 space-y-4 sm:space-y-6">
+      <div id="catalogo-completo" className="scroll-mt-32 space-y-4 bg-white sm:space-y-6">
         <div>
           <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
             Catálogo de productos
