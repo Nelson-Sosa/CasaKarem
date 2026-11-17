@@ -1,4 +1,4 @@
-import { collection, getDocs, query, orderBy, limit, startAfter, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, limit, startAfter, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
 const PRODUCTS_COLLECTION = "products";
@@ -104,6 +104,8 @@ export async function getActiveProductById(id) {
 
 /**
  * Obtiene productos activos con paginación eficiente usando cursores de Firestore.
+ * IMPORTANTE: Esta función requiere índices compuestos en Firestore.
+ * Los índices se crean automáticamente al hacer clic en el enlace que Firebase proporciona en consola.
  * 
  * @param {Object} options - Opciones de paginación y filtrado
  * @param {string} options.sortBy - Campo de ordenamiento ('createdAt', 'salePrice', 'name')
@@ -125,10 +127,10 @@ export async function getActiveProductsPaginated({
       catSnap.docs.map((d) => [d.id, d.data().name])
     );
 
-    // Construir query SIN where (para evitar índice compuesto)
-    // Filtraremos por status="active" en el código
+    // Construir query base con filtro de productos activos
     let q = query(
       collection(db, PRODUCTS_COLLECTION),
+      where("status", "==", "active"),
       orderBy(sortBy, sortDirection),
       limit(pageSize + 1) // +1 para detectar si hay más páginas
     );
@@ -137,6 +139,7 @@ export async function getActiveProductsPaginated({
     if (lastDoc) {
       q = query(
         collection(db, PRODUCTS_COLLECTION),
+        where("status", "==", "active"),
         orderBy(sortBy, sortDirection),
         startAfter(lastDoc),
         limit(pageSize + 1)
@@ -146,12 +149,9 @@ export async function getActiveProductsPaginated({
     const snapshot = await getDocs(q);
     const docs = snapshot.docs;
 
-    // Filtrar solo productos activos (en lugar de usar where en Firestore)
-    const activeDocs = docs.filter(doc => doc.data().status === "active");
-
     // Detectar si hay más páginas
-    const hasMore = activeDocs.length > pageSize;
-    const productsToShow = hasMore ? activeDocs.slice(0, pageSize) : activeDocs;
+    const hasMore = docs.length > pageSize;
+    const productsToShow = hasMore ? docs.slice(0, pageSize) : docs;
 
     // Transformar documentos a productos públicos
     const products = productsToShow
@@ -181,14 +181,15 @@ export async function getActiveProductsPaginated({
 
 /**
  * Cuenta el total de productos activos (para mostrar "X de Y resultados")
- * Nota: Esta función lee todos los documentos para filtrar por status.
- * Para optimizar en producción, considera mantener un contador en un documento separado.
  */
 export async function countActiveProducts() {
   try {
-    const snapshot = await getDocs(collection(db, PRODUCTS_COLLECTION));
-    // Filtrar por status activo
-    return snapshot.docs.filter(doc => doc.data().status === "active").length;
+    const q = query(
+      collection(db, PRODUCTS_COLLECTION),
+      where("status", "==", "active")
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.size;
   } catch (error) {
     console.error("Error counting products:", error);
     return 0;
