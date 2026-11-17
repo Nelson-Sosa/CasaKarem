@@ -54,22 +54,17 @@ export default function ProductSpecifications({ specifications = [], onChange, e
     if (!categoryId) return null; // No template if no category
     const category = categoryList.find((c) => c.id === categoryId);
     if (!category) return null;
+    
+    const categoryNameLower = category.name.toLowerCase();
+    
     // If category name contains "perfume" (case-insensitive), use perfume template
-    if (category.name.toLowerCase().includes("perfume")) {
+    if (categoryNameLower.includes("perfume")) {
       return TEMPLATE_PERFUMES;
     }
-    // If it's an electronics category, use electronics template
-    if (
-      category.name.toLowerCase().includes("electrónica") ||
-      category.name.toLowerCase().includes("electronica") ||
-      category.name.toLowerCase().includes("celular") ||
-      category.name.toLowerCase().includes("monitor") ||
-      category.name.toLowerCase().includes("accesorio")
-    ) {
-      return TEMPLATE_ELECTRONICS;
-    }
-    // For any other category (future categories like Joyas), return null (no template)
-    return null;
+    
+    // Everything else is treated as electronics (Tablets, Celulares, Monitores, Accesorios, etc.)
+    // This way, any new electronics subcategory will automatically get the electronics template
+    return TEMPLATE_ELECTRONICS;
   }
 
   // ── Add ────────────────────────────────────────────────────────────────────
