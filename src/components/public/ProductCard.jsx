@@ -36,9 +36,16 @@ function ProductCardBase({ product }) {
           wrapperClassName="h-full w-full"
         />
 
-        {/* Badge de categoría - esquina inferior izquierda */}
+        {/* Badge de categoría - efecto cristal glassmorphism */}
         {product.categoryName && (
-          <span className="absolute bottom-2 left-2 z-10 rounded-full bg-[rgba(30,41,59,0.8)] px-2.5 py-1 text-[11px] font-medium text-white shadow-sm backdrop-blur-sm">
+          <span 
+            className="absolute bottom-2 left-2 z-10 rounded-full border border-white/25 px-2.5 py-1 text-[11px] font-medium text-white shadow-sm"
+            style={{
+              backgroundColor: 'rgba(15, 23, 42, 0.48)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)'
+            }}
+          >
             {product.categoryName}
           </span>
         )}
