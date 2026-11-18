@@ -25,46 +25,47 @@ function ProductCardBase({ product }) {
       className="group relative flex h-full flex-col rounded-xl bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
     >
       {/* Contenedor de la imagen con padding aumentado para aire */}
-      <div className="relative aspect-square bg-white px-6 pb-10 pt-5">
+      <div className="aspect-square bg-white px-6 pb-10 pt-5">
         
-        {/* Imagen del producto */}
-        <ProductImage
-          image={image}
-          type="catalog"
-          alt={product.name}
-          className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-          wrapperClassName="h-full w-full"
-        />
+        {/* Contenedor relativo para la imagen y la etiqueta */}
+        <div className="relative h-full w-full">
+          {/* Imagen del producto */}
+          <ProductImage
+            image={image}
+            type="catalog"
+            alt={product.name}
+            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+            wrapperClassName="h-full w-full"
+          />
 
-        {/* Badge de categoría - efecto cristal diamante con glassmorphism real */}
-        {product.categoryName && (
-          <span 
-            className="absolute z-10 rounded-full px-2.5 py-1"
-            style={{
-              bottom: '10px',
-              left: '12px',
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(224, 242, 254, 0.35) 100%)',
-              backdropFilter: 'blur(12px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(12px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.85)',
-              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(148, 163, 184, 0.25)',
-              color: '#1e293b',
-              fontWeight: 600,
-              fontSize: '11px'
-            }}
-          >
-            {product.categoryName}
-          </span>
-        )}
-
-        {/* Overlay agotado */}
-        {isOutOfStock && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-            <span className="rounded-full bg-danger px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-lg">
-              AGOTADO
+          {/* Badge de categoría - cristal ultra transparente con glassmorphism */}
+          {product.categoryName && (
+            <span 
+              className="absolute bottom-2 left-2 z-10 rounded-full px-2.5 py-1"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(224, 242, 254, 0.15) 100%)',
+                backdropFilter: 'blur(12px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                boxShadow: '0 4px 12px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 -1px 2px rgba(148, 163, 184, 0.15)',
+                color: '#1e293b',
+                fontWeight: 600,
+                fontSize: '11px'
+              }}
+            >
+              {product.categoryName}
             </span>
-          </div>
-        )}
+          )}
+
+          {/* Overlay agotado */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+              <span className="rounded-full bg-danger px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-lg">
+                AGOTADO
+              </span>
+            </div>
+          )}
+        </div>
 
       </div>
 
