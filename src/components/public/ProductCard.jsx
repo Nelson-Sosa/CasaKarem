@@ -25,7 +25,7 @@ function ProductCardBase({ product }) {
       className="group relative flex h-full flex-col rounded-xl bg-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)]"
     >
       {/* Contenedor de la imagen con padding aumentado para aire */}
-      <div className="aspect-square bg-white px-6 pb-10 pt-5">
+      <div className="aspect-square bg-white px-6 pb-3 pt-5">
         
         {/* Contenedor relativo para la imagen y la etiqueta */}
         <div className="relative h-full w-full">
