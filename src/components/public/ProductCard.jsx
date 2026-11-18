@@ -36,17 +36,21 @@ function ProductCardBase({ product }) {
           wrapperClassName="h-full w-full"
         />
 
-        {/* Badge de categoría - fondo cristalino ultra claro */}
+        {/* Badge de categoría - efecto cristal diamante con glassmorphism real */}
         {product.categoryName && (
           <span 
-            className="absolute bottom-2 left-2 z-10 rounded-full border px-2.5 py-1 text-[11px] font-medium text-slate-600 shadow-sm"
+            className="absolute z-10 rounded-full px-2.5 py-1"
             style={{
-              backgroundColor: 'rgba(241, 245, 249, 0.75)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              borderColor: 'rgba(226, 232, 240, 0.8)',
-              fontWeight: 500,
-              color: '#475569'
+              bottom: '10px',
+              left: '12px',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(224, 242, 254, 0.35) 100%)',
+              backdropFilter: 'blur(12px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(12px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.85)',
+              boxShadow: '0 4px 12px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95), inset 0 -1px 2px rgba(148, 163, 184, 0.25)',
+              color: '#1e293b',
+              fontWeight: 600,
+              fontSize: '11px'
             }}
           >
             {product.categoryName}
