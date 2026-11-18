@@ -22,8 +22,8 @@
 
 import { IMAGE_TRANSFORMS } from "./imageConfig";
 
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "tnygc1rd";
-const BASE_URL = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`;
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "";
+const BASE_URL = CLOUD_NAME ? `https://res.cloudinary.com/${CLOUD_NAME}/image/upload` : "";
 
 // ---------------------------------------------------------------------------
 // FUNCIÓN INTERNA — Constructor de URLs
@@ -54,6 +54,7 @@ function buildUrl(image, transformation) {
   if (typeof image === "object") {
     // Con publicId: construimos URL con transformación de Cloudinary
     if (image.publicId) {
+      if (!BASE_URL) return image.url || null;
       if (transformation) {
         return `${BASE_URL}/${transformation}/${image.publicId}`;
       }

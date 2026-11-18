@@ -43,14 +43,24 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
-          npx firebase-tools deploy --only hosting --project tienda-online-cf3c0 --token "$FIREBASE_TOKEN"
-          echo "✅ Deploy completado en: https://tienda-online-cf3c0.web.app"
+          if [ -n "$FIREBASE_PROJECT_ID" ]; then
+            npx firebase-tools deploy --only hosting --project "$FIREBASE_PROJECT_ID" --token "$FIREBASE_TOKEN"
+          else
+            npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN"
+          fi
+          echo "✅ Deploy completado"
 
       - name: Deploy preview (PR)
         if: github.event_name == 'pull_request'
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
-          npx firebase-tools deploy --only hosting --project tienda-online-cf3c0 --token "$FIREBASE_TOKEN" --non-interactive
+          if [ -n "$FIREBASE_PROJECT_ID" ]; then
+            npx firebase-tools deploy --only hosting --project "$FIREBASE_PROJECT_ID" --token "$FIREBASE_TOKEN" --non-interactive
+          else
+            npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN" --non-interactive
+          fi
           echo "✅ Preview deploy completado"
