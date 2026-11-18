@@ -74,7 +74,7 @@ function ProductCardBase({ product }) {
 
           <button
             onClick={() => navigate(`/catalogo/${product.id}`)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary-light py-2 text-xs font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200/70 bg-gradient-to-b from-white/60 to-white/20 py-2 text-xs font-semibold text-amber-800 shadow-sm backdrop-blur-md transition-all hover:border-transparent hover:bg-[#FFC107] hover:text-gray-900"
           >
             Ver detalles
             <ChevronRight className="h-3.5 w-3.5" />
