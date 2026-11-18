@@ -109,7 +109,7 @@ export default function PublicLayout() {
             </form>
           </div>
 
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex items-center gap-2">
             {/* Panel de Mis Reparaciones - oculto en móvil */}
             <div className="hidden md:flex">
               <MyRepairsPanel />
@@ -216,10 +216,10 @@ export default function PublicLayout() {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex shrink-0 items-center gap-1 md:gap-1.5 rounded-xl border border-border bg-white px-2.5 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-gray-600 shadow-sm transition-all hover:border-primary hover:text-primary hover:shadow-md"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
               >
                 <LogIn className="h-4 w-4" />
-                <span className="hidden sm:inline">Entrar</span>
+                <span>Entrar</span>
               </Link>
             )}
           </div>
