@@ -27,7 +27,7 @@ export default function Categories() {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
 
-  const { categories, loading, reload } = useCategories();
+  const { categories, categoriesGrouped, loading, reload } = useCategories();
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
@@ -88,7 +88,9 @@ export default function Categories() {
       if (err instanceof ValidationError) {
         toast.error("Corrige los errores en el formulario");
       } else if (err.message === "DUPLICATE_NAME") {
-        toast.error("Ya existe una categoría con ese nombre");
+        toast.error("Ya existe una categoría con ese nombre en ese nivel");
+      } else if (err.message === "CATEGORY_HAS_CHILDREN") {
+        toast.error("No puedes eliminar esta categoría porque tiene subcategorías. Elimínalas primero.");
       } else {
         toast.error("Ocurrió un error al guardar la categoría");
       }
@@ -113,6 +115,10 @@ export default function Categories() {
       if (err.message === "CATEGORY_IN_USE") {
         toast.error(
           "No puedes eliminar esta categoría porque tiene productos asociados."
+        );
+      } else if (err.message === "CATEGORY_HAS_CHILDREN") {
+        toast.error(
+          "No puedes eliminar esta categoría porque tiene subcategorías. Elimínalas primero."
         );
       } else {
         toast.error("Ocurrió un error al eliminar la categoría");
@@ -237,6 +243,7 @@ export default function Categories() {
       >
         <CategoryForm
           initialData={editingCategory}
+          parentCategories={categories.filter((c) => !c.parentId)}
           onSubmit={handleSubmit}
           onCancel={closeModal}
           loading={modalLoading}

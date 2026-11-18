@@ -20,7 +20,7 @@ export default function PublicLayout() {
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { user, logout } = useAuth();
-  const { categories } = useCategories();
+  const { categories, categoriesGrouped } = useCategories();
   
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,8 +69,11 @@ export default function PublicLayout() {
     }
   };
 
-  // Extraer solo los nombres de las categorías activas (o todas)
-  const categoryNames = categories.map(c => c.name).sort();
+  // Solo categorías principales para la navegación (sin parentId)
+  const parentCategoryNames = categoriesGrouped.map(c => c.name).sort();
+
+  // Para el drawer móvil pasamos el árbol completo
+  const categoriesTree = categoriesGrouped;
 
   // Obtener la inicial del usuario para el avatar
   const userInitial = user?.displayName
@@ -242,7 +245,7 @@ export default function PublicLayout() {
 
       {/* Navegación de Categorías Horizontal */}
       <CategoryNavigation 
-        categories={categoryNames} 
+        categoriesGrouped={categoriesTree}
         selectedCategory={currentCategory} 
         onSelectCategory={handleSelectCategory}
       />
@@ -258,7 +261,7 @@ export default function PublicLayout() {
       <MobileMenuDrawer
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        categories={categoryNames}
+        categoriesGrouped={categoriesTree}
         selectedCategory={currentCategory}
         onSelectCategory={handleSelectCategory}
       />

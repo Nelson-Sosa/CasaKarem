@@ -149,18 +149,26 @@ export default function Catalog() {
   const filtered = useMemo(() => {
     let result = [...allProducts];
 
-    if (search.trim()) {
-      const q = search.toLowerCase().trim();
+    const q = search.trim().toLowerCase();
+
+    if (selectedCategory !== "all") {
+      // Si selectedCategory coincide con subcategoryName → solo esa subcategoría
+      // Si coincide con categoryName → todos los productos de esa categoría padre (con y sin sub)
+      result = result.filter(
+        (p) =>
+          p.subcategoryName === selectedCategory ||
+          p.categoryName === selectedCategory
+      );
+    }
+
+    if (q) {
       result = result.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
           (p.description && p.description.toLowerCase().includes(q)) ||
-          (p.categoryName && p.categoryName.toLowerCase().includes(q))
+          (p.categoryName && p.categoryName.toLowerCase().includes(q)) ||
+          (p.subcategoryName && p.subcategoryName.toLowerCase().includes(q))
       );
-    }
-
-    if (selectedCategory !== "all") {
-      result = result.filter((p) => p.categoryName === selectedCategory);
     }
 
     return result;

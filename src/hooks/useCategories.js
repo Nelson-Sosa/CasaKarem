@@ -3,6 +3,7 @@ import * as categoryService from "../services/categoryService";
 
 export function useCategories() {
   const [categories, setCategories] = useState([]);
+  const [categoriesGrouped, setCategoriesGrouped] = useState([]);
   const [loading, setLoading] = useState(true);
   const mountedRef = useRef(true);
 
@@ -15,8 +16,14 @@ export function useCategories() {
   async function load() {
     setLoading(true);
     try {
-      const data = await categoryService.getCategories();
-      if (mountedRef.current) setCategories(data);
+      const [flat, grouped] = await Promise.all([
+        categoryService.getCategories(),
+        categoryService.getCategoriesGrouped(),
+      ]);
+      if (mountedRef.current) {
+        setCategories(flat);
+        setCategoriesGrouped(grouped);
+      }
     } catch {
       // handled by page
     } finally {
@@ -26,5 +33,5 @@ export function useCategories() {
 
   const reload = useCallback(() => load(), []);
 
-  return { categories, loading, reload };
+  return { categories, categoriesGrouped, loading, reload };
 }

@@ -11,7 +11,7 @@ const PAGE_SIZE = 30;
  * detalle, búsqueda, filtrado y carrito.
  * Excluye rigurosamente `purchasePrice` y metadatos administrativos internos.
  */
-function toPublicProduct(id, data, categoryName) {
+function toPublicProduct(id, data, categoryName, subcategoryName) {
   if (!data) return null;
   return {
     id,
@@ -22,6 +22,8 @@ function toPublicProduct(id, data, categoryName) {
     images: Array.isArray(data.images) ? data.images : [],
     categoryId: data.categoryId || "",
     categoryName: categoryName || "Sin categoría",
+    subcategoryId: data.subcategoryId || null,
+    subcategoryName: subcategoryName || null,
     sku: data.sku || "",
     stock: Number(data.stock) || 0,
     brand: data.brand || "",
@@ -48,7 +50,8 @@ export async function getActiveProducts() {
     .map((docSnap) => {
       const data = docSnap.data();
       const categoryName = catMap[data.categoryId] || "Sin categoría";
-      return toPublicProduct(docSnap.id, data, categoryName);
+      const subcategoryName = data.subcategoryId ? (catMap[data.subcategoryId] || null) : null;
+      return toPublicProduct(docSnap.id, data, categoryName, subcategoryName);
     })
     .filter((p) => p && p.status === "active");
 }
@@ -72,7 +75,8 @@ export function subscribeToActiveProducts(onData, onError) {
           .map((docSnap) => {
             const data = docSnap.data();
             const categoryName = catMap[data.categoryId] || "Sin categoría";
-            return toPublicProduct(docSnap.id, data, categoryName);
+            const subcategoryName = data.subcategoryId ? (catMap[data.subcategoryId] || null) : null;
+            return toPublicProduct(docSnap.id, data, categoryName, subcategoryName);
           })
           .filter((p) => p && p.status === "active");
 
@@ -94,12 +98,17 @@ export async function getActiveProductById(id) {
   if (rawData.status !== "active") return null;
 
   let categoryName = "Sin categoría";
+  let subcategoryName = null;
   if (rawData.categoryId) {
     const catSnap = await getDoc(doc(db, CATEGORIES_COLLECTION, rawData.categoryId));
     if (catSnap.exists()) categoryName = catSnap.data().name;
   }
+  if (rawData.subcategoryId) {
+    const subSnap = await getDoc(doc(db, CATEGORIES_COLLECTION, rawData.subcategoryId));
+    if (subSnap.exists()) subcategoryName = subSnap.data().name;
+  }
 
-  return toPublicProduct(snap.id, rawData, categoryName);
+  return toPublicProduct(snap.id, rawData, categoryName, subcategoryName);
 }
 
 /**
@@ -158,7 +167,8 @@ export async function getActiveProductsPaginated({
       .map((docSnap) => {
         const data = docSnap.data();
         const categoryName = catMap[data.categoryId] || "Sin categoría";
-        return toPublicProduct(docSnap.id, data, categoryName);
+        const subcategoryName = data.subcategoryId ? (catMap[data.subcategoryId] || null) : null;
+        return toPublicProduct(docSnap.id, data, categoryName, subcategoryName);
       })
       .filter((p) => p !== null);
 

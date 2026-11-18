@@ -22,6 +22,7 @@ function buildInitial(initialData) {
       name: "",
       description: "",
       categoryId: "",
+      subcategoryId: "",
       sku: "",
       purchasePrice: "",
       salePrice: "",
@@ -30,9 +31,6 @@ function buildInitial(initialData) {
       status: "active",
       images: [],
       attributes: [],
-      // specifications: [{ id, name, value }]
-      // Ordered list of technical specs. id is stable across renames.
-      // Ready for: SEO structured data, product comparator, advanced filters, CSV import/export.
       specifications: [],
     };
   }
@@ -40,6 +38,7 @@ function buildInitial(initialData) {
     name: initialData.name || "",
     description: initialData.description || "",
     categoryId: initialData.categoryId || "",
+    subcategoryId: initialData.subcategoryId || "",
     sku: initialData.sku || "",
     purchasePrice: initialData.purchasePrice?.toString() || "",
     salePrice: initialData.salePrice?.toString() || "",
@@ -110,7 +109,8 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
   }
 
   async function handleCategoryChange(categoryId) {
-    handleChange("categoryId", categoryId);
+    // Al cambiar categoría principal, limpiar subcategoría
+    setForm((prev) => ({ ...prev, categoryId, subcategoryId: "" }));
     setErrors((prev) => ({ ...prev, categoryId: null }));
 
     if (!initialData && categoryId && !skuManuallyEdited) {
@@ -185,6 +185,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
       salePrice: Number(form.salePrice),
       stock: Number(form.stock) || 0,
       minimumStock: Number(form.minimumStock) || 0,
+      subcategoryId: form.subcategoryId || null,
       specifications: cleanedSpecs,
     });
   }
@@ -203,6 +204,12 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
   }
 
   const activeCategories = categoryList.filter((c) => c.status === "active");
+  // Categorías principales (sin padre)
+  const parentCategories = activeCategories.filter((c) => !c.parentId);
+  // Subcategorías hijas de la categoría seleccionada
+  const subcategories = form.categoryId
+    ? activeCategories.filter((c) => c.parentId === form.categoryId)
+    : [];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -249,7 +256,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               }`}
             >
               <option value="">Seleccionar categoría</option>
-              {activeCategories.map((cat) => (
+              {parentCategories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
@@ -262,6 +269,29 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               </p>
             )}
           </div>
+
+          {/* Subcategoría — solo aparece si la categoría tiene hijas */}
+          {subcategories.length > 0 && (
+            <div>
+              <label htmlFor="prod-subcat" className="block text-sm font-medium text-gray-700">
+                Subcategoría{" "}
+                <span className="font-normal text-gray-400">(opcional)</span>
+              </label>
+              <select
+                id="prod-subcat"
+                value={form.subcategoryId}
+                onChange={(e) => handleChange("subcategoryId", e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="">— Sin subcategoría —</option>
+                {subcategories.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>

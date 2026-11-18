@@ -12,11 +12,12 @@ function buildInitial(initialData) {
         name: initialData.name || "",
         description: initialData.description || "",
         status: initialData.status || "active",
+        parentId: initialData.parentId || "",
       }
-    : { name: "", description: "", status: "active" };
+    : { name: "", description: "", status: "active", parentId: "" };
 }
 
-export default function CategoryForm({ initialData, onSubmit, onCancel, loading }) {
+export default function CategoryForm({ initialData, parentCategories = [], onSubmit, onCancel, loading }) {
   const [form, setForm] = useState(() => buildInitial(initialData));
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -63,11 +64,18 @@ export default function CategoryForm({ initialData, onSubmit, onCancel, loading 
       name: sanitizeName(form.name),
       description: sanitizeDescription(form.description),
       status: form.status,
+      parentId: form.parentId || null,
     });
   }
 
+  // Categorías disponibles como padre (excluir la categoría actual en edición y subcategorías)
+  const availableParents = parentCategories.filter(
+    (c) => !initialData || c.id !== initialData.id
+  );
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Nombre */}
       <div>
         <label htmlFor="cat-name" className="block text-sm font-medium text-gray-700">
           Nombre <span className="text-danger">*</span>
@@ -83,7 +91,7 @@ export default function CategoryForm({ initialData, onSubmit, onCancel, loading 
               ? "border-red-300 focus:border-red-400 focus:ring-red/20"
               : "border-gray-200 focus:border-primary focus:ring-primary/20"
           }`}
-          placeholder="Ej: Juguetes"
+          placeholder="Ej: Accesorios"
           autoFocus
         />
         {errors.name && (
@@ -91,6 +99,7 @@ export default function CategoryForm({ initialData, onSubmit, onCancel, loading 
         )}
       </div>
 
+      {/* Descripción */}
       <div>
         <label htmlFor="cat-desc" className="block text-sm font-medium text-gray-700">
           Descripción
@@ -118,6 +127,35 @@ export default function CategoryForm({ initialData, onSubmit, onCancel, loading 
         )}
       </div>
 
+      {/* Categoría padre (subcategoría de...) */}
+      {availableParents.length > 0 && (
+        <div>
+          <label htmlFor="cat-parent" className="block text-sm font-medium text-gray-700">
+            ¿Es subcategoría de...?{" "}
+            <span className="font-normal text-gray-400">(opcional)</span>
+          </label>
+          <select
+            id="cat-parent"
+            value={form.parentId}
+            onChange={(e) => handleChange("parentId", e.target.value)}
+            className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-800 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="">— Categoría principal —</option>
+            {availableParents.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+          {form.parentId && (
+            <p className="mt-1 text-xs text-primary">
+              Esta categoría se mostrará como subcategoría de "{availableParents.find(c => c.id === form.parentId)?.name}".
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Estado */}
       <div>
         <label htmlFor="cat-status" className="block text-sm font-medium text-gray-700">
           Estado

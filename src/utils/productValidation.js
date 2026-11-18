@@ -172,6 +172,7 @@ export function validateProduct(data, categories) {
       name: sanitizedName,
       description: sanitizedDesc,
       categoryId: data.categoryId,
+      subcategoryId: data.subcategoryId || null,
       sku: data.sku ? sanitizeText(data.sku) : "",
       purchasePrice: Number(data.purchasePrice),
       salePrice: Number(data.salePrice),
