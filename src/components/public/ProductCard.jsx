@@ -38,18 +38,6 @@ function ProductCardBase({ product }) {
             wrapperClassName="h-full w-full"
           />
 
-          {/* Badge de categoría - cristal ultra transparente minimalista */}
-          {product.categoryName && (
-            <span 
-              className="absolute bottom-2 left-2 z-10 rounded-full border border-white/40 bg-white/25 px-2.5 py-1 text-[11px] font-semibold shadow-sm backdrop-blur-md"
-              style={{
-                color: '#1e293b',
-                fontWeight: 600
-              }}
-            >
-              {product.categoryName}
-            </span>
-          )}
 
           {/* Overlay agotado */}
           {isOutOfStock && (
