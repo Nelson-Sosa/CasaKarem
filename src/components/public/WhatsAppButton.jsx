@@ -7,7 +7,7 @@ function buildWhatsAppUrl(phone, productName, productPrice) {
   return `https://wa.me/${phone.replace(/\D/g, "")}?text=${text}`;
 }
 
-export default function WhatsAppButton({ productName, productPrice, variant = "floating" }) {
+export default function WhatsAppButton({ productName, productPrice, variant = "floating", className = "" }) {
   const [phone, setPhone] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +53,7 @@ export default function WhatsAppButton({ productName, productPrice, variant = "f
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-600 hover:shadow-md active:scale-[0.98] sm:w-auto sm:text-base"
+      className={`inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-600 hover:shadow-md active:scale-[0.98] sm:text-base ${className}`}
     >
       <MessageCircle className="h-5 w-5" />
       Consultar por WhatsApp

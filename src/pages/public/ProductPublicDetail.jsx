@@ -357,38 +357,52 @@ export default function ProductPublicDetail() {
             <div className="my-5 border-t border-gray-100" />
 
             {/* ── CTA Buttons ── */}
-            <div className="flex flex-col gap-3">
+            <div className="space-y-3">
 
-              {/* Fila 1: Carrito (texto, flex-1) + Favorito (ícono cuadrado) */}
-              {!isOutOfStock && (
-                <div className="flex items-stretch gap-3">
-                  <AddToCartButton
-                    product={product}
-                    variant="full"
-                  />
+              {/* ══ MOBILE layout (< lg): apilado ══ */}
+              <div className="flex flex-col gap-3 lg:hidden">
+                {!isOutOfStock && (
+                  <div className="flex items-stretch gap-3">
+                    <AddToCartButton product={product} variant="full" />
+                    <FavoriteButton
+                      product={product}
+                      size="desktop"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-white transition-colors hover:border-primary hover:bg-primary-light"
+                    />
+                  </div>
+                )}
+                {isOutOfStock && (
                   <FavoriteButton
                     product={product}
                     size="desktop"
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-white transition-colors hover:border-primary hover:bg-primary-light"
+                    className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-border bg-white transition-colors hover:border-primary hover:bg-primary-light"
                   />
-                </div>
-              )}
+                )}
+                <WhatsAppButton
+                  productName={product.name}
+                  productPrice={formatCurrency(product.salePrice)}
+                  variant="inline"
+                  className="w-full"
+                />
+              </div>
 
-              {/* Si está agotado, solo mostrar favorito como fila */}
-              {isOutOfStock && (
+              {/* ══ DESKTOP layout (>= lg): una sola fila equilibrada ══ */}
+              <div className="hidden lg:flex items-stretch gap-3">
+                {!isOutOfStock && (
+                  <AddToCartButton product={product} variant="full" />
+                )}
+                <WhatsAppButton
+                  productName={product.name}
+                  productPrice={formatCurrency(product.salePrice)}
+                  variant="inline"
+                  className="flex-1"
+                />
                 <FavoriteButton
                   product={product}
                   size="desktop"
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-border bg-white transition-colors hover:border-primary hover:bg-primary-light"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-border bg-white transition-colors hover:border-primary hover:bg-primary-light"
                 />
-              )}
-
-              {/* Fila 2: WhatsApp — ancho completo */}
-              <WhatsAppButton
-                productName={product.name}
-                productPrice={formatCurrency(product.salePrice)}
-                variant="inline"
-              />
+              </div>
 
             </div>
 
