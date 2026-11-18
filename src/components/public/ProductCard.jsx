@@ -36,14 +36,17 @@ function ProductCardBase({ product }) {
           wrapperClassName="h-full w-full"
         />
 
-        {/* Badge de categoría - efecto cristal glassmorphism */}
+        {/* Badge de categoría - fondo cristalino ultra claro */}
         {product.categoryName && (
           <span 
-            className="absolute bottom-2 left-2 z-10 rounded-full border border-white/25 px-2.5 py-1 text-[11px] font-medium text-white shadow-sm"
+            className="absolute bottom-2 left-2 z-10 rounded-full border px-2.5 py-1 text-[11px] font-medium text-slate-600 shadow-sm"
             style={{
-              backgroundColor: 'rgba(15, 23, 42, 0.48)',
-              backdropFilter: 'blur(6px)',
-              WebkitBackdropFilter: 'blur(6px)'
+              backgroundColor: 'rgba(241, 245, 249, 0.75)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              borderColor: 'rgba(226, 232, 240, 0.8)',
+              fontWeight: 500,
+              color: '#475569'
             }}
           >
             {product.categoryName}
