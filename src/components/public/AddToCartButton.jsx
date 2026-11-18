@@ -3,7 +3,7 @@ import { ShoppingCart, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "../../context/CartContext";
 
-function AddToCartButtonBase({ product, size = "desktop", className = "" }) {
+function AddToCartButtonBase({ product, size = "desktop", variant = "icon", className = "" }) {
   const { addToCart, isInCart } = useCart();
   const inCart = isInCart(product.id);
   const [isHovered, setIsHovered] = useState(false);
@@ -11,17 +11,42 @@ function AddToCartButtonBase({ product, size = "desktop", className = "" }) {
 
   const handleClick = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // prevent navigation if card is clickable
+    e.stopPropagation();
     
     setIsAnimating(true);
     addToCart(product);
     
-    // reset click animation state
     setTimeout(() => {
       setIsAnimating(false);
     }, 300);
   };
 
+  // ── Variant "full": botón ancho con texto (para página de detalle) ──
+  if (variant === "full") {
+    return (
+      <motion.button
+        onClick={handleClick}
+        whileTap={{ scale: 0.98 }}
+        animate={isAnimating ? { scale: [1, 1.02, 1] } : {}}
+        transition={{ duration: 0.2 }}
+        aria-label="Agregar al carrito"
+        className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all duration-200 focus:outline-none ${
+          inCart
+            ? "bg-green-500 text-white hover:bg-green-600"
+            : "bg-primary text-white hover:bg-primary/90"
+        } ${className}`}
+      >
+        {inCart ? (
+          <Check size={18} strokeWidth={2} />
+        ) : (
+          <ShoppingCart size={18} strokeWidth={1.8} />
+        )}
+        {inCart ? "Agregado al carrito" : "Agregar al carrito"}
+      </motion.button>
+    );
+  }
+
+  // ── Variant "icon": botón circular con tooltip (default) ──
   const buttonSize = size === "mobile" ? "h-[38px] w-[38px]" : "h-[40px] w-[40px]";
   const iconSize = size === "mobile" ? 18 : 20;
 
