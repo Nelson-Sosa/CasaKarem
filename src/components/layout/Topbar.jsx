@@ -37,10 +37,10 @@ export default function Topbar({ onMenuClick }) {
     : user?.email?.charAt(0).toUpperCase() || "A";
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-border bg-white px-4 shadow-sm lg:px-6">
+    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-4 border-b border-border/80 bg-white px-4 shadow-xs lg:px-6">
       <button
         onClick={onMenuClick}
-        className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-primary-light hover:text-primary lg:hidden"
+        className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-[#FCF9F2] hover:text-[#8F6820] lg:hidden"
       >
         <Menu className="h-6 w-6" />
       </button>
@@ -50,11 +50,13 @@ export default function Topbar({ onMenuClick }) {
           <p className="truncate text-sm font-semibold text-gray-800">
             {getGreeting()}, {displayName.split(" ")[0]} 👋
           </p>
-          <span className="hidden sm:inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+          <span className="hidden sm:inline-block rounded-full bg-[#FCF9F2] border border-[#B88B35]/40 px-2.5 py-0.5 text-[11px] font-semibold text-[#8F6820]">
             Casa Karem
           </span>
         </div>
-        <p className="text-xs text-gray-600">Panel de Administración • Casa Karem</p>
+        <p className="text-xs text-gray-500">
+          Panel de Administración • <span className="font-semibold bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent">Casa Karem</span>
+        </p>
       </div>
 
       <a
@@ -63,18 +65,18 @@ export default function Topbar({ onMenuClick }) {
         rel="noopener noreferrer"
         aria-label="Ver catálogo público"
         title="Ver catálogo público"
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm transition-all hover:border-primary hover:bg-primary-light hover:text-primary active:scale-[0.97] sm:px-4"
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-[#B88B35]/50 bg-white px-3 py-2 text-sm font-medium text-[#8F6820] shadow-xs transition-all hover:border-[#B88B35] hover:bg-[#FCF9F2] hover:text-[#735118] active:scale-[0.97] sm:px-4"
       >
-        <Store className="h-4 w-4" />
+        <Store className="h-4 w-4 text-[#B88B35]" />
         <span className="hidden sm:inline">Ver Catálogo</span>
       </a>
 
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-primary-light"
+          className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-[#FCF9F2]"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#8A641E] via-[#B88B35] to-[#C9A048] text-sm font-bold text-white shadow-sm ring-2 ring-[#B88B35]/25">
             {initials}
           </div>
           <div className="hidden text-left lg:block">
@@ -90,7 +92,7 @@ export default function Topbar({ onMenuClick }) {
             <div className="border-b border-border px-4 py-3">
               <p className="text-sm font-medium text-gray-800">{displayName}</p>
               <p className="text-xs text-gray-500">{user?.email}</p>
-              <span className="mt-1.5 inline-flex items-center rounded-full bg-primary-light px-2.5 py-0.5 text-[11px] font-medium text-primary">
+              <span className="mt-1.5 inline-flex items-center rounded-full bg-[#FCF9F2] border border-[#B88B35]/40 px-2.5 py-0.5 text-[11px] font-semibold text-[#8F6820]">
                 Administrador
               </span>
             </div>

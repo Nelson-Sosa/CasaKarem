@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colores Principales (Azul Profesional) */
-  --color-primary: #2563EB;
-  --color-primary-hover: #1D4ED8;
-  --color-primary-dark: #1E40AF;
-  --color-primary-light: #DBEAFE;
+  /* Colores Principales (Rojo Marca Casa Karem) */
+  --color-primary: #DC2626;
+  --color-primary-hover: #B91C1C;
+  --color-primary-dark: #991B1B;
+  --color-primary-light: #FEE2E2;
   
   /* Color de Acento */
   --color-accent: #F97316;

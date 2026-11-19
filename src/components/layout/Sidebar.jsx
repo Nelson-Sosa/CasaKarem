@@ -57,26 +57,29 @@ export default function Sidebar({ collapsed, mobileOpen, onClose, onToggle }) {
       <NavLink
         to={item.href}
         className={({ isActive: active }) =>
-          `relative flex items-center rounded-lg text-sm font-medium transition-all duration-200 ${active
-            ? "bg-primary-light text-primary font-semibold"
-            : "text-gray-700 hover:bg-primary-light/50 hover:text-primary"
+          `group relative flex items-center rounded-lg text-sm font-medium transition-all duration-200 ${
+            active
+              ? "bg-[#FCF9F2] text-[#8F6820] font-semibold shadow-xs"
+              : "text-gray-700 hover:bg-[#FCF9F2]/60 hover:text-[#8F6820]"
           } ${collapsed ? "px-3 py-3 justify-center" : "px-3 py-3"}`
         }
       >
         {({ isActive: active }) => (
           <>
             {active && (
-              <div className="absolute left-0 top-1/2 h-3/4 w-[3px] -translate-y-1/2 rounded-r-full bg-primary" />
+              <div className="absolute left-0 top-1/2 h-3/4 w-[3.5px] -translate-y-1/2 rounded-r-full bg-[#B88B35]" />
             )}
             <div className="flex w-6 shrink-0 items-center justify-center">
               <item.icon
-                className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-gray-500 group-hover:text-primary"
-                  }`}
+                className={`h-5 w-5 transition-colors ${
+                  active ? "text-[#8F6820]" : "text-gray-500 group-hover:text-[#8F6820]"
+                }`}
               />
             </div>
             <span
-              className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${collapsed ? "max-w-0 opacity-0" : "ml-3 max-w-40 opacity-100"
-                }`}
+              className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${
+                collapsed ? "max-w-0 opacity-0" : "ml-3 max-w-40 opacity-100"
+              }`}
             >
               {item.name}
             </span>
@@ -102,16 +105,16 @@ export default function Sidebar({ collapsed, mobileOpen, onClose, onToggle }) {
   function SidebarContent() {
     return (
       <div className="flex h-full flex-col bg-white">
-        <div className={`flex h-16 shrink-0 items-center border-b border-border px-3 ${collapsed ? "justify-center" : "justify-between"}`}>
+        <div className={`flex h-16 shrink-0 items-center border-b border-border/70 px-3 ${collapsed ? "justify-center" : "justify-between"}`}>
           {collapsed ? (
-            <BrandLogo size="sidebar-collapsed" noLink />
+            <BrandLogo size="sidebar-collapsed" noLink goldText />
           ) : (
-            <BrandLogo size="md" />
+            <BrandLogo size="md" goldText />
           )}
           {mobileOpen && (
             <button
               onClick={onClose}
-              className="ml-auto rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-primary-light hover:text-primary lg:hidden"
+              className="ml-auto rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-[#FCF9F2] hover:text-[#8F6820] lg:hidden"
             >
               <X className="h-5 w-5" />
             </button>
@@ -127,10 +130,10 @@ export default function Sidebar({ collapsed, mobileOpen, onClose, onToggle }) {
 
         </nav>
 
-        <div className="border-t border-border px-3 py-3">
+        <div className="border-t border-border/70 px-3 py-3">
           <button
             onClick={onToggle}
-            className="hidden w-full items-center justify-center rounded-lg px-3 py-2.5 text-gray-500 transition-colors hover:bg-primary-light hover:text-primary lg:flex"
+            className="hidden w-full items-center justify-center rounded-lg px-3 py-2.5 text-gray-500 transition-colors hover:bg-[#FCF9F2] hover:text-[#8F6820] lg:flex"
             title={collapsed ? "Expandir menú" : "Colapsar menú"}
           >
             {collapsed ? (

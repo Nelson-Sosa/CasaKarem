@@ -77,7 +77,7 @@ function PedidoCard({ pedido, onView }) {
         </span>
         <button
           onClick={onView}
-          className="flex items-center gap-1.5 rounded-lg bg-primary-light px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary hover:text-white"
+          className="flex items-center gap-1.5 rounded-lg bg-[#FCF9F2] border border-[#B88B35]/30 px-3 py-1.5 text-xs font-semibold text-[#8F6820] transition-colors hover:bg-[#B88B35] hover:text-white"
           title="Ver en pedidos"
         >
           <Eye className="h-3.5 w-3.5" />
@@ -241,7 +241,7 @@ export default function Dashboard() {
                         <td className="whitespace-nowrap px-5 py-3 text-right">
                           <button
                             onClick={() => navigate("/admin/pedidos")}
-                            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-light"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-[#FCF9F2] border border-[#B88B35]/30 px-3 py-1.5 text-xs font-semibold text-[#8F6820] hover:bg-[#B88B35] hover:text-white transition-colors"
                           >
                             <Eye className="h-3.5 w-3.5" />
                             Ver

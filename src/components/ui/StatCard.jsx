@@ -1,12 +1,47 @@
 import { formatCurrency } from "../../utils/formatCurrency";
 
-export default function StatCard({ title, value, icon: Icon, accent = "primary", kind = "number" }) {
+const ACCENT_VARIANTS = {
+  amber: {
+    circle: "bg-amber-50/80 border border-amber-200/60",
+    icon: "text-[#B88B35]",
+    bar: "bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#C9A048]",
+  },
+  gold: {
+    circle: "bg-[#FCF9F2] border border-[#B88B35]/40",
+    icon: "text-[#8F6820]",
+    bar: "bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#C9A048]",
+  },
+  blue: {
+    circle: "bg-indigo-50/80 border border-indigo-200/60",
+    icon: "text-indigo-600",
+    bar: "bg-indigo-500",
+  },
+  indigo: {
+    circle: "bg-indigo-50/80 border border-indigo-200/60",
+    icon: "text-indigo-600",
+    bar: "bg-indigo-500",
+  },
+  emerald: {
+    circle: "bg-emerald-50/80 border border-emerald-200/60",
+    icon: "text-emerald-600",
+    bar: "bg-emerald-500",
+  },
+  rose: {
+    circle: "bg-red-50/80 border border-red-200/60",
+    icon: "text-red-600",
+    bar: "bg-red-600",
+  },
+  danger: {
+    circle: "bg-red-50/80 border border-red-200/60",
+    icon: "text-red-600",
+    bar: "bg-red-600",
+  },
+};
+
+export default function StatCard({ title, value, icon: Icon, accent = "amber", kind = "number" }) {
   const isPlaceholder = value === null || value === undefined;
 
-  const variant =
-    accent === "rose" || accent === "danger"
-      ? { circle: "bg-danger/10", icon: "text-danger", bar: "bg-danger" }
-      : { circle: "bg-primary-light", icon: "text-primary", bar: "bg-primary" };
+  const variant = ACCENT_VARIANTS[accent] || ACCENT_VARIANTS.amber;
 
   function format(val) {
     if (isPlaceholder) return "—";
