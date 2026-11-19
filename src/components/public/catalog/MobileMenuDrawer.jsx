@@ -6,10 +6,10 @@ import { getIconForCategory } from "../../../utils/categoryIcons";
 
 function SidebarItem({ label, icon: Icon, isActive, onClick, accent, indent = false }) {
   const activeClasses = isActive
-    ? "bg-primary-light text-primary font-semibold"
+    ? "bg-red-50 text-[#E30613] font-bold"
     : accent === "amber"
     ? "text-amber-600 hover:bg-amber-50"
-    : "text-gray-600 hover:bg-gray-50 hover:text-gray-800";
+    : "text-gray-600 hover:bg-red-50/60 hover:text-[#E30613]";
 
   return (
     <motion.button
@@ -70,12 +70,12 @@ export default function MobileMenuDrawer({ isOpen, onClose, categoriesGrouped = 
             {/* Drawer header */}
             <div className="flex items-center justify-between border-b border-border px-4 py-4">
               <div className="flex items-center gap-2">
-                <Menu className="h-5 w-5 text-primary" />
+                <Menu className="h-5 w-5 text-[#E30613]" />
                 <h3 className="text-base font-bold text-gray-800">Menú</h3>
               </div>
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-red-50 hover:text-[#E30613]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -107,8 +107,8 @@ export default function MobileMenuDrawer({ isOpen, onClose, categoriesGrouped = 
                         transition={{ duration: 0.15 }}
                         className={`flex flex-1 items-center gap-3 px-4 py-2.5 text-left text-[13px] transition-colors ${
                           selectedCategory === cat.name
-                            ? "bg-primary-light font-semibold text-primary"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                            ? "bg-red-50 font-bold text-[#E30613]"
+                            : "text-gray-600 hover:bg-red-50/60 hover:text-[#E30613]"
                         }`}
                       >
                         <Icon className="h-4 w-4 shrink-0" />

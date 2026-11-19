@@ -202,3 +202,17 @@ export function getLqipImage(image) {
     "c_pad,w_20,h_20,b_white,q_1,f_auto,e_blur:800"
   );
 }
+
+/**
+ * Optimiza URLs directas de Cloudinary agregando compresión y formato automático
+ * (WebP/AVIF según compatibilidad del navegador).
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+export function optimizeCloudinaryUrl(url) {
+  if (!url || typeof url !== "string") return url;
+  if (!url.includes("res.cloudinary.com")) return url;
+  if (url.includes("f_auto") || url.includes("q_auto")) return url;
+  return url.replace("/upload/", "/upload/f_auto,q_auto/");
+}

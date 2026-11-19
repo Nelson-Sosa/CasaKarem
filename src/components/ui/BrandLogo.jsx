@@ -20,6 +20,8 @@ import { BRAND } from "../../config/brand";
  * @param {boolean} dark Si true, adapta textos para fondos oscuros (footer)
  * @param {boolean} onlyIcon Si true, omite el texto "CASA KAREM" al lado
  * @param {boolean} noIcon Si true, omite el emblema y muestra solo el texto
+ * @param {boolean} goldText Si true, aplica tipografía dorada metálica elegante
+ * @param {string} textClassName Clases adicionales para el texto
  */
 export default function BrandLogo({
   size = "md",
@@ -29,6 +31,8 @@ export default function BrandLogo({
   dark = false,
   onlyIcon = false,
   noIcon = false,
+  goldText = false,
+  textClassName = "",
 }) {
   const isOnlyIcon = onlyIcon || size === "sidebar-collapsed";
   const isAuth = size === "auth";
@@ -66,14 +70,19 @@ export default function BrandLogo({
         <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap">
           <span
             className={[
-              "uppercase transition-colors select-none font-bold tracking-[0.16em]",
+              "uppercase transition-all duration-300 select-none tracking-[0.16em] [text-rendering:optimizeLegibility]",
               size === "footer"
-                ? "text-xl sm:text-2xl"
+                ? "text-xl sm:text-2xl font-bold"
                 : size === "sm"
-                ? "text-base sm:text-lg"
-                : "text-xl sm:text-2xl",
-              dark ? "text-white" : "text-[#2b050d]",
-            ].join(" ")}
+                ? "text-base sm:text-lg font-bold"
+                : "text-xl sm:text-2xl font-extrabold",
+              goldText
+                ? "bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(140,96,16,0.18)] group-hover:brightness-110"
+                : dark
+                ? "text-white font-bold"
+                : "text-[#2b050d] font-bold",
+              textClassName,
+            ].filter(Boolean).join(" ")}
           >
             Casa Karem
           </span>

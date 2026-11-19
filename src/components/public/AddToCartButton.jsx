@@ -30,18 +30,20 @@ function AddToCartButtonBase({ product, size = "desktop", variant = "icon", clas
         animate={isAnimating ? { scale: [1, 1.02, 1] } : {}}
         transition={{ duration: 0.2 }}
         aria-label="Agregar al carrito"
-        className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all duration-200 focus:outline-none ${
+        className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3.5 px-6 text-sm sm:text-base font-bold tracking-wide transition-all duration-300 focus:outline-none shadow-md ${
           inCart
-            ? "bg-green-500 text-white hover:bg-green-600"
-            : "bg-primary text-white hover:bg-primary/90"
+            ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
+            : "bg-gradient-to-r from-[#8C6010] via-[#C59B27] to-[#8C6010] text-white shadow-[#8C6010]/25 hover:shadow-lg hover:shadow-[#8C6010]/35 hover:brightness-105 active:scale-[0.98]"
         } ${className}`}
       >
         {inCart ? (
-          <Check size={18} strokeWidth={2} />
+          <Check size={18} strokeWidth={2.2} className="drop-shadow-xs" />
         ) : (
-          <ShoppingCart size={18} strokeWidth={1.8} />
+          <ShoppingCart size={18} strokeWidth={2} className="drop-shadow-xs" />
         )}
-        {inCart ? "Agregado al carrito" : "Agregar al carrito"}
+        <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]">
+          {inCart ? "Agregado al carrito" : "Agregar al carrito"}
+        </span>
       </motion.button>
     );
   }

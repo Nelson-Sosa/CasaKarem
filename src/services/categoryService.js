@@ -13,13 +13,20 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { validateCategory, normalizeText } from "../utils/categoryValidation";
+import { getCache, setCache, clearCache } from "../utils/memoryCache";
 
 const COLLECTION = "categories";
+const CACHE_KEY_CATEGORIES = "all_categories";
 
 export async function getCategories() {
+  const cached = getCache(CACHE_KEY_CATEGORIES);
+  if (cached) return cached;
+
   const q = query(collection(db, COLLECTION), orderBy("name", "asc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  setCache(CACHE_KEY_CATEGORIES, data);
+  return data;
 }
 
 /**
@@ -67,6 +74,8 @@ export async function createCategory(data, userId) {
     updatedBy: userId,
   });
 
+  clearCache();
+
   return { id: docRef.id, ...sanitized, parentId: data.parentId ?? null };
 }
 
@@ -83,6 +92,8 @@ export async function updateCategory(id, data, userId) {
     updatedAt: serverTimestamp(),
     updatedBy: userId,
   });
+
+  clearCache();
 }
 
 export async function toggleCategoryStatus(id, newStatus, userId) {
@@ -94,6 +105,8 @@ export async function toggleCategoryStatus(id, newStatus, userId) {
     updatedAt: serverTimestamp(),
     updatedBy: userId,
   });
+
+  clearCache();
 }
 
 export async function deleteCategory(id) {
@@ -112,6 +125,8 @@ export async function deleteCategory(id) {
     throw new Error("CATEGORY_HAS_CHILDREN");
   }
   await deleteDoc(doc(db, COLLECTION, id));
+
+  clearCache();
 }
 
 /**

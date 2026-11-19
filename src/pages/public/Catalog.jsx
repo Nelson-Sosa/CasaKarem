@@ -325,8 +325,8 @@ export default function Catalog() {
                   }}
                   className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                     selectedCategory === "all"
-                      ? "bg-primary text-white"
-                      : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-primary-light"
+                      ? "bg-[#E30613] text-white"
+                      : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-red-50 hover:text-[#E30613]"
                   }`}
                 >
                   Todas
@@ -340,8 +340,8 @@ export default function Catalog() {
                     }}
                     className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                       selectedCategory === cat
-                        ? "bg-primary text-white"
-                        : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-primary-light"
+                        ? "bg-[#E30613] text-white"
+                        : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-red-50 hover:text-[#E30613]"
                     }`}
                   >
                     {cat}
@@ -395,7 +395,7 @@ export default function Catalog() {
                   searchParams.delete("q");
                   handleSelectCategory("all");
                 }}
-                className="mt-6 inline-flex items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-hover active:scale-95"
+                className="mt-6 inline-flex items-center gap-1.5 rounded-xl bg-[#E30613] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#c70510] active:scale-95"
               >
                 <X className="h-4 w-4" />
                 Limpiar filtros

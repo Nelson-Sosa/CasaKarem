@@ -19,6 +19,7 @@ import { deleteImage as cloudinaryDelete } from "./cloudinary";
 import { validateProduct } from "../utils/productValidation";
 import { getCategoryPrefix } from "../utils/skuUtils";
 import { getCategories } from "./categoryService";
+import { clearCache } from "../utils/memoryCache";
 
 const COLLECTION = "products";
 
@@ -89,6 +90,8 @@ export async function createProduct(data, userId) {
     updatedBy: userId,
   });
 
+  clearCache();
+
   return { id: docRef.id, ...sanitized };
 }
 
@@ -113,6 +116,8 @@ export async function updateProduct(id, data, userId) {
     updatedAt: serverTimestamp(),
     updatedBy: userId,
   });
+
+  clearCache();
 }
 
 export async function toggleProductStatus(id, newStatus, userId) {
@@ -124,6 +129,8 @@ export async function toggleProductStatus(id, newStatus, userId) {
     updatedAt: serverTimestamp(),
     updatedBy: userId,
   });
+
+  clearCache();
 }
 
 export async function duplicateProduct(id, userId) {
@@ -167,6 +174,8 @@ export async function duplicateProduct(id, userId) {
     updatedBy: userId,
   });
 
+  clearCache();
+
   return { id: docRef.id };
 }
 
@@ -187,6 +196,7 @@ export async function deleteProduct(id) {
     );
   }
   await deleteDoc(doc(db, COLLECTION, id));
+  clearCache();
 }
 
 export async function checkStockAvailability(productId, quantity) {
@@ -214,6 +224,7 @@ export async function decrementStock(productId, quantity, userId) {
       updatedBy: userId,
     });
   });
+  clearCache();
 }
 
 export async function uploadImage(file) {

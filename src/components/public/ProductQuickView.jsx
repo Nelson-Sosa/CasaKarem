@@ -131,7 +131,7 @@ export default function ProductQuickView({ product, onClose }) {
                ))}
             </ul>
             {product.features.length > 4 && (
-              <button onClick={handleViewDetails} className="text-xs font-semibold text-primary hover:underline">
+              <button onClick={handleViewDetails} className="text-xs font-semibold text-[#8C6010] hover:text-[#C59B27] hover:underline transition-colors">
                 Ver todos los detalles →
               </button>
             )}
@@ -177,21 +177,23 @@ export default function ProductQuickView({ product, onClose }) {
                onClick={handleAddToCart}
                disabled={isOutOfStock}
                whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
-               className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold shadow-sm transition-colors ${
+               className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold tracking-wide shadow-md transition-all duration-300 ${
                  isOutOfStock 
                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                    : inCart
-                   ? 'bg-[#FFC107] text-gray-900 hover:bg-[#ffb300]'
-                   : 'bg-primary text-white hover:bg-primary-dark'
+                   ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20'
+                   : 'bg-gradient-to-r from-[#8C6010] via-[#C59B27] to-[#8C6010] text-white shadow-[#8C6010]/25 hover:shadow-lg hover:shadow-[#8C6010]/35 hover:brightness-105 active:scale-[0.98]'
                }`}
              >
-               {inCart ? <Check size={18} /> : <ShoppingCart size={18} />}
-               {isOutOfStock ? 'AGOTADO' : inCart ? 'AGREGADO AL CARRITO' : 'AGREGAR AL CARRITO'}
+               {inCart ? <Check size={18} className="drop-shadow-xs" /> : <ShoppingCart size={18} className="drop-shadow-xs" />}
+               <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]">
+                 {isOutOfStock ? 'AGOTADO' : inCart ? 'AGREGADO AL CARRITO' : 'AGREGAR AL CARRITO'}
+               </span>
              </motion.button>
              
              <button
                onClick={handleViewDetails}
-               className="flex w-full items-center justify-center py-2 text-sm font-semibold text-gray-600 hover:text-primary transition-colors"
+               className="flex w-full items-center justify-center py-2 text-sm font-semibold text-gray-600 hover:text-[#8C6010] transition-colors"
              >
                Ver detalles completos
              </button>

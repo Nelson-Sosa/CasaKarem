@@ -1,24 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   LayoutGrid,
   Smartphone,
   Heart,
   ShoppingCart,
-  Search,
   Mail,
   Clock,
   Info,
-  FileText,
-  Shield,
-  RefreshCw,
-  HelpCircle,
+  MapPin,
   ShieldCheck,
   Truck,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  X
 } from "lucide-react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { BRAND } from "../../config/brand";
 
 /* ── Iconos SVG oficiales ─────────────────────────────────────────── */
@@ -45,19 +42,33 @@ const TikTokIcon = ({ size = 22 }) => (
   </svg>
 );
 
+/* Horarios oficiales ordenados */
+const STORE_SCHEDULE = [
+  { day: "Lunes", hours: "07:30 – 17:00", dayIndex: 1 },
+  { day: "Martes", hours: "07:30 – 17:00", dayIndex: 2 },
+  { day: "Miércoles", hours: "07:30 – 17:00", dayIndex: 3 },
+  { day: "Jueves", hours: "07:30 – 17:00", dayIndex: 4 },
+  { day: "Viernes", hours: "07:30 – 17:00", dayIndex: 5 },
+  { day: "Sábado", hours: "07:30 – 17:00", dayIndex: 6 },
+  { day: "Domingo", hours: "Cerrado", isClosed: true, dayIndex: 0 },
+];
+
 const FooterAccordion = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <div className="border-b border-gray-800 md:border-none">
+    <div className="border-b border-[#B88B35]/20 md:border-none">
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between py-3 md:cursor-default md:py-0"
       >
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-          {title}
-        </h3>
-        <div className="md:hidden text-gray-400">
+        <div className="flex flex-col items-start gap-1.5">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[#9C7428]">
+            {title}
+          </h3>
+          <span className="hidden md:block h-[2px] w-6 rounded-full bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#C9A048]" />
+        </div>
+        <div className="md:hidden text-[#9C7428]">
           {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
       </button>
@@ -72,27 +83,96 @@ const FooterAccordion = ({ title, children, defaultOpen = false }) => {
 };
 
 export default function Footer() {
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const todayIndex = new Date().getDay();
+
+  const handleNav = (targetPath, scrollToElId = null) => (e) => {
+    const isSamePath = location.pathname === targetPath;
+
+    if (scrollToElId) {
+      if (isSamePath) {
+        e.preventDefault();
+        const el = document.getElementById(scrollToElId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      } else {
+        e.preventDefault();
+        navigate(targetPath);
+        setTimeout(() => {
+          const el = document.getElementById(scrollToElId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }, 150);
+        return;
+      }
+    }
+
+    if (isSamePath) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  };
+
+  // Cerrar modal con tecla Escape
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") {
+        setIsAboutModalOpen(false);
+        setIsScheduleModalOpen(false);
+      }
+    }
+    if (isAboutModalOpen || isScheduleModalOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isAboutModalOpen, isScheduleModalOpen]);
+
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="relative bg-white text-gray-800 shadow-sm border-t border-gray-100">
+      
+      {/* Moldura superior con degradado dorado metálico */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-[#8A641E] via-[#C9A048] to-[#8A641E]" />
+
       {/* Top Main Section */}
-      <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <div className="relative z-10 mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:gap-12">
           
           {/* 1. Brand & Socials */}
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-5 md:gap-6 md:col-span-1">
-            <div className="flex flex-col items-center md:items-start gap-2 md:gap-3">
+            <div className="flex flex-col items-center md:items-start gap-1.5">
               <Link
-                to="/"
-                className="text-xl sm:text-2xl font-bold uppercase tracking-[0.16em] text-white hover:opacity-90 transition-opacity select-none"
+                to="/catalogo"
+                onClick={handleNav("/catalogo")}
+                className="text-2xl sm:text-3xl font-black uppercase tracking-[0.16em] bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#8A641E] bg-clip-text text-transparent hover:brightness-110 transition-all select-none drop-shadow-xs"
               >
                 Casa Karem
               </Link>
-              <p className="text-sm text-gray-400 max-w-xs">
+              
+              {/* Placa elegante dorada 'Electrónica • Perfumes' */}
+              <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#FCF9F2] border border-[#B88B35]/60 shadow-xs">
+                <span className="text-[10.5px] font-semibold tracking-[0.24em] text-[#8F6820] uppercase select-none">
+                  Electrónica • Perfumes
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm text-gray-500 max-w-xs font-normal">
                 Tecnología, productos y soluciones para vos.
               </p>
             </div>
             
-            {/* Social Buttons – brand colors + animations */}
+            {/* Social Buttons */}
             <div className="flex items-center gap-3">
 
               {/* WhatsApp */}
@@ -102,13 +182,13 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 style={{ backgroundColor: "#25D366" }}
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white overflow-hidden"
-                whileHover={{ scale: 1.18, boxShadow: "0 0 18px 4px #25D36688" }}
+                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
+                whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #25D36688" }}
                 whileTap={{ scale: 0.93 }}
-                animate={{ boxShadow: ["0 0 0px 0px #25D36600", "0 0 10px 3px #25D36644", "0 0 0px 0px #25D36600"] }}
+                animate={{ boxShadow: ["0 0 0px 0px #25D36600", "0 0 8px 2px #25D36644", "0 0 0px 0px #25D36600"] }}
                 transition={{ boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }, scale: { type: "spring", stiffness: 350, damping: 15 } }}
               >
-                <WhatsAppIcon size={20} />
+                <WhatsAppIcon size={19} />
               </motion.a>
 
               {/* Instagram */}
@@ -117,14 +197,14 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
                 style={{ background: "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)" }}
-                whileHover={{ scale: 1.18, boxShadow: "0 0 18px 4px #e6683c88", rotate: 8 }}
+                whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #e6683c88", rotate: 8 }}
                 whileTap={{ scale: 0.93 }}
-                animate={{ boxShadow: ["0 0 0px 0px #dc274300", "0 0 10px 3px #dc274344", "0 0 0px 0px #dc274300"] }}
+                animate={{ boxShadow: ["0 0 0px 0px #dc274300", "0 0 8px 2px #dc274344", "0 0 0px 0px #dc274300"] }}
                 transition={{ boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }, scale: { type: "spring", stiffness: 350, damping: 15 }, rotate: { type: "spring", stiffness: 300 } }}
               >
-                <InstagramIcon size={20} />
+                <InstagramIcon size={19} />
               </motion.a>
 
               {/* TikTok */}
@@ -133,16 +213,15 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
                 style={{ background: "#010101" }}
-                whileHover={{ scale: 1.18, boxShadow: "0 0 10px 3px #69C9D0aa, 0 0 20px 6px #EE1D5244" }}
+                whileHover={{ scale: 1.18, boxShadow: "0 0 10px 3px #69C9D0aa, 0 0 18px 5px #EE1D5244" }}
                 whileTap={{ scale: 0.93 }}
-                animate={{ boxShadow: ["0 0 0px 0px #69C9D000", "0 0 8px 2px #69C9D033", "0 0 0px 0px #69C9D000"] }}
+                animate={{ boxShadow: ["0 0 0px 0px #69C9D000", "0 0 6px 2px #69C9D033", "0 0 0px 0px #69C9D000"] }}
                 transition={{ boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.6 }, scale: { type: "spring", stiffness: 350, damping: 15 } }}
               >
-                {/* Efecto dual-color TikTok (cyan + pink sombra) */}
                 <span className="relative drop-shadow-[1px_1px_0_#EE1D52] drop-shadow-[-1px_-1px_0_#69C9D0]">
-                  <TikTokIcon size={20} />
+                  <TikTokIcon size={19} />
                 </span>
               </motion.a>
 
@@ -153,23 +232,39 @@ export default function Footer() {
           <FooterAccordion title="Tienda" defaultOpen={true}>
             <ul className="grid grid-cols-2 gap-y-3 gap-x-2 md:flex md:flex-col md:gap-3">
               <li>
-                <Link to="/catalogo" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <LayoutGrid size={16} /> Catálogo
+                <Link
+                  to="/catalogo"
+                  onClick={handleNav("/catalogo")}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <LayoutGrid size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" /> Catálogo
                 </Link>
               </li>
               <li>
-                <Link to="/catalogo" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Smartphone size={16} /> Productos
+                <Link
+                  to="/catalogo"
+                  onClick={handleNav("/catalogo", "catalogo-completo")}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <Smartphone size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" /> Productos
                 </Link>
               </li>
               <li>
-                <Link to="/catalogo/favoritos" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Heart size={16} /> Favoritos
+                <Link
+                  to="/catalogo/favoritos"
+                  onClick={handleNav("/catalogo/favoritos")}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <Heart size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" /> Favoritos
                 </Link>
               </li>
               <li>
-                <Link to="/catalogo/carrito" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <ShoppingCart size={16} /> Carrito
+                <Link
+                  to="/catalogo/carrito"
+                  onClick={handleNav("/catalogo/carrito")}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <ShoppingCart size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" /> Carrito
                 </Link>
               </li>
             </ul>
@@ -179,14 +274,25 @@ export default function Footer() {
           <FooterAccordion title="Atención al cliente">
             <ul className="flex flex-col gap-3">
               <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Mail size={16} /> Contacto
+                <a
+                  href="https://wa.me/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <Mail size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" />
+                  <span>Contacto</span>
                 </a>
               </li>
               <li>
-                <span className="flex items-center gap-2 text-sm text-gray-400">
-                  <Clock size={16} /> Horarios de atención
-                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsScheduleModalOpen(true)}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150 text-left cursor-pointer"
+                >
+                  <Clock size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" />
+                  <span>Horarios de atención</span>
+                </button>
               </li>
             </ul>
           </FooterAccordion>
@@ -195,28 +301,24 @@ export default function Footer() {
           <FooterAccordion title="Información">
             <ul className="flex flex-col gap-3">
               <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Info size={16} /> Sobre nosotros
-                </a>
+                <button
+                  type="button"
+                  onClick={() => setIsAboutModalOpen(true)}
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150 text-left cursor-pointer"
+                >
+                  <Info size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" />
+                  <span>Sobre nosotros</span>
+                </button>
               </li>
               <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <FileText size={16} /> Términos y condiciones
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Shield size={16} /> Política de privacidad
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <RefreshCw size={16} /> Política de cambios
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <HelpCircle size={16} /> Preguntas frecuentes
+                <a
+                  href="https://maps.app.goo.gl/3um24Kn7n49CH5bbA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"
+                >
+                  <MapPin size={16} className="text-[#B88B35] shrink-0 transition-transform group-hover:scale-110" />
+                  <span>Ubicación del local</span>
                 </a>
               </li>
             </ul>
@@ -224,43 +326,224 @@ export default function Footer() {
 
         </div>
 
-        {/* Mobile Info Badges (Shown only on small screens for reference) */}
+        {/* Mobile Info Badges */}
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
-           <div className="flex items-center gap-3 rounded-lg bg-gray-800/40 p-3.5">
-              <ShieldCheck className="text-primary-light shrink-0" size={22} />
+           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
+              <ShieldCheck className="text-[#9C7428] shrink-0" size={22} />
               <div>
-                <p className="text-sm font-medium text-white">Compra 100% segura</p>
-                <p className="text-xs text-gray-400">Protegemos tus datos</p>
+                <p className="text-sm font-bold text-gray-800">Compra 100% segura</p>
+                <p className="text-xs text-gray-500">Protegemos tus datos</p>
               </div>
            </div>
-           <div className="flex items-center gap-3 rounded-lg bg-gray-800/40 p-3.5">
-              <Truck className="text-primary-light shrink-0" size={22} />
+           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
+              <Truck className="text-[#9C7428] shrink-0" size={22} />
               <div>
-                <p className="text-sm font-medium text-white">Envíos a todo el país</p>
-                <p className="text-xs text-gray-400">Rápidos y confiables</p>
+                <p className="text-sm font-bold text-gray-800">Envíos a todo el país</p>
+                <p className="text-xs text-gray-500">Rápidos y confiables</p>
               </div>
            </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800 bg-gray-950">
-        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-6 px-4 py-6 md:flex-row sm:px-6 lg:px-8">
+      {/* Bottom Bar — Separada con línea dorada sutil sobre fondo blanco */}
+      <div className="relative z-10 border-t border-[#B88B35]/25 bg-white">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 px-4 py-5 md:flex-row sm:px-6 lg:px-8">
           
           <div className="text-center md:text-left">
-            <p className="text-sm text-gray-400">
-              &copy; {new Date().getFullYear()} {BRAND.name}. Todos los derechos reservados.
+            <p className="text-sm text-gray-600 font-normal">
+              &copy; {new Date().getFullYear()} <span className="font-semibold text-[#9C7428]">{BRAND.name}</span>. Todos los derechos reservados.
             </p>
           </div>
 
-
-          <div className="hidden items-center gap-2 text-sm text-gray-400 md:flex">
-             <ShieldCheck size={18} className="text-primary-light" />
-             <span>Sitio protegido por SSL</span>
+          <div className="hidden items-center gap-2 text-sm text-[#9C7428] font-semibold md:flex">
+             <ShieldCheck size={19} className="text-[#9C7428]" />
+             <span>Sitio 100% protegido por SSL</span>
           </div>
 
         </div>
       </div>
+
+      {/* Modal Sobre Nosotros */}
+      <AnimatePresence>
+        {isAboutModalOpen && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            {/* Backdrop con desenfoque suave */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAboutModalOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Tarjeta del diálogo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 16 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl border border-[#B88B35]/40"
+            >
+              {/* Moldura superior con destello dorado */}
+              <div className="h-[3px] w-full bg-gradient-to-r from-[#8A641E] via-[#C9A048] to-[#8A641E]" />
+
+              <div className="p-6 sm:p-7 text-center">
+                {/* Botón Cerrar (X) */}
+                <button
+                  onClick={() => setIsAboutModalOpen(false)}
+                  className="absolute right-3.5 top-3.5 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer"
+                  aria-label="Cerrar modal"
+                >
+                  <X size={20} />
+                </button>
+
+                {/* Medallón de Marca */}
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFFDF7] to-[#F3E5C8] border-2 border-[#B88B35] shadow-md">
+                  <img
+                    src="/logo-casa-karem-circulo.webp"
+                    alt="Casa Karem"
+                    className="h-12 w-12 object-contain"
+                  />
+                </div>
+
+                <h3 className="text-xl font-black uppercase tracking-[0.14em] text-gray-900">
+                  Sobre Nosotros
+                </h3>
+                
+                <div className="inline-flex items-center px-3 py-0.5 mt-1.5 rounded-full bg-[#FCF9F2] border border-[#B88B35]/50">
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-[#8F6820] uppercase">
+                    Casa Karem • Desde 1992
+                  </span>
+                </div>
+
+                <div className="my-4 h-px w-20 mx-auto bg-gradient-to-r from-transparent via-[#B88B35] to-transparent" />
+
+                {/* Mensaje oficial */}
+                <p className="text-[15px] sm:text-base leading-relaxed text-gray-700 font-medium px-2">
+                  Desde 1992, acercándote lo mejor en electrónica y perfumería, con calidad, confianza y atención cercana. ¡Gracias por ser parte de nuestra historia!
+                </p>
+
+                {/* Botón de acción */}
+                <div className="mt-6">
+                  <button
+                    onClick={() => setIsAboutModalOpen(false)}
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#8A641E] text-white font-bold text-sm shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Entendido
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Horarios de Atención */}
+      <AnimatePresence>
+        {isScheduleModalOpen && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            {/* Backdrop con desenfoque suave */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsScheduleModalOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Tarjeta del diálogo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 16 }}
+              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl border border-[#B88B35]/40"
+            >
+              {/* Moldura superior con destello dorado */}
+              <div className="h-[3px] w-full bg-gradient-to-r from-[#8A641E] via-[#C9A048] to-[#8A641E]" />
+
+              <div className="p-6 sm:p-7 text-center">
+                {/* Botón Cerrar (X) */}
+                <button
+                  onClick={() => setIsScheduleModalOpen(false)}
+                  className="absolute right-3.5 top-3.5 rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors cursor-pointer"
+                  aria-label="Cerrar modal"
+                >
+                  <X size={20} />
+                </button>
+
+                {/* Medallón con Ícono de Reloj Dorado */}
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFFDF7] to-[#F3E5C8] border-2 border-[#B88B35] shadow-md">
+                  <Clock className="h-8 w-8 text-[#8F6820]" />
+                </div>
+
+                <h3 className="text-xl font-black uppercase tracking-[0.14em] text-gray-900">
+                  Horarios de Atención
+                </h3>
+                
+                <div className="inline-flex items-center px-3 py-0.5 mt-1.5 rounded-full bg-[#FCF9F2] border border-[#B88B35]/50">
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-[#8F6820] uppercase">
+                    Casa Karem • Tienda Física
+                  </span>
+                </div>
+
+                <div className="my-4 h-px w-20 mx-auto bg-gradient-to-r from-transparent via-[#B88B35] to-transparent" />
+
+                {/* Tabla ordenada y nítida */}
+                <div className="rounded-xl bg-[#FCF9F2] p-3 sm:p-3.5 border border-[#B88B35]/30 text-xs sm:text-sm shadow-xs space-y-1 text-left">
+                  {STORE_SCHEDULE.map((item) => {
+                    const isToday = item.dayIndex === todayIndex;
+                    return (
+                      <div
+                        key={item.day}
+                        className={`flex items-center justify-between py-1.5 px-2.5 rounded-lg transition-colors ${
+                          isToday
+                            ? "bg-[#B88B35]/15 font-bold text-gray-900 ring-1 ring-[#B88B35]/35"
+                            : "text-gray-700"
+                        } ${item.isClosed ? "border-t border-[#B88B35]/20 mt-1.5 pt-2" : ""}`}
+                      >
+                        <span className="flex items-center gap-2">
+                          {isToday && (
+                            <span
+                              className="h-2 w-2 rounded-full bg-[#10B981] shrink-0 animate-pulse"
+                              title="Hoy"
+                            />
+                          )}
+                          <span>{item.day}</span>
+                          {isToday && (
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#10B981] ml-0.5">
+                              (Hoy)
+                            </span>
+                          )}
+                        </span>
+                        <span
+                          className={
+                            item.isClosed
+                              ? "font-extrabold text-[#E30613]"
+                              : "font-bold text-gray-900"
+                          }
+                        >
+                          {item.hours}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Botón de acción */}
+                <div className="mt-6">
+                  <button
+                    onClick={() => setIsScheduleModalOpen(false)}
+                    className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#8A641E] text-white font-bold text-sm shadow-md hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Entendido
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 }

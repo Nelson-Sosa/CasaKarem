@@ -1,9 +1,14 @@
 import { collection, getDocs, query, where, orderBy, limit, startAfter, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+import { getCache, setCache } from "../utils/memoryCache";
 
 const PRODUCTS_COLLECTION = "products";
 const CATEGORIES_COLLECTION = "categories";
 const PAGE_SIZE = 30;
+
+// Claves de caché para este servicio
+const CACHE_ACTIVE_PRODUCTS = "active_products";
+const CACHE_CATEGORIES = "pub_categories";
 
 /**
  * Transforma un documento de Firestore a una representación pública autorizada.
@@ -34,19 +39,33 @@ function toPublicProduct(id, data, categoryName, subcategoryName) {
   };
 }
 
+/**
+ * Obtiene y devuelve el mapeo de categorías (con caché en memoria).
+ * Función interna reutilizada por las funciones públicas.
+ */
+async function getCatMap() {
+  const cached = getCache(CACHE_CATEGORIES);
+  if (cached) return cached;
+
+  const catSnap = await getDocs(collection(db, CATEGORIES_COLLECTION));
+  const catMap = Object.fromEntries(catSnap.docs.map((d) => [d.id, d.data().name]));
+  setCache(CACHE_CATEGORIES, catMap);
+  return catMap;
+}
+
 export async function getActiveProducts() {
+  // Intentar servir desde caché
+  const cached = getCache(CACHE_ACTIVE_PRODUCTS);
+  if (cached) return cached;
+
   const q = query(
     collection(db, PRODUCTS_COLLECTION),
     orderBy("name", "asc")
   );
   const snapshot = await getDocs(q);
+  const catMap = await getCatMap();
 
-  const catSnap = await getDocs(collection(db, CATEGORIES_COLLECTION));
-  const catMap = Object.fromEntries(
-    catSnap.docs.map((d) => [d.id, d.data().name])
-  );
-
-  return snapshot.docs
+  const products = snapshot.docs
     .map((docSnap) => {
       const data = docSnap.data();
       const categoryName = catMap[data.categoryId] || "Sin categoría";
@@ -54,6 +73,9 @@ export async function getActiveProducts() {
       return toPublicProduct(docSnap.id, data, categoryName, subcategoryName);
     })
     .filter((p) => p && p.status === "active");
+
+  setCache(CACHE_ACTIVE_PRODUCTS, products);
+  return products;
 }
 
 export function subscribeToActiveProducts(onData, onError) {
@@ -66,10 +88,7 @@ export function subscribeToActiveProducts(onData, onError) {
     q,
     async (snapshot) => {
       try {
-        const catSnap = await getDocs(collection(db, CATEGORIES_COLLECTION));
-        const catMap = Object.fromEntries(
-          catSnap.docs.map((d) => [d.id, d.data().name])
-        );
+        const catMap = await getCatMap();
 
         const products = snapshot.docs
           .map((docSnap) => {
@@ -92,23 +111,23 @@ export function subscribeToActiveProducts(onData, onError) {
 }
 
 export async function getActiveProductById(id) {
+  // Intentar servir desde caché individual
+  const cacheKey = `product_${id}`;
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
   const snap = await getDoc(doc(db, PRODUCTS_COLLECTION, id));
   if (!snap.exists()) return null;
   const rawData = snap.data();
   if (rawData.status !== "active") return null;
 
-  let categoryName = "Sin categoría";
-  let subcategoryName = null;
-  if (rawData.categoryId) {
-    const catSnap = await getDoc(doc(db, CATEGORIES_COLLECTION, rawData.categoryId));
-    if (catSnap.exists()) categoryName = catSnap.data().name;
-  }
-  if (rawData.subcategoryId) {
-    const subSnap = await getDoc(doc(db, CATEGORIES_COLLECTION, rawData.subcategoryId));
-    if (subSnap.exists()) subcategoryName = subSnap.data().name;
-  }
+  const catMap = await getCatMap();
+  const categoryName = catMap[rawData.categoryId] || "Sin categoría";
+  const subcategoryName = rawData.subcategoryId ? (catMap[rawData.subcategoryId] || null) : null;
 
-  return toPublicProduct(snap.id, rawData, categoryName, subcategoryName);
+  const product = toPublicProduct(snap.id, rawData, categoryName, subcategoryName);
+  setCache(cacheKey, product);
+  return product;
 }
 
 /**
@@ -130,11 +149,8 @@ export async function getActiveProductsPaginated({
   pageSize = PAGE_SIZE
 }) {
   try {
-    // Obtener mapeo de categorías una vez
-    const catSnap = await getDocs(collection(db, CATEGORIES_COLLECTION));
-    const catMap = Object.fromEntries(
-      catSnap.docs.map((d) => [d.id, d.data().name])
-    );
+    // Obtener mapeo de categorías (con caché en memoria)
+    const catMap = await getCatMap();
 
     // Construir query base con filtro de productos activos
     let q = query(

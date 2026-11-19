@@ -93,7 +93,7 @@ export default function PublicLayout() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
-            <BrandLogo size="md" />
+            <BrandLogo size="md" goldText />
           </div>
 
           {/* Buscador central prominente (solo Desktop) */}
@@ -142,7 +142,7 @@ export default function PublicLayout() {
 
             <Link 
               to="/catalogo/carrito"
-              className={`relative flex h-8 w-8 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${isCartRoute ? 'bg-primary-light text-primary ring-1 ring-primary/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}
+              className={`relative flex h-8 w-8 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${isCartRoute ? 'bg-red-50 text-[#E30613] ring-1 ring-[#E30613]/20' : 'bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-[#E30613]'}`}
             >
               <ShoppingCart className="h-4 w-4" />
               <AnimatePresence>
@@ -152,7 +152,7 @@ export default function PublicLayout() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
+                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#E30613] text-[10px] font-bold text-white shadow-sm ring-2 ring-white"
                   >
                     {cartCount}
                   </motion.span>

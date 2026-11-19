@@ -56,7 +56,7 @@ export default function CartPublic() {
         </p>
         <Link
           to="/catalogo"
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#E30613] px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#c70510] hover:shadow-md active:scale-95"
         >
           <ShoppingBag className="h-5 w-5" />
           Continuar comprando
