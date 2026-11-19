@@ -98,15 +98,24 @@ export default function PublicLayout() {
 
           {/* Buscador central prominente (solo Desktop) */}
           <div className="hidden lg:flex flex-1 max-w-xl mx-8">
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar por nombre, descripción o categoría..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                className="w-full rounded-xl border border-border bg-gray-50 py-2.5 pl-10 pr-4 text-[15px] text-gray-800 placeholder-gray-400 outline-none transition-all focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"
-              />
+            <form onSubmit={handleSearchSubmit} className="relative flex w-full items-stretch overflow-hidden rounded-[3px] border-2 border-[#E30613] bg-white shadow-sm transition-all focus-within:shadow-md">
+              <div className="relative flex flex-1 items-center">
+                <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-[#E30613]" strokeWidth={2.2} />
+                <input
+                  type="text"
+                  placeholder="Buscar productos"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  className="w-full bg-white py-2.5 pl-10 pr-3 text-[15px] text-gray-800 placeholder-gray-400 outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                aria-label="Buscar"
+                className="flex items-center justify-center bg-[#E30613] px-4 sm:px-5 text-white transition-colors hover:bg-[#c70510] shrink-0 cursor-pointer"
+              >
+                <Search className="h-4 w-4 text-white" strokeWidth={2.4} />
+              </button>
             </form>
           </div>
 
@@ -223,15 +232,24 @@ export default function PublicLayout() {
 
         {/* Buscador móvil (solo visible en pantallas pequeñas) */}
         <div className="mx-auto px-3 pb-3 md:px-6 lg:hidden">
-          <form onSubmit={handleSearchSubmit} className="relative w-full">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar productos..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="w-full rounded-xl border border-border bg-gray-50 py-2.5 pl-10 pr-4 text-[15px] text-gray-800 placeholder-gray-400 outline-none transition-all focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/20"
-            />
+          <form onSubmit={handleSearchSubmit} className="relative flex w-full items-stretch overflow-hidden rounded-[3px] border-2 border-[#E30613] bg-white shadow-sm">
+            <div className="relative flex flex-1 items-center">
+              <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-[#E30613]" strokeWidth={2.2} />
+              <input
+                type="text"
+                placeholder="Buscar productos"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="w-full bg-white py-2 pl-10 pr-3 text-[14px] text-gray-800 placeholder-gray-400 outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              aria-label="Buscar"
+              className="flex items-center justify-center bg-[#E30613] px-3.5 text-white transition-colors hover:bg-[#c70510] shrink-0 cursor-pointer"
+            >
+              <Search className="h-4 w-4 text-white" strokeWidth={2.4} />
+            </button>
           </form>
         </div>
       </header>
