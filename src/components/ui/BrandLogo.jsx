@@ -1,69 +1,96 @@
 /**
- * BrandLogo — Componente centralizado del logo oficial de Casa Karem.
+ * BrandLogo — Componente oficial del logotipo de Casa Karem.
  *
- * Responsabilidades:
- *  - Renderiza el logo oficial con proporciones correctas (object-fit: contain).
- *  - Envuelve el logo en un enlace accesible al inicio.
- *  - Aplica tamaños responsive mediante clamp() sin deformar la imagen.
- *  - Soporta variantes de tamaño: "sm", "md", "lg" y "auto".
- *  - Nunca modifica el diseño ni los colores del logo original.
+ * Utiliza el logo circular oficial con fondo exterior transparente:
+ * /logo-casa-karem-circulo.webp (716x716 px)
+ *
+ * Muestra el emblema circular completo con el monograma dorado "CK"
+ * y el texto oficial "CASA KAREM" integrado con proporciones profesionales
+ * y sin recortes.
  */
 
 import { Link } from "react-router-dom";
 import { BRAND } from "../../config/brand";
 
 /**
- * @param {"sm"|"md"|"lg"|"sidebar-collapsed"|"none"} size
- *   sm  → auth pages, footer: ~120px
- *   md  → public header mobile: clamp(130px, 20vw, 170px)
- *   lg  → public header desktop: clamp(150px, 14vw, 200px)
- *   sidebar-collapsed → solo ícono cuadrado: 48px
- *   none → sin enlace (renderiza <img> directamente)
- * @param {string} className  Clases adicionales para el <img>
- * @param {boolean} noLink   Si true, no envuelve en <Link>
- * @param {string} to        Ruta del enlace (por defecto "/catalogo")
+ * @param {"sm"|"md"|"lg"|"footer"|"auth"|"sidebar-collapsed"|"none"} size
+ * @param {string} className Clases adicionales para el contenedor
+ * @param {boolean} noLink Si true, no envuelve en <Link>
+ * @param {string} to Ruta de navegación (por defecto "/")
+ * @param {boolean} dark Si true, adapta textos para fondos oscuros (footer)
+ * @param {boolean} onlyIcon Si true, omite el texto "CASA KAREM" al lado
+ * @param {boolean} noIcon Si true, omite el emblema y muestra solo el texto
  */
 export default function BrandLogo({
   size = "md",
   className = "",
   noLink = false,
-  to = "/catalogo",
+  to = "/",
   dark = false,
+  onlyIcon = false,
+  noIcon = false,
 }) {
-  const sizeStyles = {
-    sm:                "w-[clamp(120px,16vw,150px)] max-h-full",
-    md:                "w-[clamp(130px,18vw,165px)] max-h-full",
-    lg:                "w-[clamp(165px,15vw,195px)] max-h-[80px]",
-    "sidebar-collapsed": "h-12 w-12 object-contain",
-    none:              "w-[clamp(130px,18vw,165px)] max-h-full",
-  };
+  const isOnlyIcon = onlyIcon || size === "sidebar-collapsed";
+  const isAuth = size === "auth";
 
-  const img = (
-    <img
-      src={BRAND.logo}
-      alt={`${BRAND.name} — Inicio`}
-      width={200}
-      height={80}
-      className={[
-        "object-contain shrink-0 select-none",
-        "transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] drop-shadow-sm hover:drop-shadow-md",
-        sizeStyles[size] ?? sizeStyles.md,
-        dark ? "brightness-0 invert" : "",
-        className,
-      ].filter(Boolean).join(" ")}
-      draggable={false}
-    />
+  // Dimensiones profesionales para el medallón circular sin fondo exterior
+  const emblemContainerClasses = isAuth
+    ? "w-28 h-28 sm:w-32 sm:h-32 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-xl"
+    : size === "footer"
+    ? "w-16 h-16 sm:w-[70px] sm:h-[70px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
+    : size === "sm"
+    ? "w-10 h-10 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
+    : size === "sidebar-collapsed"
+    ? "w-11 h-11 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
+    : "w-12 h-12 sm:w-[58px] sm:h-[58px] lg:w-[64px] lg:h-[64px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md";
+
+  const emblem = (
+    <div className={emblemContainerClasses}>
+      <img
+        src="/logo-casa-karem-circulo.webp"
+        alt="Casa Karem"
+        loading="eager"
+        width={160}
+        height={160}
+        className="h-full w-full object-contain select-none pointer-events-none [image-rendering:-webkit-optimize-contrast]"
+        draggable={false}
+      />
+    </div>
   );
 
-  if (noLink) return img;
+  const content = (
+    <div className={`inline-flex items-center gap-3 sm:gap-3.5 shrink-0 select-none ${className}`}>
+      {!noIcon && emblem}
+
+      {!isOnlyIcon && (
+        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap">
+          <span
+            className={[
+              "uppercase transition-colors select-none font-bold tracking-[0.16em]",
+              size === "footer"
+                ? "text-xl sm:text-2xl"
+                : size === "sm"
+                ? "text-base sm:text-lg"
+                : "text-xl sm:text-2xl",
+              dark ? "text-white" : "text-[#2b050d]",
+            ].join(" ")}
+          >
+            Casa Karem
+          </span>
+        </div>
+      )}
+    </div>
+  );
+
+  if (noLink) return content;
 
   return (
     <Link
       to={to}
-      aria-label={`${BRAND.name} — Inicio`}
-      className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+      aria-label="Casa Karem"
+      className="group inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full transition-opacity hover:opacity-95"
     >
-      {img}
+      {content}
     </Link>
   );
 }

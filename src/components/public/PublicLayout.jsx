@@ -84,7 +84,7 @@ export default function PublicLayout() {
   return (
     <div className="min-h-screen bg-background-secondary">
       <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md">
-        <div className="mx-auto flex h-14 md:h-16 lg:h-20 max-w-[1600px] items-center justify-between px-3 md:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-3 md:px-6 lg:px-8">
           
           <div className="flex items-center gap-2 md:gap-4">
             <button
@@ -93,8 +93,7 @@ export default function PublicLayout() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
-            <BrandLogo size="sm" className="lg:hidden" />
-            <BrandLogo size="lg" className="hidden lg:block" />
+            <BrandLogo size="md" />
           </div>
 
           {/* Buscador central prominente (solo Desktop) */}

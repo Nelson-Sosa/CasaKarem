@@ -57,7 +57,7 @@ export default function Register() {
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-sm ring-1 ring-primary-soft">
         <div className="text-center">
           <div className="flex justify-center">
-            <BrandLogo size="sm" noLink />
+            <BrandLogo size="auth" onlyIcon noLink />
           </div>
           <h1 className="mt-4 text-xl font-bold text-gray-800 sm:text-2xl">
             Bienvenido a {BRAND.name}

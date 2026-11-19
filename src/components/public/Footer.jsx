@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import BrandLogo from "../ui/BrandLogo";
 import { BRAND } from "../../config/brand";
 
 /* ── Iconos SVG oficiales ─────────────────────────────────────────── */
@@ -82,7 +81,12 @@ export default function Footer() {
           {/* 1. Brand & Socials */}
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-5 md:gap-6 md:col-span-1">
             <div className="flex flex-col items-center md:items-start gap-2 md:gap-3">
-              <BrandLogo size="sm" className="opacity-90" dark />
+              <Link
+                to="/"
+                className="text-xl sm:text-2xl font-bold uppercase tracking-[0.16em] text-white hover:opacity-90 transition-opacity select-none"
+              >
+                Casa Karem
+              </Link>
               <p className="text-sm text-gray-400 max-w-xs">
                 Tecnología, productos y soluciones para vos.
               </p>
