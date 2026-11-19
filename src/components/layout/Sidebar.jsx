@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, Link } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -105,11 +105,17 @@ export default function Sidebar({ collapsed, mobileOpen, onClose, onToggle }) {
   function SidebarContent() {
     return (
       <div className="flex h-full flex-col bg-white">
-        <div className={`flex h-16 shrink-0 items-center border-b border-border/70 px-3 ${collapsed ? "justify-center" : "justify-between"}`}>
+        <div className={`flex h-16 shrink-0 items-center border-b border-border/70 px-4 ${collapsed ? "justify-center" : "justify-between"}`}>
           {collapsed ? (
-            <BrandLogo size="sidebar-collapsed" noLink goldText />
+            <Link
+              to="/admin/dashboard"
+              className="text-lg font-extrabold tracking-wider bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent hover:opacity-90"
+              title="Casa Karem"
+            >
+              CK
+            </Link>
           ) : (
-            <BrandLogo size="md" goldText />
+            <BrandLogo size="md" goldText noIcon to="/admin/dashboard" />
           )}
           {mobileOpen && (
             <button
