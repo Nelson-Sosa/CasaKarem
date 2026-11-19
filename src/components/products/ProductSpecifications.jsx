@@ -25,45 +25,19 @@ function generateId() {
   return `spec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
-// Quick template for electronics
-const TEMPLATE_ELECTRONICS = [
-  { name: "Marca", value: "" },
-  { name: "Modelo", value: "" },
-  { name: "Color", value: "" },
-  { name: "Conectividad", value: "" },
-  { name: "Batería", value: "" },
-  { name: "Garantía", value: "" },
+// Ejemplos divididos por fila para no sobrecargar ni repetir placeholders
+const PLACEHOLDER_PAIRS = [
+  { name: "Ej: Marca", value: "Ej: Samsung" },
+  { name: "Ej: Color", value: "Ej: Negro" },
+  { name: "Ej: Capacidad", value: "Ej: 128 GB" },
+  { name: "Ej: Material", value: "Ej: Acero" },
+  { name: "Ej: Conectividad", value: "Ej: Bluetooth" },
+  { name: "Ej: Garantía", value: "Ej: 6 meses" },
 ];
 
-// Quick template for perfumes
-const TEMPLATE_PERFUMES = [
-  { name: "Marca", value: "" },
-  { name: "Fragancia", value: "" },
-  { name: "Género", value: "" },
-  { name: "Tamaño/Volumen", value: "" },
-];
-
-export default function ProductSpecifications({ specifications = [], onChange, errors, categoryId, categoryList = [] }) {
+export default function ProductSpecifications({ specifications = [], onChange, errors }) {
   const dragIndex = useRef(null);
   const dragOverIndex = useRef(null);
-
-  // Detect category name to choose the right template
-  function getTemplateForCategory() {
-    if (!categoryId) return null; // No template if no category
-    const category = categoryList.find((c) => c.id === categoryId);
-    if (!category) return null;
-    
-    const categoryNameLower = category.name.toLowerCase();
-    
-    // If category name contains "perfume" (case-insensitive), use perfume template
-    if (categoryNameLower.includes("perfume")) {
-      return TEMPLATE_PERFUMES;
-    }
-    
-    // Everything else is treated as electronics (Tablets, Celulares, Monitores, Accesorios, etc.)
-    // This way, any new electronics subcategory will automatically get the electronics template
-    return TEMPLATE_ELECTRONICS;
-  }
 
   // ── Add ────────────────────────────────────────────────────────────────────
 
@@ -72,19 +46,13 @@ export default function ProductSpecifications({ specifications = [], onChange, e
   }
 
   function loadBasicTemplate() {
-    const template = getTemplateForCategory();
-    if (template) {
-      // If we have a template, load it with all fields
-      const newSpecs = template.map((preset) => ({
-        id: generateId(),
-        name: preset.name,
-        value: preset.value,
-      }));
-      onChange([...specifications, ...newSpecs]);
-    } else {
-      // If no template exists (new category), just add 1 blank row
-      onChange([...specifications, { id: generateId(), name: "", value: "" }]);
-    }
+    // Genera 3 filas vacías para cualquier categoría
+    const blankRows = [
+      { id: generateId(), name: "", value: "" },
+      { id: generateId(), name: "", value: "" },
+      { id: generateId(), name: "", value: "" },
+    ];
+    onChange([...specifications, ...blankRows]);
   }
 
   // ── Update ─────────────────────────────────────────────────────────────────
@@ -155,6 +123,7 @@ export default function ProductSpecifications({ specifications = [], onChange, e
       <div className="space-y-2">
         {specifications.map((spec, i) => {
           const rowError = errors?.[i];
+          const placeholder = PLACEHOLDER_PAIRS[i] || { name: "Nombre", value: "Valor" };
           return (
             <div
               key={spec.id}
@@ -181,7 +150,7 @@ export default function ProductSpecifications({ specifications = [], onChange, e
                   value={spec.name}
                   onChange={(e) => updateField(i, "name", e.target.value)}
                   onBlur={() => handleBlur(i, "name")}
-                  placeholder="Ej: Pantalla"
+                  placeholder={placeholder.name}
                   maxLength={100}
                   className={`w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 ${
                     rowError && !spec.name
@@ -198,7 +167,7 @@ export default function ProductSpecifications({ specifications = [], onChange, e
                   value={spec.value}
                   onChange={(e) => updateField(i, "value", e.target.value)}
                   onBlur={() => handleBlur(i, "value")}
-                  placeholder="Ej: 6.1″ OLED 2556×1179"
+                  placeholder={placeholder.value}
                   maxLength={500}
                   className={`w-full rounded-lg border px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 ${
                     rowError && !spec.value
