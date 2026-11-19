@@ -46,10 +46,15 @@ export default function Topbar({ onMenuClick }) {
       </button>
 
       <div className="min-w-0 flex-1 pl-1 lg:pl-5">
-        <p className="truncate text-sm font-semibold text-gray-800">
-          {getGreeting()}, {displayName.split(" ")[0]} 👋
-        </p>
-        <p className="text-xs text-gray-600">Bienvenido nuevamente</p>
+        <div className="flex items-center gap-2">
+          <p className="truncate text-sm font-semibold text-gray-800">
+            {getGreeting()}, {displayName.split(" ")[0]} 👋
+          </p>
+          <span className="hidden sm:inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+            Casa Karem
+          </span>
+        </div>
+        <p className="text-xs text-gray-600">Panel de Administración • Casa Karem</p>
       </div>
 
       <a

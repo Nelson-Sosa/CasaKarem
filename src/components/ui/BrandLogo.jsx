@@ -1,5 +1,5 @@
 /**
- * BrandLogo — Componente centralizado del logo oficial de TiendaOnline.
+ * BrandLogo — Componente centralizado del logo oficial de Casa Karem.
  *
  * Responsabilidades:
  *  - Renderiza el logo oficial con proporciones correctas (object-fit: contain).

@@ -127,7 +127,7 @@ export default function Dashboard() {
   const hasRecentPedidos = recentPedidos && recentPedidos.length > 0;
 
   return (
-    <PageContainer title="Dashboard" description="Resumen general del negocio">
+    <PageContainer title="Dashboard — Casa Karem" description="Resumen general del negocio">
 
       {/* ------------------------------------------------------------------ */}
       {/* Stat cards: Pedidos + Stock                                         */}

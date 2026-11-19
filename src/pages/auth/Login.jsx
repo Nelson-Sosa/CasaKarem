@@ -29,6 +29,7 @@ export default function Login() {
 
   // Si ya hay una sesión de admin activa, redirigir al panel
   useEffect(() => {
+    document.title = "Iniciar Sesión | Casa Karem";
     if (user?.role === "admin") {
       navigate("/admin/dashboard", { replace: true });
     }

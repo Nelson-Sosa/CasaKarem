@@ -32,7 +32,7 @@ export default function CartPublic() {
     });
 
     const message = [
-      "🛒 *Hola, quiero realizar el siguiente pedido:*",
+      "🛒 *Hola Casa Karem, quiero realizar el siguiente pedido:*",
       "",
       ...lines,
       "",
