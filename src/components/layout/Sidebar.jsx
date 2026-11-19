@@ -10,7 +10,6 @@ import {
   ChevronRight,
   X,
   ClipboardList,
-  Wrench,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import BrandLogo from "../ui/BrandLogo";
@@ -19,7 +18,6 @@ const mainNav = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
 
   { name: "Pedidos", href: "/admin/pedidos", icon: ClipboardList },
-  { name: "Servicio Técnico", href: "/admin/servicio-tecnico", icon: Wrench },
   { name: "Clientes", href: "/admin/clientes", icon: Users },
   { name: "Productos", href: "/admin/productos", icon: Package },
   { name: "Categorías", href: "/admin/categorias", icon: Tags },

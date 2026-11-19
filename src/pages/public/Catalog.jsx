@@ -219,12 +219,8 @@ export default function Catalog() {
   return (
     <div className="space-y-8 bg-white sm:space-y-10">
       
-      {/* Nuevo Hero Layout con Sidebar y Service Card */}
-      <PublicCatalogLayout
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={handleSelectCategory}
-      />
+      {/* Sección Hero: Banner Principal */}
+      <PublicCatalogLayout />
 
       {/* Carrusel de Productos Destacados (Oculto temporalmente) */}
       {/* <FeaturedProducts products={products} loading={loading} /> */}

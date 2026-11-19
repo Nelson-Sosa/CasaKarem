@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { LogIn, LogOut, ShoppingCart, Heart, Search, LayoutDashboard } from "lucide-react";
+import { User, LogOut, ShoppingCart, Heart, Search, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
@@ -9,7 +9,6 @@ import { useCategories } from "../../hooks/useCategories";
 import WhatsappFloat from "./WhatsappFloat";
 import CategoryNavigation from "./catalog/CategoryNavigation";
 import MobileMenuDrawer from "./catalog/MobileMenuDrawer";
-import MyRepairsPanel from "./MyRepairsPanel";
 import BrandLogo from "../ui/BrandLogo";
 import Footer from "./Footer";
 
@@ -113,11 +112,6 @@ export default function PublicLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Panel de Mis Reparaciones - oculto en móvil */}
-            <div className="hidden md:flex">
-              <MyRepairsPanel />
-            </div>
-
             <Link 
               to="/catalogo/favoritos"
               className={`relative flex h-8 w-8 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${isWishlistRoute ? 'bg-red-50 text-danger ring-1 ring-danger/20' : 'bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-danger'}`}
@@ -219,10 +213,10 @@ export default function PublicLayout() {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
-                <LogIn className="h-4 w-4" />
-                <span>Entrar</span>
+                <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" strokeWidth={1.8} />
+                <span>Cuenta</span>
               </Link>
             )}
           </div>

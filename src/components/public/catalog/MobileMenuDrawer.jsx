@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronRight, ChevronDown, LayoutGrid, Wrench, Menu } from "lucide-react";
+import { X, ChevronRight, ChevronDown, LayoutGrid, Menu } from "lucide-react";
 import { getIconForCategory } from "../../../utils/categoryIcons";
 
 function SidebarItem({ label, icon: Icon, isActive, onClick, accent, indent = false }) {
@@ -25,6 +26,7 @@ function SidebarItem({ label, icon: Icon, isActive, onClick, accent, indent = fa
 }
 
 export default function MobileMenuDrawer({ isOpen, onClose, categoriesGrouped = [], selectedCategory, onSelectCategory }) {
+  const navigate = useNavigate();
   const [expandedParent, setExpandedParent] = useState(null);
 
   useEffect(() => {
@@ -161,16 +163,6 @@ export default function MobileMenuDrawer({ isOpen, onClose, categoriesGrouped = 
                   </div>
                 );
               })}
-
-              <div className="mx-4 my-1 border-t border-gray-100" />
-
-              <SidebarItem
-                label="Servicio Técnico"
-                icon={Wrench}
-                isActive={false}
-                onClick={() => onClose()}
-                accent="amber"
-              />
             </div>
           </motion.div>
         </div>

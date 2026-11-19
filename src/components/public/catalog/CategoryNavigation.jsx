@@ -1,7 +1,7 @@
 import { memo, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, Wrench, ChevronDown } from "lucide-react";
+import { Home, ChevronDown } from "lucide-react";
 import { getIconForCategory } from "../../../utils/categoryIcons";
 
 function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSelectCategory }) {
@@ -35,7 +35,6 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
       action: () => onSelectCategory(cat.name),
       subcategories: cat.subcategories || [],
     })),
-    { id: "servicio", label: "Servicio Técnico", icon: Wrench, action: () => navigate("/servicio-tecnico"), subcategories: [] },
   ];
 
   const hoveredNavItem = navItems.find((i) => i.id === hoveredItem);

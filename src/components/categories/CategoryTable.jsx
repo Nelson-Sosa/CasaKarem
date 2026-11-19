@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Pencil, EyeOff, Eye, Trash2, ChevronRight } from "lucide-react";
 import CategoryStatusBadge from "./CategoryStatusBadge";
 
@@ -92,9 +93,8 @@ export default function CategoryTable({ categories, onEdit, onToggleStatus, onDe
         </thead>
         <tbody className="divide-y divide-gray-100">
           {parents.map((parent) => (
-            <>
+            <Fragment key={parent.id}>
               <CategoryRow
-                key={parent.id}
                 cat={parent}
                 isChild={false}
                 onEdit={onEdit}
@@ -111,7 +111,7 @@ export default function CategoryTable({ categories, onEdit, onToggleStatus, onDe
                   onDelete={onDelete}
                 />
               ))}
-            </>
+            </Fragment>
           ))}
           {orphans.map((cat) => (
             <CategoryRow

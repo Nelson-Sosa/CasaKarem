@@ -6,7 +6,6 @@ import {
   Smartphone,
   Heart,
   ShoppingCart,
-  Wrench,
   Search,
   Mail,
   Clock,
@@ -138,16 +137,6 @@ export default function Footer() {
           <FooterAccordion title="Atención al cliente">
             <ul className="flex flex-col gap-3">
               <li>
-                <Link to="/servicio-tecnico" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Wrench size={16} /> Servicio Técnico
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicio-tecnico/seguimiento" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
-                  <Search size={16} /> Consultar reparación
-                </Link>
-              </li>
-              <li>
                 <a href="#" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-primary-light">
                   <Mail size={16} /> Contacto
                 </a>
@@ -212,13 +201,6 @@ export default function Footer() {
               <div>
                 <p className="text-sm font-medium text-white">Envíos a todo el país</p>
                 <p className="text-xs text-gray-400">Rápidos y confiables</p>
-              </div>
-           </div>
-           <div className="flex items-center gap-3 rounded-lg bg-gray-800/50 p-4">
-              <Wrench className="text-primary-light" size={24} />
-              <div>
-                <p className="text-sm font-medium text-white">Servicio técnico</p>
-                <p className="text-xs text-gray-400">Especialistas a tu servicio</p>
               </div>
            </div>
         </div>
