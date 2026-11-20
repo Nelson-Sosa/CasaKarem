@@ -46,7 +46,7 @@ export default function PaymentMethods() {
       {/* Content */}
       <div className="px-4 sm:px-6 py-4 sm:py-5">
         {/* Payment cards grid - diseño refinado */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {paymentMethods.map((method) => (
             <div
               key={method.name}
@@ -89,17 +89,6 @@ export default function PaymentMethods() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Nota inferior boutique - sin caja azul */}
-        <div className="flex items-start gap-2.5 sm:gap-3 rounded-xl border border-[#B88B35]/30 bg-[#FCF9F2] px-4 py-3">
-          <ShieldCheck className="h-5 w-5 shrink-0 text-[#9C7428] mt-0.5" strokeWidth={2} />
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-900">Pago seguro con POS</p>
-            <p className="mt-0.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
-              Realizá tu pago con tarjetas de débito o crédito en nuestro local al retirar tu pedido, o consultanos por WhatsApp para coordinar otras modalidades.
-            </p>
-          </div>
         </div>
       </div>
     </div>
