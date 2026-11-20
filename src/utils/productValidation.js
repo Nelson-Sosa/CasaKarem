@@ -179,6 +179,7 @@ export function validateProduct(data, categories) {
       stock: Number(data.stock) || 0,
       minimumStock: Number(data.minimumStock) || 0,
       status: data.status || "active",
+      isOnSale: Boolean(data.isOnSale),
     },
   };
 }

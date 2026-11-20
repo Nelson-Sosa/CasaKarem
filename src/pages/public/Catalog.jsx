@@ -7,6 +7,7 @@ import ProductQuickView from "../../components/public/ProductQuickView";
 import BottomSheet from "../../components/ui/BottomSheet";
 import PublicCatalogLayout from "../../components/public/catalog/PublicCatalogLayout";
 import FeaturedProducts from "../../components/public/catalog/FeaturedProducts";
+import FeaturedOffers from "../../components/public/catalog/FeaturedOffers";
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Más recientes", sortBy: "createdAt", sortDirection: "desc" },
@@ -224,6 +225,11 @@ export default function Catalog() {
 
       {/* Carrusel de Productos Destacados (Oculto temporalmente) */}
       {/* <FeaturedProducts products={products} loading={loading} /> */}
+
+      {/* Sección de Ofertas Destacadas - Solo visible si no hay filtros activos y hay productos en oferta */}
+      {!loading && !hasActiveFilters && allProducts.length > 0 && (
+        <FeaturedOffers products={allProducts} />
+      )}
 
       {/* Catálogo Completo */}
       <div id="catalogo-completo" className="scroll-mt-32 space-y-4 bg-white sm:space-y-6">

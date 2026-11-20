@@ -26,9 +26,11 @@ function buildInitial(initialData) {
       sku: "",
       purchasePrice: "",
       salePrice: "",
+      offerPrice: "",
       stock: "0",
       minimumStock: "0",
       status: "active",
+      isOnSale: false,
       images: [],
       attributes: [],
       specifications: [],
@@ -42,9 +44,11 @@ function buildInitial(initialData) {
     sku: initialData.sku || "",
     purchasePrice: initialData.purchasePrice?.toString() || "",
     salePrice: initialData.salePrice?.toString() || "",
+    offerPrice: initialData.offerPrice?.toString() || "",
     stock: initialData.stock?.toString() || "0",
     minimumStock: initialData.minimumStock?.toString() || "0",
     status: initialData.status || "active",
+    isOnSale: initialData.isOnSale || false,
     images: initialData.images || [],
     attributes: initialData.attributes || [],
     specifications: initialData.specifications || [],
@@ -183,9 +187,11 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
       sku: form.sku ? sanitizeText(form.sku) : "",
       purchasePrice: Number(form.purchasePrice),
       salePrice: Number(form.salePrice),
+      offerPrice: form.isOnSale && form.offerPrice ? Number(form.offerPrice) : null,
       stock: Number(form.stock) || 0,
       minimumStock: Number(form.minimumStock) || 0,
       subcategoryId: form.subcategoryId || null,
+      isOnSale: Boolean(form.isOnSale),
       specifications: cleanedSpecs,
     });
   }
@@ -196,6 +202,14 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
       case "description": return validateDescription(value);
       case "purchasePrice": return validatePurchasePrice(value);
       case "salePrice": return validateSalePrice(value);
+      case "offerPrice": 
+        if (form.isOnSale && value) {
+          const offerNum = Number(value);
+          const saleNum = Number(form.salePrice);
+          if (isNaN(offerNum) || offerNum <= 0) return "El precio de oferta debe ser mayor a 0.";
+          if (saleNum > 0 && offerNum >= saleNum) return "El precio de oferta debe ser menor al precio de venta.";
+        }
+        return null;
       case "stock": return validateStock(value, "El stock inicial");
       case "minimumStock": return validateStock(value, "El stock mínimo");
       case "sku": return validateSku(value);
@@ -401,6 +415,72 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               <option value="inactive">Inactivo</option>
             </select>
           </div>
+
+          {/* Producto en Oferta */}
+          <div>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={form.isOnSale}
+                  onChange={(e) => handleChange("isOnSale", e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-[#E30613] transition-colors"></div>
+                <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700">Producto en Oferta</span>
+                <span className="text-xs text-gray-500">Este producto aparecerá en la sección de ofertas destacadas</span>
+              </div>
+            </label>
+          </div>
+
+          {/* Precio de Oferta - Solo visible si isOnSale está activado */}
+          {form.isOnSale && (
+            <div className="rounded-lg border-2 border-[#E30613]/20 bg-red-50/50 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E30613]">
+                  <span className="text-xs font-bold text-white">%</span>
+                </div>
+                <h4 className="text-sm font-bold text-gray-900">Configuración de Oferta</h4>
+              </div>
+              
+              <div>
+                <label htmlFor="prod-offer-price" className="block text-sm font-medium text-gray-700">
+                  Precio de oferta <span className="text-danger">*</span>
+                </label>
+                <input
+                  id="prod-offer-price"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={form.offerPrice}
+                  onChange={(e) => handleChange("offerPrice", e.target.value)}
+                  onBlur={() => handleBlur("offerPrice")}
+                  className={`mt-1 block w-full rounded-lg border px-4 py-2.5 text-sm text-gray-800 transition-colors focus:outline-none focus:ring-2 ${
+                    errors.offerPrice
+                      ? "border-red-300 focus:border-red-400 focus:ring-red/20"
+                      : "border-gray-200 focus:border-primary focus:ring-primary/20"
+                  }`}
+                  placeholder="0.00"
+                />
+                {errors.offerPrice && <p className="mt-1 text-xs text-red-500">{errors.offerPrice}</p>}
+                
+                {/* Mostrar el descuento calculado */}
+                {form.offerPrice && form.salePrice && Number(form.offerPrice) < Number(form.salePrice) && (
+                  <div className="mt-2 flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 border border-green-200">
+                    <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <p className="text-xs font-semibold text-green-700">
+                      Descuento: {Math.round(((Number(form.salePrice) - Number(form.offerPrice)) / Number(form.salePrice)) * 100)}%
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

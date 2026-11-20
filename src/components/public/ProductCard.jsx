@@ -15,6 +15,13 @@ function ProductCardBase({ product }) {
       ? product.images[0]
       : null;
   const isOutOfStock = product.stock <= 0;
+  
+  // Calcular descuento si hay precio de oferta
+  const hasDiscount = product.isOnSale && product.offerPrice && product.offerPrice < product.salePrice;
+  const discountPercentage = hasDiscount 
+    ? Math.round(((product.salePrice - product.offerPrice) / product.salePrice) * 100)
+    : 0;
+  const displayPrice = hasDiscount ? product.offerPrice : product.salePrice;
 
   return (
     <motion.div 
@@ -38,6 +45,21 @@ function ProductCardBase({ product }) {
             wrapperClassName="h-full w-full"
           />
 
+          {/* Badge de oferta - esquina superior derecha */}
+          {hasDiscount && !isOutOfStock && (
+            <div className="absolute right-0 top-0 z-10">
+              <motion.div
+                initial={{ scale: 0, rotate: -12 }}
+                animate={{ scale: 1, rotate: -12 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="rounded-lg bg-gradient-to-br from-[#E30613] to-[#c70510] px-2.5 py-1 shadow-lg"
+              >
+                <span className="text-[11px] font-black uppercase tracking-wide text-white">
+                  -{discountPercentage}%
+                </span>
+              </motion.div>
+            </div>
+          )}
 
           {/* Overlay agotado */}
           {isOutOfStock && (
@@ -68,9 +90,20 @@ function ProductCardBase({ product }) {
 
         {/* Precio y botón en la parte inferior */}
         <div className="mt-auto pt-3">
-          <p className="mb-2.5 text-base font-bold text-gray-900">
-            {formatCurrency(product.salePrice)}
-          </p>
+          {hasDiscount ? (
+            <div className="mb-2.5">
+              <p className="text-xs text-gray-500 line-through">
+                {formatCurrency(product.salePrice)}
+              </p>
+              <p className="text-base font-bold text-[#E30613]">
+                {formatCurrency(displayPrice)}
+              </p>
+            </div>
+          ) : (
+            <p className="mb-2.5 text-base font-bold text-gray-900">
+              {formatCurrency(displayPrice)}
+            </p>
+          )}
 
           <button
             onClick={() => navigate(`/catalogo/${product.id}`)}
