@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  addDoc,
   getDoc,
   getDocs,
   query,
@@ -141,6 +142,62 @@ export async function createPedido({
   });
 
   return { id: pedidoDocRef.id };
+}
+
+// ─────────────────────────────────────────────────────────────
+//  CREATE PUBLIC WHATSAPP PEDIDO
+//  Registra automáticamente un pedido originado desde el carrito
+//  público al hacer clic en "Finalizar por WhatsApp".
+// ─────────────────────────────────────────────────────────────
+export async function createPublicWhatsAppPedido({ items, total, notes = null }) {
+  if (!items || items.length === 0) throw new Error("EMPTY_PEDIDO");
+  if (total < 0) throw new Error("NEGATIVE_TOTAL");
+
+  // Código amigable tipo CK-1849
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const orderCode = `CK-${randomSuffix}`;
+
+  const subtotal = items.reduce((sum, item) => {
+    const price = Number(item.salePrice || item.unitPrice) || 0;
+    return sum + price * (Number(item.quantity) || 1);
+  }, 0);
+
+  const pedidoData = {
+    orderCode,
+    items: items.map((item) => ({
+      productId: item.productId || item.id || "",
+      name: item.name || "",
+      sku: item.sku || "",
+      quantity: Number(item.quantity) || 1,
+      unitPrice: Number(item.salePrice || item.unitPrice) || 0,
+      subtotal: (Number(item.salePrice || item.unitPrice) || 0) * (Number(item.quantity) || 1),
+    })),
+    subtotal: subtotal || total,
+    discountType: null,
+    discountValue: 0,
+    discount: 0,
+    total: Number(total) || subtotal,
+    paymentMethod: null,
+    clientId: null,
+    clientName: "Cliente WhatsApp Web",
+    notes: notes?.trim() || "Pedido originado desde la tienda online vía WhatsApp",
+    status: PEDIDO_STATUS.PENDING,
+    origin: "whatsapp_web",
+    saleOrderId: null,
+    createdAt: serverTimestamp(),
+    createdBy: "web_client",
+    updatedAt: serverTimestamp(),
+    deliveredAt: null,
+    deliveredBy: null,
+    cancelledAt: null,
+    cancelledBy: null,
+    cancelReason: null,
+  };
+
+  const docRef = await addDoc(collection(db, PEDIDOS_COLLECTION), pedidoData);
+  clearDashboardCache();
+
+  return { id: docRef.id, orderCode };
 }
 
 // ─────────────────────────────────────────────────────────────

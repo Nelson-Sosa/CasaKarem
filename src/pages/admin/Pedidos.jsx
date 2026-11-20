@@ -153,6 +153,20 @@ function PedidoDetailModal({ pedido, onClose, onDelete, deleting }) {
                 <p className="font-medium text-gray-800 text-xs font-mono">{pedido.saleOrderId.slice(0, 8)}…</p>
               </div>
             )}
+            {pedido.orderCode && (
+              <div className="col-span-2">
+                <p className="text-gray-500">Código de pedido</p>
+                <p className="font-bold text-[#8F6820] text-base font-mono tracking-widest">{pedido.orderCode}</p>
+              </div>
+            )}
+            {pedido.origin === "whatsapp_web" && (
+              <div>
+                <p className="text-gray-500">Origen</p>
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-200">
+                  📱 WhatsApp Web
+                </span>
+              </div>
+            )}
           </div>
 
           {pedido.notes && (
@@ -811,6 +825,10 @@ export default function Pedidos() {
       result = result.filter(pedido => {
         // Buscar en nombre de cliente
         if (pedido.clientName && pedido.clientName.toLowerCase().includes(queryLower)) {
+          return true;
+        }
+        // Buscar en código de pedido (#CK-XXXX)
+        if (pedido.orderCode && pedido.orderCode.toLowerCase().includes(queryLower)) {
           return true;
         }
         // Buscar en ID de pedido (primeros caracteres)

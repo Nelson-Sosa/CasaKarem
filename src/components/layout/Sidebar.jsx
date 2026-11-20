@@ -12,7 +12,6 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import BrandLogo from "../ui/BrandLogo";
 
 const mainNav = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -115,7 +114,14 @@ export default function Sidebar({ collapsed, mobileOpen, onClose, onToggle }) {
               CK
             </Link>
           ) : (
-            <BrandLogo size="md" goldText noIcon to="/admin/dashboard" />
+            <Link
+              to="/admin/dashboard"
+              className="group inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg transition-opacity hover:opacity-90"
+            >
+              <span className="uppercase tracking-[0.16em] text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(140,96,16,0.18)] select-none whitespace-nowrap [text-rendering:optimizeLegibility]">
+                Casa Karem
+              </span>
+            </Link>
           )}
           {mobileOpen && (
             <button

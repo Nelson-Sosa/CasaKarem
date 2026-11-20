@@ -1,27 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { 
   ShoppingCart, 
   Trash2, 
   Minus, 
   Plus, 
-  ShoppingBag
+  ShoppingBag,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { formatCurrency } from "../../utils/formatCurrency";
 import ProductImage from "../../components/ui/ProductImage";
 import { getWhatsappNumber } from "../../services/settingsService";
+import { createPublicWhatsAppPedido } from "../../services/pedidoService";
 
 export default function CartPublic() {
-  const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
   const [waPhone, setWaPhone] = useState("");
+  // Estados del flujo de finalización
+  const [submitting, setSubmitting] = useState(false);
+  const [orderResult, setOrderResult] = useState(null); // { id, orderCode }
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
     getWhatsappNumber().then((num) => setWaPhone(num || ""));
   }, []);
 
-  // Construir mensaje de WhatsApp con el detalle del carrito
-  function buildWhatsAppUrl() {
+  // Construir mensaje de WhatsApp con el detalle del carrito y el código de pedido
+  const buildWhatsAppUrl = useCallback((orderCode = null) => {
     if (!waPhone) return "#";
     const phone = waPhone.replace(/\D/g, "");
 
@@ -31,9 +38,12 @@ export default function CartPublic() {
       return `• ${item.name} x${item.quantity} = ${formatCurrency(subtotal)}`;
     });
 
+    const codeSection = orderCode ? [`📋 *Código de pedido: ${orderCode}*`, ""] : [];
+
     const message = [
       "🛒 *Hola Casa Karem, quiero realizar el siguiente pedido:*",
       "",
+      ...codeSection,
       ...lines,
       "",
       `*Total: ${formatCurrency(cartTotal)}*`,
@@ -42,25 +52,91 @@ export default function CartPublic() {
     ].join("\n");
 
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  }, [waPhone, cartItems, cartTotal]);
+
+  // Handler principal: registra el pedido en Firestore y abre WhatsApp
+  async function handleFinalizarWhatsApp(e) {
+    e.preventDefault();
+    if (!waPhone || submitting || cartItems.length === 0) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // 1. Registrar el pedido en Firestore
+      const result = await createPublicWhatsAppPedido({
+        items: cartItems.map((item) => ({
+          productId: item.id,
+          name: item.name,
+          sku: item.sku || "",
+          quantity: item.quantity,
+          salePrice: Number(item.salePrice) || 0,
+        })),
+        total: cartTotal,
+      });
+
+      setOrderResult(result);
+
+      // 2. Abrir WhatsApp con el código del pedido incluido
+      const url = buildWhatsAppUrl(result.orderCode);
+      window.open(url, "_blank", "noopener,noreferrer");
+
+      // 3. Vaciar el carrito
+      clearCart();
+
+    } catch (err) {
+      console.error("[CartPublic] Error al registrar pedido:", err);
+      setSubmitError("No se pudo registrar el pedido. Por favor intenta de nuevo.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (cartItems.length === 0) {
+    // Pantalla: carrito vacío (incluye el caso post-pedido exitoso)
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <div className="mb-6 rounded-full bg-gray-50 p-8">
-          <ShoppingCart className="h-20 w-20 text-gray-300" />
-        </div>
-        <h2 className="mb-2 text-2xl font-bold text-gray-900">Tu carrito está vacío</h2>
-        <p className="mb-8 text-gray-500">
-          Parece que aún no has agregado productos a tu carrito.
-        </p>
-        <Link
-          to="/catalogo"
-          className="inline-flex items-center gap-2 rounded-xl bg-[#E30613] px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#c70510] hover:shadow-md active:scale-95"
-        >
-          <ShoppingBag className="h-5 w-5" />
-          Continuar comprando
-        </Link>
+        {orderResult ? (
+          // ── Confirmación de pedido enviado ──
+          <>
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-green-50">
+              <CheckCircle2 className="h-10 w-10 text-green-500" />
+            </div>
+            <h2 className="mb-1 text-2xl font-bold text-gray-900">¡Pedido enviado!</h2>
+            <p className="mb-1 text-gray-500">Tu pedido fue registrado exitosamente.</p>
+            <p className="mb-6 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 px-6 py-3 text-lg font-bold text-[#8F6820]">
+              Código: {orderResult.orderCode}
+            </p>
+            <p className="mb-8 max-w-sm text-sm text-gray-500 leading-relaxed">
+              WhatsApp se abrió con el detalle completo. Enviá el mensaje y te confirmaremos a la brevedad.
+            </p>
+            <Link
+              to="/catalogo"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#E30613] px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#c70510] hover:shadow-md active:scale-95"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              Seguir comprando
+            </Link>
+          </>
+        ) : (
+          // ── Carrito vacío normal ──
+          <>
+            <div className="mb-6 rounded-full bg-gray-50 p-8">
+              <ShoppingCart className="h-20 w-20 text-gray-300" />
+            </div>
+            <h2 className="mb-2 text-2xl font-bold text-gray-900">Tu carrito está vacío</h2>
+            <p className="mb-8 text-gray-500">
+              Parece que aún no has agregado productos a tu carrito.
+            </p>
+            <Link
+              to="/catalogo"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#E30613] px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#c70510] hover:shadow-md active:scale-95"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              Continuar comprando
+            </Link>
+          </>
+        )}
       </div>
     );
   }
@@ -214,25 +290,38 @@ export default function CartPublic() {
               </div>
             </div>
 
-            <a
-              href={buildWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`mt-8 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold text-white shadow-sm transition-all hover:shadow-md active:scale-[0.98] ${
-                waPhone
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "cursor-not-allowed bg-gray-300"
+            {/* Error de registro */}
+            {submitError && (
+              <p className="mt-4 rounded-lg bg-red-50 px-4 py-2.5 text-center text-xs font-medium text-red-600">
+                {submitError}
+              </p>
+            )}
+
+            {/* Botón principal */}
+            <button
+              onClick={handleFinalizarWhatsApp}
+              disabled={!waPhone || submitting}
+              className={`mt-8 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold text-white shadow-sm transition-all hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${
+                waPhone ? "bg-green-500 hover:bg-green-600" : "bg-gray-300"
               }`}
             >
-              {/* WhatsApp Icon */}
-              <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 2C8.268 2 2 8.268 2 16c0 2.748.853 5.302 2.425 7.486L2.514 29.2a.625.625 0 00.763.763l5.714-1.911A13.944 13.944 0 0016 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="white"/>
-                <path d="M23.098 20.016c-.372 1.043-1.483 1.916-2.555 2.162-.681.156-1.569.282-4.542-1.298-3.807-2.023-6.262-6.989-6.45-7.307-.193-.318-1.536-2.044-1.536-3.9 0-1.856.972-2.767 1.319-3.147.347-.38.756-.475 1.008-.475.253 0 .506.004.726.013.232.009.556-.09.87.666.314.757 1.069 2.623 1.164 2.813.095.19.158.413.031.667-.126.254-.19.413-.38.634-.19.221-.398.493-.572.663-.19.19-.388.396-.166.777.221.381.984 1.624 2.115 2.63 1.451 1.29 2.676 1.691 3.055 1.882.38.19.603.158.824-.095.222-.253.952-1.108 1.207-1.488.254-.38.507-.317.855-.19.348.126 2.21 1.042 2.59 1.233.38.19.632.285.696.444.063.158.063.918-.31 1.96z" fill="rgba(0,0,0,0.3)"/>
-              </svg>
-              Finalizar por WhatsApp
-            </a>
+              {submitting ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Registrando pedido…
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 32 32" fill="none" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 2C8.268 2 2 8.268 2 16c0 2.748.853 5.302 2.425 7.486L2.514 29.2a.625.625 0 00.763.763l5.714-1.911A13.944 13.944 0 0016 30c7.732 0 14-6.268 14-14S23.732 2 16 2z" fill="white"/>
+                    <path d="M23.098 20.016c-.372 1.043-1.483 1.916-2.555 2.162-.681.156-1.569.282-4.542-1.298-3.807-2.023-6.262-6.989-6.45-7.307-.193-.318-1.536-2.044-1.536-3.9 0-1.856.972-2.767 1.319-3.147.347-.38.756-.475 1.008-.475.253 0 .506.004.726.013.232.009.556-.09.87.666.314.757 1.069 2.623 1.164 2.813.095.19.158.413.031.667-.126.254-.19.413-.38.634-.19.221-.398.493-.572.663-.19.19-.388.396-.166.777.221.381.984 1.624 2.115 2.63 1.451 1.29 2.676 1.691 3.055 1.882.38.19.603.158.824-.095.222-.253.952-1.108 1.207-1.488.254-.38.507-.317.855-.19.348.126 2.21 1.042 2.59 1.233.38.19.632.285.696.444.063.158.063.918-.31 1.96z" fill="rgba(0,0,0,0.3)"/>
+                  </svg>
+                  Finalizar por WhatsApp
+                </>
+              )}
+            </button>
             <p className="mt-4 text-center text-xs text-gray-500">
-              Se abrirá WhatsApp con el detalle de tu pedido listo para enviar.
+              Tu pedido quedará registrado y se abrirá WhatsApp con el detalle listo para enviar.
             </p>
           </div>
         </div>
