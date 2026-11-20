@@ -350,17 +350,17 @@ export default function Footer() {
         </div>
 
         {/* Mobile Info Badges */}
-        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
+        <div className="mt-8 grid grid-cols-1 gap-3 md:hidden">
            <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
-              <ShieldCheck className="text-[#9C7428] shrink-0" size={22} />
-              <div>
+              <ShieldCheck className="text-[#9C7428] shrink-0" size={20} />
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-gray-800">Compra 100% segura</p>
                 <p className="text-xs text-gray-500">Protegemos tus datos</p>
               </div>
            </div>
            <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
-              <Truck className="text-[#9C7428] shrink-0" size={22} />
-              <div>
+              <Truck className="text-[#9C7428] shrink-0" size={20} />
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-gray-800">Envíos a todo el país</p>
                 <p className="text-xs text-gray-500">Rápidos y confiables</p>
               </div>
