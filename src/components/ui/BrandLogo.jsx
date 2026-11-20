@@ -46,7 +46,7 @@ export default function BrandLogo({
     ? "w-9 h-9 sm:w-11 sm:h-11 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
     : size === "sidebar-collapsed"
     ? "w-11 h-11 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
-    : "w-10 h-10 sm:w-12 sm:h-12 lg:w-[64px] lg:h-[64px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md";
+    : "w-9 h-9 sm:w-11 sm:h-11 lg:w-14 lg:h-14 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md";
 
   const emblem = (
     <div className={emblemContainerClasses}>
@@ -63,19 +63,19 @@ export default function BrandLogo({
   );
 
   const content = (
-    <div className={`inline-flex items-center gap-2 sm:gap-3 shrink-0 select-none min-w-0 ${className}`}>
+    <div className="inline-flex items-center gap-2 sm:gap-3 shrink-0 select-none flex-nowrap min-w-0">
       {!noIcon && emblem}
 
       {!isOnlyIcon && (
-        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap min-w-0 flex-shrink">
+        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap min-w-0 shrink-0">
           <span
             className={[
-              "uppercase transition-all duration-300 select-none tracking-[0.16em] [text-rendering:optimizeLegibility]",
+              "uppercase transition-all duration-300 select-none tracking-[0.14em] sm:tracking-[0.16em] [text-rendering:optimizeLegibility]",
               size === "footer"
                 ? "text-xl sm:text-2xl font-bold"
                 : size === "sm"
                 ? "text-sm sm:text-lg font-bold"
-                : "text-base sm:text-xl lg:text-2xl font-extrabold",
+                : "text-sm sm:text-lg lg:text-xl font-extrabold",
               goldText
                 ? "bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(140,96,16,0.18)] group-hover:brightness-110"
                 : dark
@@ -91,13 +91,13 @@ export default function BrandLogo({
     </div>
   );
 
-  if (noLink) return content;
+  if (noLink) return <div className={`inline-flex items-center ${className}`}>{content}</div>;
 
   return (
     <Link
       to={to}
       aria-label="Casa Karem"
-      className="group inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full transition-opacity hover:opacity-95"
+      className={`group inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-full transition-opacity hover:opacity-95 ${className}`}
     >
       {content}
     </Link>
