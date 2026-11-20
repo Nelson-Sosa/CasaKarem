@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, SlidersHorizontal, X, Package, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, X, Package, ArrowUpDown } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { getActiveProductsPaginated, countActiveProducts } from "../../services/publicProductService";
+import { subscribeToActiveProducts } from "../../services/publicProductService";
 import ProductCard from "../../components/public/ProductCard";
 import ProductQuickView from "../../components/public/ProductQuickView";
 import BottomSheet from "../../components/ui/BottomSheet";
@@ -10,30 +10,23 @@ import FeaturedProducts from "../../components/public/catalog/FeaturedProducts";
 import FeaturedOffers from "../../components/public/catalog/FeaturedOffers";
 
 const SORT_OPTIONS = [
-  { value: "newest", label: "Más recientes", sortBy: "createdAt", sortDirection: "desc" },
-  { value: "price-asc", label: "Menor precio", sortBy: "salePrice", sortDirection: "asc" },
-  { value: "price-desc", label: "Mayor precio", sortBy: "salePrice", sortDirection: "desc" },
+  { value: "newest", label: "Más recientes", field: "createdAt", direction: "desc" },
+  { value: "price-asc", label: "Menor precio", field: "salePrice", direction: "asc" },
+  { value: "price-desc", label: "Mayor precio", field: "salePrice", direction: "desc" },
+  { value: "name", label: "Nombre A-Z", field: "name", direction: "asc" },
 ];
-
-const PAGE_SIZE = 30;
 
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [allProducts, setAllProducts] = useState([]); // Para filtrado local
+  const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [totalProducts, setTotalProducts] = useState(0);
 
   // Estados locales sincronizados con la URL
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [sort, setSort] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Estados de paginación
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [pageDocuments, setPageDocuments] = useState({}); // Cache de cursores por página
 
   // Referencias para evitar scroll en el montaje inicial
   const prevSearch = useRef(searchParams.get("q") || "");
@@ -81,80 +74,38 @@ export default function Catalog() {
     setSearchParams(searchParams);
   };
 
-  // Cargar productos con paginación
-  const loadProducts = async (page = 1, resetCache = false) => {
+  // ✅ Suscripción en tiempo real a productos activos
+  useEffect(() => {
     setLoading(true);
     
-    try {
-      const sortOption = SORT_OPTIONS.find(opt => opt.value === sort) || SORT_OPTIONS[0];
-      
-      let lastDoc = null;
-      
-      // Si no es página 1 y no estamos reseteando, buscar el cursor de la página anterior
-      if (page > 1 && !resetCache && pageDocuments[page - 1]) {
-        lastDoc = pageDocuments[page - 1];
+    const unsubscribe = subscribeToActiveProducts(
+      (products) => {
+        setAllProducts(products);
+        
+        // Extraer categorías únicas
+        const cats = [...new Set(products.map(p => p.categoryName).filter(Boolean))];
+        setCategories(cats.sort());
+        
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error al cargar productos en tiempo real:", error);
+        setLoading(false);
       }
+    );
 
-      const result = await getActiveProductsPaginated({
-        sortBy: sortOption.sortBy,
-        sortDirection: sortOption.sortDirection,
-        lastDoc,
-        pageSize: PAGE_SIZE
-      });
+    // Cleanup: desuscribirse cuando el componente se desmonte
+    return () => unsubscribe();
+  }, []);
 
-      // Guardar todos los productos para filtrado local
-      setAllProducts(result.products);
-      setHasNextPage(result.hasMore);
-      
-      // Guardar cursor de esta página para navegación futura
-      if (result.lastVisible) {
-        setPageDocuments(prev => ({
-          ...(resetCache ? {} : prev),
-          [page]: result.lastVisible
-        }));
-      }
-
-      // Obtener total de productos activos
-      const total = await countActiveProducts();
-      setTotalProducts(total);
-
-      // Extraer categorías únicas de todos los productos cargados
-      const cats = [...new Set(result.products.map(p => p.categoryName).filter(Boolean))];
-      setCategories(cats.sort());
-      
-    } catch (error) {
-      console.error("Error loading products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Efecto inicial: cargar productos
-  useEffect(() => {
-    loadProducts(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sort]);
-
-  // Reset paginación cuando cambian filtros o búsqueda
-  useEffect(() => {
-    const isInitial = isInitialMount.current;
-    if (!isInitial && currentPage !== 1) {
-      setCurrentPage(1);
-      setPageDocuments({});
-      loadProducts(1, true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, selectedCategory]);
-
-  // Filtrar productos localmente (búsqueda y categoría)
+  // Filtrar y ordenar productos localmente
   const filtered = useMemo(() => {
     let result = [...allProducts];
 
     const q = search.trim().toLowerCase();
 
+    // Filtrar por categoría
     if (selectedCategory !== "all") {
-      // Si selectedCategory coincide con subcategoryName → solo esa subcategoría
-      // Si coincide con categoryName → todos los productos de esa categoría padre (con y sin sub)
       result = result.filter(
         (p) =>
           p.subcategoryName === selectedCategory ||
@@ -162,6 +113,7 @@ export default function Catalog() {
       );
     }
 
+    // Filtrar por búsqueda
     if (q) {
       result = result.filter(
         (p) =>
@@ -172,44 +124,40 @@ export default function Catalog() {
       );
     }
 
+    // Ordenar según la opción seleccionada
+    const sortOption = SORT_OPTIONS.find(opt => opt.value === sort) || SORT_OPTIONS[0];
+    
+    result.sort((a, b) => {
+      const field = sortOption.field;
+      const direction = sortOption.direction;
+      
+      let aValue = a[field];
+      let bValue = b[field];
+      
+      // Manejar campos especiales
+      if (field === "createdAt") {
+        // Convertir timestamps de Firestore a milisegundos (con fallback a Date.now() para productos recién creados)
+        aValue = aValue?.toMillis ? aValue.toMillis() : (aValue?.seconds ? aValue.seconds * 1000 : Date.now());
+        bValue = bValue?.toMillis ? bValue.toMillis() : (bValue?.seconds ? bValue.seconds * 1000 : Date.now());
+      } else if (field === "name") {
+        // Comparación alfabética case-insensitive
+        aValue = (aValue || "").toLowerCase();
+        bValue = (bValue || "").toLowerCase();
+      }
+      
+      // Comparación
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+
     return result;
-  }, [allProducts, search, selectedCategory]);
+  }, [allProducts, search, selectedCategory, sort]);
 
-  // Funciones de navegación de página
-  const handleNextPage = () => {
-    if (hasNextPage) {
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
-      loadProducts(nextPage, false);
-      
-      // Scroll suave al inicio
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      const prevPage = currentPage - 1;
-      setCurrentPage(prevPage);
-      loadProducts(prevPage, false);
-      
-      // Scroll suave al inicio
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // Calcular información de paginación
-  // Si hay filtros activos (búsqueda o categoría), mostramos los filtrados
-  // Si no hay filtros, mostramos la paginación normal
+  // Información para mostrar
+  const displayProducts = filtered;
+  const displayTotal = filtered.length;
   const hasActiveFilters = search.trim() !== "" || selectedCategory !== "all";
-  const displayProducts = hasActiveFilters ? filtered : allProducts;
-  const displayTotal = hasActiveFilters ? filtered.length : totalProducts;
-  
-  const startIndex = hasActiveFilters ? 1 : (currentPage - 1) * PAGE_SIZE + 1;
-  const endIndex = hasActiveFilters ? filtered.length : Math.min(currentPage * PAGE_SIZE, displayTotal);
-  
-  // Solo mostrar paginación si no hay filtros activos Y hay más de 30 productos
-  const showPagination = !hasActiveFilters && displayTotal > PAGE_SIZE;
 
   const quickviewId = searchParams.get("quickview");
   const quickviewProduct = useMemo(() => {
@@ -421,52 +369,11 @@ export default function Catalog() {
 
         {/* Product grid */}
         {!loading && displayProducts.length > 0 && (
-          <>
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {displayProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-
-            {/* Pagination Controls - Solo se muestra si hay más de 30 productos */}
-            {showPagination && (
-              <div className="mt-8 flex items-center justify-center gap-2 sm:gap-4">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
-                    currentPage === 1
-                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                      : "bg-white text-gray-700 shadow-sm ring-1 ring-border hover:bg-primary hover:text-white hover:ring-primary"
-                  }`}
-                  aria-label="Página anterior"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Anterior</span>
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <span className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm">
-                    Página {currentPage}
-                  </span>
-                </div>
-
-                <button
-                  onClick={handleNextPage}
-                  disabled={!hasNextPage}
-                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
-                    !hasNextPage
-                      ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                      : "bg-white text-gray-700 shadow-sm ring-1 ring-border hover:bg-primary hover:text-white hover:ring-primary"
-                  }`}
-                  aria-label="Página siguiente"
-                >
-                  <span className="hidden sm:inline">Siguiente</span>
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {displayProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         )}
 
         {/* Quick View Modal */}
