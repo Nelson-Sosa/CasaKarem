@@ -67,7 +67,7 @@ const FooterAccordion = ({ title, children, defaultOpen = false }) => {
     <div className="border-b border-[#B88B35]/20 md:border-none">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between py-3 md:cursor-default md:py-0"
+        className="flex w-full items-center justify-between py-2.5 md:py-3 md:cursor-default md:py-0"
       >
         <div className="flex flex-col items-start gap-1.5">
           <h3 className="text-sm font-bold uppercase tracking-wider text-[#9C7428]">
@@ -80,7 +80,7 @@ const FooterAccordion = ({ title, children, defaultOpen = false }) => {
         </div>
       </button>
       
-      <div className={`overflow-hidden transition-all duration-300 md:max-h-none md:!block ${isOpen ? 'max-h-96 pb-3' : 'max-h-0'}`}>
+      <div className={`overflow-hidden transition-all duration-300 md:max-h-none md:!block ${isOpen ? 'max-h-96 pb-2.5 md:pb-3' : 'max-h-0'}`}>
         <div className="md:pt-4">
           {children}
         </div>
@@ -153,11 +153,11 @@ export default function Footer() {
       <div className="h-[3px] w-full bg-gradient-to-r from-[#8A641E] via-[#C9A048] to-[#8A641E]" />
 
       {/* Top Main Section */}
-      <div className="relative z-10 mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:gap-12">
+      <div className="relative z-10 mx-auto max-w-[1600px] px-4 py-5 sm:px-6 md:py-8 lg:px-8 lg:py-10">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 lg:gap-12">
           
           {/* 1. Brand & Socials */}
-          <div className="flex flex-col items-center text-center md:items-start md:text-left gap-5 md:gap-6 md:col-span-1">
+          <div className="flex flex-col items-center text-center md:items-start md:text-left gap-4 md:gap-6 md:col-span-1">
             <div className="flex flex-col items-center md:items-start gap-1.5">
               <Link
                 to="/catalogo"
@@ -174,13 +174,13 @@ export default function Footer() {
                 </span>
               </div>
 
-              <p className="mt-2 text-sm text-gray-500 max-w-xs font-normal">
+              <p className="mt-1.5 text-xs sm:text-sm text-gray-500 max-w-xs font-normal">
                 Tecnología, productos y soluciones para vos.
               </p>
             </div>
             
             {/* Social Buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 md:gap-3">
 
               {/* Facebook */}
               <motion.a
@@ -189,7 +189,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 aria-label="Facebook"
                 style={{ backgroundColor: "#1877F2" }}
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2 md:p-2.5 text-white shadow-md overflow-hidden"
                 whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #1877F288" }}
                 whileTap={{ scale: 0.93 }}
                 animate={{ boxShadow: ["0 0 0px 0px #1877F200", "0 0 8px 2px #1877F244", "0 0 0px 0px #1877F200"] }}
@@ -205,7 +205,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 style={{ backgroundColor: "#25D366" }}
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2 md:p-2.5 text-white shadow-md overflow-hidden"
                 whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #25D36688" }}
                 whileTap={{ scale: 0.93 }}
                 animate={{ boxShadow: ["0 0 0px 0px #25D36600", "0 0 8px 2px #25D36644", "0 0 0px 0px #25D36600"] }}
@@ -220,7 +220,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2 md:p-2.5 text-white shadow-md overflow-hidden"
                 style={{ background: "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)" }}
                 whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #e6683c88", rotate: 8 }}
                 whileTap={{ scale: 0.93 }}
@@ -236,7 +236,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="relative flex items-center justify-center rounded-full p-2.5 text-white shadow-md overflow-hidden"
+                className="relative flex items-center justify-center rounded-full p-2 md:p-2.5 text-white shadow-md overflow-hidden"
                 style={{ background: "#010101" }}
                 whileHover={{ scale: 1.18, boxShadow: "0 0 10px 3px #69C9D0aa, 0 0 18px 5px #EE1D5244" }}
                 whileTap={{ scale: 0.93 }}
@@ -253,7 +253,7 @@ export default function Footer() {
 
           {/* 2. Tienda */}
           <FooterAccordion title="Tienda" defaultOpen={true}>
-            <ul className="grid grid-cols-2 gap-y-3 gap-x-2 md:flex md:flex-col md:gap-3">
+            <ul className="grid grid-cols-2 gap-y-2.5 gap-x-2 md:flex md:flex-col md:gap-3">
               <li>
                 <Link
                   to="/catalogo"
@@ -295,7 +295,7 @@ export default function Footer() {
 
           {/* 3. Atención al Cliente */}
           <FooterAccordion title="Atención al cliente">
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2.5 md:gap-3">
               <li>
                 <a
                   href="https://wa.me/"
@@ -322,7 +322,7 @@ export default function Footer() {
 
           {/* 4. Información */}
           <FooterAccordion title="Información">
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2.5 md:gap-3">
               <li>
                 <button
                   type="button"
@@ -350,16 +350,16 @@ export default function Footer() {
         </div>
 
         {/* Mobile Info Badges */}
-        <div className="mt-8 grid grid-cols-1 gap-3 md:hidden">
-           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
-              <ShieldCheck className="text-[#9C7428] shrink-0" size={20} />
+        <div className="mt-6 grid grid-cols-2 gap-2.5 md:hidden">
+           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3 shadow-sm">
+              <ShieldCheck className="text-[#9C7428] shrink-0" size={18} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-gray-800">Compra 100% segura</p>
                 <p className="text-xs text-gray-500">Protegemos tus datos</p>
               </div>
            </div>
-           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3.5 shadow-sm">
-              <Truck className="text-[#9C7428] shrink-0" size={20} />
+           <div className="flex items-center gap-3 rounded-xl bg-[#FCF9F2] border border-[#B88B35]/30 p-3 shadow-sm">
+              <Truck className="text-[#9C7428] shrink-0" size={18} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-gray-800">Envíos a todo el país</p>
                 <p className="text-xs text-gray-500">Rápidos y confiables</p>
@@ -370,10 +370,10 @@ export default function Footer() {
 
       {/* Bottom Bar — Separada con línea dorada sutil sobre fondo blanco */}
       <div className="relative z-10 border-t border-[#B88B35]/25 bg-white">
-        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 px-4 py-5 md:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 px-4 py-3.5 md:py-5 md:flex-row sm:px-6 lg:px-8">
           
           <div className="text-center md:text-left">
-            <p className="text-sm text-gray-600 font-normal">
+            <p className="text-xs sm:text-sm text-gray-600 font-normal">
               &copy; {new Date().getFullYear()} <span className="font-semibold text-[#9C7428]">{BRAND.name}</span>. Todos los derechos reservados.
             </p>
           </div>
