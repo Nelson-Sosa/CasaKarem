@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, SlidersHorizontal, X, Package, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, Package, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { getActiveProductsPaginated, countActiveProducts } from "../../services/publicProductService";
 import ProductCard from "../../components/public/ProductCard";
@@ -227,63 +227,72 @@ export default function Catalog() {
 
       {/* Catálogo Completo */}
       <div id="catalogo-completo" className="scroll-mt-32 space-y-4 bg-white sm:space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
-            Catálogo de productos
-          </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Explorá todos nuestros productos disponibles
-          </p>
-        </div>
-
-        {/* Filter bar (no sticky - desaparece al hacer scroll) */}
-        <div className="bg-white pb-3 pt-2">
-          <div className="flex items-center justify-between gap-4">
-            {/* Resultados info */}
-            <div className="text-xs text-gray-500 hidden sm:block">
-              {displayTotal > 0 ? (
-                hasActiveFilters ? (
-                  <>
-                    Mostrando <span className="font-semibold text-gray-800">{displayTotal}</span> {displayTotal === 1 ? 'resultado' : 'resultados'}
-                  </>
-                ) : (
-                  <>
-                    Mostrando <span className="font-semibold text-gray-800">{startIndex}–{endIndex}</span> de{" "}
-                    <span className="font-semibold text-gray-800">{displayTotal}</span> resultados
-                  </>
-                )
-              ) : (
-                <span>No hay resultados</span>
-              )}
+        
+        {/* Cabecera Boutique Minimalista */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pb-4 border-b border-gray-100">
+          
+          {/* Lado izquierdo: Barrita dorada + Título + Píldora + Subtítulo */}
+          <div className="flex items-start gap-3">
+            {/* Barrita vertical dorada */}
+            <div className="h-8 w-1 shrink-0 bg-gradient-to-b from-[#B88B35] to-[#8A641E] rounded-full mt-0.5" />
+            
+            <div>
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2 className="text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl">
+                  Catálogo de productos
+                </h2>
+                
+                {/* Indicador exacto: Punto verde + número en negrita + productos */}
+                {displayTotal > 0 && (
+                  <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm select-none">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                    <span className="font-bold text-gray-900">{displayTotal}</span>
+                    <span className="font-normal text-gray-500">{displayTotal === 1 ? "producto" : "productos"}</span>
+                  </div>
+                )}
+              </div>
+              
+              <p className="mt-1 text-xs sm:text-sm text-gray-500 font-normal">
+                Explorá todos nuestros productos disponibles
+              </p>
             </div>
+          </div>
 
-              {/* Botón Ordenar */}
-              <div className="shrink-0 flex items-center gap-2">
-                <button
-                  onClick={() => setShowFilters(true)}
-                  className="flex items-center justify-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm ring-1 ring-border transition-colors hover:bg-gray-50 hover:text-gray-900 lg:hidden"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  <span>Filtros</span>
-                </button>
+          {/* Lado derecho: Botón mobile Filtros / Selector desktop Ordenar por */}
+          <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+            {/* Mobile: botón filtros */}
+            <button
+              onClick={() => setShowFilters(true)}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-xs ring-1 ring-border transition-all hover:border-[#B88B35]/50 hover:bg-[#FCF9F2]/50 hover:text-gray-900 lg:hidden"
+            >
+              <SlidersHorizontal className="h-4 w-4 text-[#8F6820]" />
+              <span>Filtros y orden</span>
+            </button>
 
-                <div className="hidden items-center gap-2 lg:flex">
-                  <span className="text-sm font-medium text-gray-500">Ordenar por:</span>
-                  <select
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                    className="rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none transition-all hover:bg-gray-50 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  >
-                    {SORT_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
+            {/* Desktop: selector Ordenar por con ícono elegante */}
+            <div className="hidden items-center gap-2 lg:flex">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Ordenar por:
+              </span>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[#8F6820]">
+                  <ArrowUpDown className="h-3.5 w-3.5" />
                 </div>
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="rounded-xl border border-gray-200 bg-white py-2 pl-8 pr-8 text-sm font-medium text-gray-700 shadow-xs outline-none transition-all hover:border-[#B88B35]/60 hover:bg-[#FCF9F2]/30 focus:border-[#B88B35] focus:ring-2 focus:ring-[#B88B35]/15 cursor-pointer"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
+        </div>
 
         {/* Bottom Sheet para Filtros y Orden (Mobile) */}
         <BottomSheet 

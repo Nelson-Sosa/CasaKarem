@@ -202,7 +202,7 @@ export default function ProductPublicDetail() {
       </nav>
 
       {/* ── Main grid: Image + Info ──────────────────────────────────── */}
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,440px)_1fr]">
+      <div className="grid gap-5 lg:gap-6 lg:grid-cols-[minmax(0,360px)_1fr] xl:grid-cols-[minmax(0,400px)_1fr]">
 
         {/* LEFT — Image gallery */}
         <div className="mx-auto w-full max-w-sm sm:max-w-md lg:mx-0 lg:max-w-none">
@@ -239,14 +239,14 @@ export default function ProductPublicDetail() {
 
           {/* Thumbnails */}
           {images.length > 1 && (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1">
               {images.map((img, i) => {
                 const thumbUrl = getThumbImage(img, 64);
                 return (
                   <button
                     key={i}
                     onClick={() => setSelectedImage(i)}
-                    className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all ${
+                    className={`h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-xl border-2 bg-white transition-all ${
                       i === selectedImage
                         ? "border-primary shadow-md"
                         : "border-transparent opacity-60 hover:opacity-100"
@@ -269,7 +269,7 @@ export default function ProductPublicDetail() {
 
         {/* RIGHT — Product info */}
         <div className="flex flex-col">
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-border">
+          <div className="rounded-2xl bg-white p-4.5 sm:p-5 lg:p-5 shadow-sm ring-1 ring-border">
 
             {/* Category + availability */}
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -281,7 +281,7 @@ export default function ProductPublicDetail() {
                   {product.categoryName}
                 </button>
               )}
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                 isOutOfStock ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"
               }`}>
                 {isOutOfStock
@@ -292,34 +292,34 @@ export default function ProductPublicDetail() {
             </div>
 
             {/* Product name */}
-            <h1 className="mt-2 text-xl font-bold leading-snug text-gray-900 sm:text-2xl lg:text-[1.6rem]">
+            <h1 className="mt-1.5 text-lg font-bold leading-snug text-gray-900 sm:text-xl lg:text-[1.35rem]">
               {product.name}
             </h1>
 
             {/* Price */}
-            <p className="mt-3 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            <p className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl tracking-tight">
               {formatCurrency(product.salePrice)}
             </p>
 
             {/* Badges */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-white shadow-sm">
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
                 <Truck className="h-3.5 w-3.5" />
                 Envíos a todo el Paraguay
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Garantía incluida
               </span>
             </div>
 
-            <div className="my-5 border-t border-gray-100" />
+            <div className="my-3.5 border-t border-gray-100" />
 
             {/* ── Especificaciones Técnicas — bullet list (Compulandia style) ── */}
             {specs.length > 0 && (
-              <ul className="space-y-1.5">
+              <ul className="space-y-1">
                 {specs.map((spec, i) => (
-                  <li key={spec.id || i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <li key={spec.id || i} className="flex items-start gap-2 text-xs sm:text-[13px] text-gray-700">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                     <span>
                       <span className="font-semibold text-gray-900">{spec.name}:</span>{" "}
@@ -332,17 +332,17 @@ export default function ProductPublicDetail() {
 
             {/* ── Variantes — pill selectors ── */}
             {attributes.length > 0 && (
-              <div className={`space-y-4 ${specs.length > 0 ? "mt-5 border-t border-gray-100 pt-5" : ""}`}>
+              <div className={`space-y-3 ${specs.length > 0 ? "mt-3.5 border-t border-gray-100 pt-3.5" : ""}`}>
                 {attributes.map((attr, i) => {
                   const values = (attr.values || []).filter((v) => v?.trim());
                   return (
                     <div key={i}>
-                      <p className="mb-2 text-sm font-semibold text-gray-800">{attr.name}</p>
+                      <p className="mb-1.5 text-xs sm:text-sm font-semibold text-gray-800">{attr.name}</p>
                       <div className="flex flex-wrap gap-2">
                         {values.map((v, j) => (
                           <span
                             key={j}
-                            className="rounded-xl border-2 border-border bg-white px-4 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-primary hover:text-primary"
+                            className="rounded-xl border-2 border-border bg-white px-3 py-1 text-xs sm:text-sm font-medium text-gray-700 shadow-sm transition-colors hover:border-primary hover:text-primary"
                           >
                             {v}
                           </span>
@@ -354,7 +354,7 @@ export default function ProductPublicDetail() {
               </div>
             )}
 
-            <div className="my-5 border-t border-gray-100" />
+            <div className="my-3.5 border-t border-gray-100" />
 
             {/* ── CTA Buttons ── */}
             <div className="space-y-3">
