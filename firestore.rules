@@ -93,6 +93,16 @@ service cloud.firestore {
         && request.resource.data.items.size() > 0
         && request.resource.data.total is number
         && request.resource.data.total >= 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.subtotal >= 0
+        && (!('createdBy' in request.resource.data) || request.resource.data.createdBy is string)
+        && (!('origin' in request.resource.data) || request.resource.data.origin is string)
+        && (!('orderCode' in request.resource.data) || request.resource.data.orderCode is string)
+        && (!('clientName' in request.resource.data) || request.resource.data.clientName is string || request.resource.data.clientName == null)
+        && (!('notes' in request.resource.data) || request.resource.data.notes is string || request.resource.data.notes == null)
+        && (!('paymentMethod' in request.resource.data) || request.resource.data.paymentMethod == null || request.resource.data.paymentMethod is string)
+        && (!('discount' in request.resource.data) || request.resource.data.discount is number)
+        && (!('discountValue' in request.resource.data) || request.resource.data.discountValue is number)
       );
       allow update: if isAdmin();
       // Solo se permite eliminar pedidos explícitamente cancelados
