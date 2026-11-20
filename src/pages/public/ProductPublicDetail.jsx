@@ -19,6 +19,7 @@ import { getDetailImage, getThumbImage, getZoomImage } from "../../lib/cloudinar
 import WhatsAppButton from "../../components/public/WhatsAppButton";
 import FavoriteButton from "../../components/public/FavoriteButton";
 import AddToCartButton from "../../components/public/AddToCartButton";
+import PaymentMethods from "../../components/public/PaymentMethods";
 
 // ---------------------------------------------------------------------------
 // Lightbox — Zoom modal sin librerías externas
@@ -423,6 +424,9 @@ export default function ProductPublicDetail() {
           </div>
         </div>
       )}
+
+      {/* ── Métodos de Pago ── */}
+      <PaymentMethods />
 
       {/* Lightbox */}
       {lightboxOpen && images.length > 0 && (
