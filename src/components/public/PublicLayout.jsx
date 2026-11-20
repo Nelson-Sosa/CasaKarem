@@ -82,18 +82,19 @@ export default function PublicLayout() {
     : "U";
   
   return (
-    <div className="min-h-screen bg-background-secondary">
-      <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md">
-        <div className="mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-3 md:px-6 lg:px-8">
+    <div className="min-h-screen bg-background-secondary w-full max-w-full overflow-x-hidden">
+      <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md w-full">
+        <div className="mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-2 sm:px-3 md:px-6 lg:px-8 w-full">
           
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 min-w-0">
             <button
               onClick={() => setIsMenuOpen(true)}
               className="lg:hidden flex h-8 w-8 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-xl text-gray-700 transition-colors hover:bg-gray-100"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
             </button>
-            <BrandLogo size="md" goldText />
+            <BrandLogo size="sm" goldText className="sm:hidden" />
+            <BrandLogo size="md" goldText className="hidden sm:block" />
           </div>
 
           {/* Buscador central prominente (solo Desktop) */}
@@ -119,7 +120,7 @@ export default function PublicLayout() {
             </form>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Link 
               to="/catalogo/favoritos"
               className={`relative flex h-8 w-8 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${isWishlistRoute ? 'bg-red-50 text-danger ring-1 ring-danger/20' : 'bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-danger'}`}
@@ -221,26 +222,26 @@ export default function PublicLayout() {
             ) : (
               <Link
                 to="/login"
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
                 <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" strokeWidth={1.8} />
-                <span>Cuenta</span>
+                <span className="hidden sm:inline">Cuenta</span>
               </Link>
             )}
           </div>
         </div>
 
         {/* Buscador móvil (solo visible en pantallas pequeñas) */}
-        <div className="mx-auto px-3 pb-3 md:px-6 lg:hidden">
+        <div className="mx-auto px-2 sm:px-3 md:px-6 pb-3 lg:hidden w-full max-w-full">
           <form onSubmit={handleSearchSubmit} className="relative flex w-full items-stretch overflow-hidden rounded-lg border-2 border-[#E30613] bg-white shadow-sm">
-            <div className="relative flex flex-1 items-center">
+            <div className="relative flex flex-1 min-w-0 items-center">
               <Search className="pointer-events-none absolute left-3.5 h-[17px] w-[17px] text-gray-400" strokeWidth={2} />
               <input
                 type="text"
                 placeholder="Buscar productos"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="w-full bg-white py-2 pl-10 pr-3 text-[14px] text-gray-800 placeholder-gray-400 outline-none"
+                className="w-full min-w-0 bg-white py-2 pl-10 pr-3 text-[14px] text-gray-800 placeholder-gray-400 outline-none"
               />
             </div>
             <button
@@ -261,7 +262,7 @@ export default function PublicLayout() {
         onSelectCategory={handleSelectCategory}
       />
 
-      <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 py-6 sm:px-6 lg:px-8 lg:py-8 w-full max-w-full overflow-x-hidden">
         <Outlet />
       </main>
 

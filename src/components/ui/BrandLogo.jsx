@@ -43,10 +43,10 @@ export default function BrandLogo({
     : size === "footer"
     ? "w-16 h-16 sm:w-[70px] sm:h-[70px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md"
     : size === "sm"
-    ? "w-10 h-10 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
+    ? "w-9 h-9 sm:w-11 sm:h-11 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
     : size === "sidebar-collapsed"
     ? "w-11 h-11 shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-sm"
-    : "w-12 h-12 sm:w-[58px] sm:h-[58px] lg:w-[64px] lg:h-[64px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md";
+    : "w-10 h-10 sm:w-12 sm:h-12 lg:w-[64px] lg:h-[64px] shrink-0 select-none transition-transform duration-300 group-hover:scale-105 drop-shadow-md";
 
   const emblem = (
     <div className={emblemContainerClasses}>
@@ -63,19 +63,19 @@ export default function BrandLogo({
   );
 
   const content = (
-    <div className={`inline-flex items-center gap-3 sm:gap-3.5 shrink-0 select-none ${className}`}>
+    <div className={`inline-flex items-center gap-2 sm:gap-3 shrink-0 select-none min-w-0 ${className}`}>
       {!noIcon && emblem}
 
       {!isOnlyIcon && (
-        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap">
+        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap min-w-0 flex-shrink">
           <span
             className={[
               "uppercase transition-all duration-300 select-none tracking-[0.16em] [text-rendering:optimizeLegibility]",
               size === "footer"
                 ? "text-xl sm:text-2xl font-bold"
                 : size === "sm"
-                ? "text-base sm:text-lg font-bold"
-                : "text-xl sm:text-2xl font-extrabold",
+                ? "text-sm sm:text-lg font-bold"
+                : "text-base sm:text-xl lg:text-2xl font-extrabold",
               goldText
                 ? "bg-gradient-to-r from-[#8C6010] via-[#D4AF37] to-[#8C6010] bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(140,96,16,0.18)] group-hover:brightness-110"
                 : dark
