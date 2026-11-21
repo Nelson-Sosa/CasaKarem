@@ -64,7 +64,7 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
               <span>Categorías</span>
               {categoriesGrouped.length > 0 && (
                 <ChevronDown
-                  className={`h-3.5 w-3.5 text-[#E30613] transition-transform duration-200 ${
+                  className={`hidden lg:block h-3.5 w-3.5 text-[#E30613] transition-transform duration-200 ${
                     hoveredItem === "all" ? "rotate-180" : ""
                   }`}
                 />
@@ -98,7 +98,7 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
                     <span>{item.label}</span>
                     {hasChildren && (
                       <ChevronDown
-                        className={`h-3 w-3 text-white/80 transition-transform duration-200 ${
+                        className={`hidden lg:block h-3 w-3 text-white/80 transition-transform duration-200 ${
                           isHovered ? "rotate-180 text-white" : ""
                         }`}
                       />
@@ -112,7 +112,7 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
         </div>
       </div>
 
-      {/* Dropdown renderizado con posición fija para evitar recortes */}
+      {/* Dropdown renderizado con posición fija para evitar recortes - SOLO DESKTOP */}
       <AnimatePresence>
         {hoveredNavItem && hoveredNavItem.subcategories.length > 0 && (
           <motion.div
@@ -122,7 +122,7 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
             exit={{ opacity: 0, y: 6, scale: 0.98 }}
             transition={{ duration: 0.15 }}
             style={{ position: "fixed", left: dropdownPos.left, top: dropdownPos.top }}
-            className="z-[9999] min-w-[210px] max-h-[380px] overflow-y-auto rounded-xl border border-slate-200 bg-white py-1.5 shadow-2xl"
+            className="hidden lg:block z-[9999] min-w-[210px] max-h-[380px] overflow-y-auto rounded-xl border border-slate-200 bg-white py-1.5 shadow-2xl"
             onMouseEnter={() => {
               clearTimeout(hoverTimeout.current);
               setHoveredItem(hoveredNavItem.id);
