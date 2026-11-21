@@ -13,12 +13,21 @@
     <title>Casa Karem | Catálogo Online</title>
 
     <!--
-      Preconnect a Cloudinary CDN:
+      Preconnect a Cloudinary CDN y Firebase:
       Establece la conexión TCP + TLS antes de que el browser descubra
-      las URLs de imagen, ahorrando 100-300ms en la primera carga.
+      las URLs de imagen y datos, ahorrando 100-300ms en la primera carga.
     -->
+    <!-- Cloudinary CDN (imágenes de productos) -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+    
+    <!-- Firebase Firestore (base de datos de productos) -->
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+    
+    <!-- Firebase Auth (autenticación de usuarios) -->
+    <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
   </head>
   <body>
     <div id="root"></div>
