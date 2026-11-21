@@ -154,7 +154,7 @@ export default function Footer() {
 
       {/* Top Main Section */}
       <div className="relative z-10 mx-auto max-w-[1600px] px-4 py-5 sm:px-6 md:py-8 lg:px-8 lg:py-10">
-        <div className="grid grid-cols-1 gap-4 md:gap-6 lg:gap-12">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6 lg:gap-12">
           
           {/* 1. Brand & Socials */}
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-4 md:gap-6 md:col-span-1">
