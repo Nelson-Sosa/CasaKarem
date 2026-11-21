@@ -19,6 +19,8 @@ import {
   RefreshCw,
   CheckCircle2,
   XCircle,
+  Pencil,
+  Check,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import * as pedidoService from "../../services/pedidoService";
@@ -117,7 +119,41 @@ function PaymentBadge({ method }) {
 // ─────────────────────────────────────────────────────────────
 //  Detail Modal
 // ─────────────────────────────────────────────────────────────
-function PedidoDetailModal({ pedido, onClose, onDelete, deleting }) {
+function PedidoDetailModal({ pedido, onClose, onDelete, deleting, onUpdate }) {
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleStartEdit = () => {
+    setEditedName(pedido.clientName || "");
+    setIsEditingName(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingName(false);
+    setEditedName("");
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editedName.trim()) {
+      toast.error("El nombre del cliente no puede estar vacío");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await pedidoService.updatePedidoClientName(pedido.id, editedName.trim());
+      toast.success("Nombre del cliente actualizado");
+      setIsEditingName(false);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error("Error updating client name:", error);
+      toast.error("Error al actualizar el nombre del cliente");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   if (!pedido) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -145,7 +181,45 @@ function PedidoDetailModal({ pedido, onClose, onDelete, deleting }) {
             </div>
             <div>
               <p className="text-gray-500">Cliente</p>
-              <p className="font-medium text-gray-800">{pedido.clientName || "Cliente general"}</p>
+              {isEditingName ? (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm focus:border-primary focus:outline-none"
+                    autoFocus
+                    disabled={isSaving}
+                  />
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={isSaving}
+                    className="rounded p-1 text-green-600 hover:bg-green-50 disabled:opacity-50"
+                    title="Guardar"
+                  >
+                    <Check className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    disabled={isSaving}
+                    className="rounded p-1 text-gray-400 hover:bg-gray-100 disabled:opacity-50"
+                    title="Cancelar"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 group">
+                  <p className="font-medium text-gray-800">{pedido.clientName || "Cliente general"}</p>
+                  <button
+                    onClick={handleStartEdit}
+                    className="rounded p-0.5 text-gray-400 opacity-0 group-hover:opacity-100 hover:bg-gray-100 hover:text-gray-600 transition-opacity"
+                    title="Editar nombre"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
             {pedido.saleOrderId && (
               <div>
@@ -1252,6 +1326,7 @@ export default function Pedidos() {
           onClose={() => setSelectedPedido(null)}
           onDelete={handleDelete}
           deleting={deleting}
+          onUpdate={fetchPedidos}
         />
       )}
       {deliverTarget && (

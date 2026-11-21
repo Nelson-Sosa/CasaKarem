@@ -517,3 +517,31 @@ export async function getPedidosSummary() {
     total: active.length,
   };
 }
+
+// ─────────────────────────────────────────────────────────────
+//  UPDATE CLIENT NAME
+//  Allows admin to update the client name for WhatsApp orders
+// ─────────────────────────────────────────────────────────────
+export async function updatePedidoClientName(pedidoId, newClientName) {
+  if (!pedidoId) throw new Error("PEDIDO_ID_REQUIRED");
+  if (!newClientName || newClientName.trim() === "") {
+    throw new Error("CLIENT_NAME_REQUIRED");
+  }
+
+  const pedidoRef = doc(db, PEDIDOS_COLLECTION, pedidoId);
+  
+  return runTransaction(db, async (transaction) => {
+    const pedidoSnap = await transaction.get(pedidoRef);
+    
+    if (!pedidoSnap.exists()) {
+      throw new Error("PEDIDO_NOT_FOUND");
+    }
+
+    transaction.update(pedidoRef, {
+      clientName: newClientName.trim(),
+      updatedAt: serverTimestamp(),
+    });
+
+    return { success: true };
+  });
+}
