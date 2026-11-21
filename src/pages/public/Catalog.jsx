@@ -280,19 +280,20 @@ export default function Catalog() {
             
             <div>
               <h3 className="mb-3 text-sm font-semibold text-gray-800">Categorías</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2">
                 <button
                   onClick={() => {
                     handleSelectCategory("all");
                     setShowFilters(false);
                   }}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                     selectedCategory === "all"
                       ? "bg-[#E30613] text-white"
                       : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-red-50 hover:text-[#E30613]"
                   }`}
                 >
                   Todas
+                  {selectedCategory === "all" && <div className="h-2 w-2 rounded-full bg-white" />}
                 </button>
                 {categories.map((cat) => (
                   <button
@@ -301,13 +302,14 @@ export default function Catalog() {
                       handleSelectCategory(cat);
                       setShowFilters(false);
                     }}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                    className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                       selectedCategory === cat
                         ? "bg-[#E30613] text-white"
                         : "bg-gray-50 text-gray-600 ring-1 ring-border hover:bg-red-50 hover:text-[#E30613]"
                     }`}
                   >
                     {cat}
+                    {selectedCategory === cat && <div className="h-2 w-2 rounded-full bg-white" />}
                   </button>
                 ))}
               </div>
