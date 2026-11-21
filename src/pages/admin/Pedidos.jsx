@@ -1326,7 +1326,7 @@ export default function Pedidos() {
           onClose={() => setSelectedPedido(null)}
           onDelete={handleDelete}
           deleting={deleting}
-          onUpdate={fetchPedidos}
+          onUpdate={() => loadPedidos(true)}
         />
       )}
       {deliverTarget && (
