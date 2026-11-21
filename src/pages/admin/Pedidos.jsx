@@ -145,7 +145,7 @@ function PedidoDetailModal({ pedido, onClose, onDelete, deleting, onUpdate }) {
       await pedidoService.updatePedidoClientName(pedido.id, editedName.trim());
       toast.success("Nombre del cliente actualizado");
       setIsEditingName(false);
-      if (onUpdate) onUpdate();
+      if (onUpdate) onUpdate(editedName.trim());
     } catch (error) {
       console.error("Error updating client name:", error);
       toast.error("Error al actualizar el nombre del cliente");
@@ -1326,7 +1326,15 @@ export default function Pedidos() {
           onClose={() => setSelectedPedido(null)}
           onDelete={handleDelete}
           deleting={deleting}
-          onUpdate={() => loadPedidos(true)}
+          onUpdate={(newClientName) => {
+            // Actualizar el pedido seleccionado inmediatamente para reflejar el cambio en el modal
+            setSelectedPedido(prev => ({
+              ...prev,
+              clientName: newClientName
+            }));
+            // Recargar la lista completa
+            loadPedidos(true);
+          }}
         />
       )}
       {deliverTarget && (
