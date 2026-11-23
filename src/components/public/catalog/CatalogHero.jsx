@@ -106,11 +106,11 @@ export default function CatalogHero() {
       {/* Overlay sutil */}
       <div className="absolute inset-0 bg-black/5 transition-colors duration-300 group-hover:bg-transparent" />
 
-      {/* Botón "COMPRAR AHORA" ROJO - Móvil optimizado (centrado y compacto) / Desktop perfecto */}
+      {/* Botón "COMPRAR AHORA" ROJO - Móvil optimizado / Desktop perfecto y centrado */}
       {currentBanner.hasButton && (
         <div className="absolute inset-0 z-10 pointer-events-none">
           <div 
-            className="absolute pointer-events-auto left-[23.6%] -translate-x-1/2 top-[59%] md:left-[clamp(2rem,6vw,10rem)] md:top-[clamp(15.5rem,68%,18rem)] md:translate-x-0"
+            className="absolute pointer-events-auto left-[23.6%] -translate-x-1/2 top-[59%] md:left-[23.3%] md:top-[61%]"
           >
             <motion.button
               initial={{ opacity: 0, y: 10 }}
