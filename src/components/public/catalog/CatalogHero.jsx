@@ -8,7 +8,7 @@ const BANNERS = [
     id: 1,
     src: "/bannerPerfumesMejorado.jpg",
     alt: "Perfumería de Lujo Casa Karem",
-    objectPosition: "center",
+    objectPositionClass: "object-center",
     hasButton: true,
     category: "Perfumes",
   },
@@ -17,7 +17,7 @@ const BANNERS = [
     src: "/electronica-1280.webp",
     srcSet: "/electronica-640.webp 640w, /electronica-960.webp 960w, /electronica-1280.webp 1280w",
     alt: "Electrónica y Tecnología",
-    objectPosition: "center 28%",
+    objectPositionClass: "object-[68%_center] md:object-[center_28%]",
     hasButton: false,
   },
 ];
@@ -98,8 +98,7 @@ export default function CatalogHero() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          style={{ objectPosition: currentBanner.objectPosition }}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+          className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] ${currentBanner.objectPositionClass}`}
         />
       </AnimatePresence>
 
