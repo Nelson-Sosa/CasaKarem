@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Search, SlidersHorizontal, X, Package, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, X, Package, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { subscribeToActiveProducts } from "../../services/publicProductService";
 import ProductCard from "../../components/public/ProductCard";
@@ -16,6 +16,8 @@ const SORT_OPTIONS = [
   { value: "name", label: "Nombre A-Z", field: "name", direction: "asc" },
 ];
 
+const PRODUCTS_PER_PAGE = 20;
+
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [allProducts, setAllProducts] = useState([]);
@@ -27,6 +29,7 @@ export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all");
   const [sort, setSort] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Referencias para evitar scroll en el montaje inicial
   const prevSearch = useRef(searchParams.get("q") || "");
@@ -66,6 +69,7 @@ export default function Catalog() {
   // Actualizar URL cuando cambia la categoría desde la sidebar
   const handleSelectCategory = (cat) => {
     setSelectedCategory(cat);
+    setCurrentPage(1); // Reset a página 1 al cambiar categoría
     if (cat === "all") {
       searchParams.delete("category");
     } else {
@@ -154,9 +158,57 @@ export default function Catalog() {
     return result;
   }, [allProducts, search, selectedCategory, sort]);
 
-  // Información para mostrar
-  const displayProducts = filtered;
+  // Reset página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory, sort]);
+
+  // Calcular paginación
+  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const displayProducts = filtered.slice(startIndex, endIndex);
   const displayTotal = filtered.length;
+
+  // Generar números de página para mostrar
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5; // Máximo de números de página visibles
+    
+    if (totalPages <= maxPagesToShow) {
+      // Si hay pocas páginas, mostrar todas
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Lógica para mostrar páginas con elipsis
+      if (currentPage <= 3) {
+        // Inicio: 1 2 3 4 ... último
+        pages.push(1, 2, 3, 4, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        // Final: 1 ... antepenúltimo penúltimo último
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        // Medio: 1 ... actual-1 actual actual+1 ... último
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    
+    // Scroll suave al inicio del catálogo
+    setTimeout(() => {
+      const catalogSection = document.getElementById("catalogo-completo");
+      if (catalogSection) {
+        catalogSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+  };
   const hasActiveFilters = search.trim() !== "" || selectedCategory !== "all";
 
   const quickviewId = searchParams.get("quickview");
@@ -322,6 +374,7 @@ export default function Catalog() {
                   setSearch("");
                   searchParams.delete("q");
                   handleSelectCategory("all");
+                  setCurrentPage(1);
                 }}
                 className="mt-6 inline-flex items-center gap-1.5 rounded-xl bg-[#E30613] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#c70510] active:scale-95"
               >
@@ -334,11 +387,79 @@ export default function Catalog() {
 
         {/* Product grid */}
         {!loading && displayProducts.length > 0 && (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {displayProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex flex-col items-center gap-4 sm:mt-10">
+                {/* Información de rango actual */}
+                <p className="text-sm text-gray-600">
+                  Mostrando <span className="font-semibold text-gray-900">{startIndex + 1}</span> a{" "}
+                  <span className="font-semibold text-gray-900">{Math.min(endIndex, displayTotal)}</span> de{" "}
+                  <span className="font-semibold text-gray-900">{displayTotal}</span> productos
+                </p>
+
+                {/* Controles de paginación */}
+                <div className="flex items-center gap-2">
+                  {/* Botón Anterior */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-[#B88B35]/60 hover:bg-[#FCF9F2]/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
+                    aria-label="Página anterior"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">Anterior</span>
+                  </button>
+
+                  {/* Números de página */}
+                  <div className="flex items-center gap-1">
+                    {getPageNumbers().map((page, index) => {
+                      if (page === '...') {
+                        return (
+                          <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
+                            ...
+                          </span>
+                        );
+                      }
+
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`min-w-[40px] rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                            currentPage === page
+                              ? "bg-[#B88B35] text-white shadow-sm ring-1 ring-[#B88B35]"
+                              : "border border-gray-200 bg-white text-gray-700 hover:border-[#B88B35]/60 hover:bg-[#FCF9F2]/30"
+                          }`}
+                          aria-label={`Ir a página ${page}`}
+                          aria-current={currentPage === page ? "page" : undefined}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Botón Siguiente */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-[#B88B35]/60 hover:bg-[#FCF9F2]/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
+                    aria-label="Página siguiente"
+                  >
+                    <span className="hidden sm:inline">Siguiente</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Quick View Modal */}
