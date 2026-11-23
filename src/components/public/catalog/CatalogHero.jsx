@@ -106,15 +106,17 @@ export default function CatalogHero() {
       {/* Overlay sutil */}
       <div className="absolute inset-0 bg-black/5 transition-colors duration-300 group-hover:bg-transparent" />
 
-      {/* Botón "COMPRAR AHORA" ROJO - Solución definitiva centrado */}
+      {/* Botón "COMPRAR AHORA" ROJO - Responsive: ajustado para móvil, perfecto en desktop */}
       {currentBanner.hasButton && (
         <div className="absolute inset-0 z-10 pointer-events-none">
           {/* Contenedor absoluto con posicionamiento preciso */}
           <div 
             className="absolute pointer-events-auto"
             style={{
-              left: 'calc(clamp(3rem, 10vw, 8rem) + 45px)',
-              top: 'calc(clamp(13rem, 67%, 18rem) + 27px)',
+              // Móvil: más centrado y a la izquierda | Desktop: mantiene posición perfecta
+              left: 'clamp(2.5rem, 6vw, 10rem)',
+              // Móvil: más arriba | Desktop: mantiene posición perfecta  
+              top: 'clamp(12rem, 65%, 18rem)',
               transform: 'translateY(0)',
             }}
           >
@@ -123,7 +125,7 @@ export default function CatalogHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
               onClick={(e) => handleCategoryClick(currentBanner.category, e)}
-              className="rounded-lg bg-[#E30613] px-6 sm:px-7 md:px-8 lg:px-9 py-2.5 sm:py-3 md:py-3.5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
+              className="rounded-lg bg-[#E30613] px-5 py-2 sm:px-6 sm:py-2.5 md:px-8 md:py-3.5 lg:px-9 lg:py-3.5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
             >
               Comprar Ahora
             </motion.button>
