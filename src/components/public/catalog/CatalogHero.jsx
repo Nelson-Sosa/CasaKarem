@@ -82,7 +82,7 @@ export default function CatalogHero() {
   return (
     <div
       onClick={handleScrollToCatalog}
-      className="group relative flex w-full h-[280px] sm:h-[320px] md:h-[400px] lg:h-[480px] xl:h-[520px] cursor-pointer flex-col justify-center overflow-hidden rounded-2xl shadow-sm ring-1 ring-border"
+      className="group relative flex w-full aspect-[16/9] md:aspect-auto md:h-[400px] lg:h-[480px] xl:h-[520px] cursor-pointer flex-col justify-center overflow-hidden rounded-2xl shadow-sm ring-1 ring-border"
     >
       {/* Banners con AnimatePresence para transiciones suaves */}
       <AnimatePresence mode="wait">
@@ -106,26 +106,18 @@ export default function CatalogHero() {
       {/* Overlay sutil */}
       <div className="absolute inset-0 bg-black/5 transition-colors duration-300 group-hover:bg-transparent" />
 
-      {/* Botón "COMPRAR AHORA" ROJO - Responsive: ajustado para móvil, perfecto en desktop */}
+      {/* Botón "COMPRAR AHORA" ROJO - Móvil optimizado (porcentajes) / Desktop perfecto */}
       {currentBanner.hasButton && (
         <div className="absolute inset-0 z-10 pointer-events-none">
-          {/* Contenedor absoluto con posicionamiento preciso */}
           <div 
-            className="absolute pointer-events-auto"
-            style={{
-              // Móvil: más centrado y a la izquierda | Desktop: mantiene posición perfecta
-              left: 'clamp(2.5rem, 6vw, 10rem)',
-              // Móvil: más arriba | Desktop: mantiene posición perfecta  
-              top: 'clamp(12rem, 65%, 18rem)',
-              transform: 'translateY(0)',
-            }}
+            className="absolute pointer-events-auto left-[7%] top-[62%] md:left-[clamp(2rem,6vw,10rem)] md:top-[clamp(15.5rem,68%,18rem)]"
           >
             <motion.button
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
               onClick={(e) => handleCategoryClick(currentBanner.category, e)}
-              className="rounded-lg bg-[#E30613] px-5 py-2 sm:px-6 sm:py-2.5 md:px-8 md:py-3.5 lg:px-9 lg:py-3.5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
+              className="rounded-lg bg-[#E30613] px-3 py-1.5 md:px-8 md:py-3.5 lg:px-9 text-[10px] md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
             >
               Comprar Ahora
             </motion.button>
@@ -136,7 +128,7 @@ export default function CatalogHero() {
       {/* Botones de navegación - Estilo Compulandia */}
       <button
         onClick={goToPrevious}
-        className="absolute left-4 top-1/2 z-20 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+        className="absolute left-4 top-1/2 z-20 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
         aria-label="Banner anterior"
       >
         <ChevronLeft className="h-6 w-6" />
@@ -144,7 +136,7 @@ export default function CatalogHero() {
 
       <button
         onClick={goToNext}
-        className="absolute right-4 top-1/2 z-20 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+        className="absolute right-4 top-1/2 z-20 -translate-y-1/2 hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
         aria-label="Banner siguiente"
       >
         <ChevronRight className="h-6 w-6" />
