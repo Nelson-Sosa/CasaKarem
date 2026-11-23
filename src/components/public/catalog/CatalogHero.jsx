@@ -106,18 +106,18 @@ export default function CatalogHero() {
       {/* Overlay sutil */}
       <div className="absolute inset-0 bg-black/5 transition-colors duration-300 group-hover:bg-transparent" />
 
-      {/* Botón "COMPRAR AHORA" ROJO - Móvil optimizado (porcentajes) / Desktop perfecto */}
+      {/* Botón "COMPRAR AHORA" ROJO - Móvil optimizado (centrado y compacto) / Desktop perfecto */}
       {currentBanner.hasButton && (
         <div className="absolute inset-0 z-10 pointer-events-none">
           <div 
-            className="absolute pointer-events-auto left-[7%] top-[62%] md:left-[clamp(2rem,6vw,10rem)] md:top-[clamp(15.5rem,68%,18rem)]"
+            className="absolute pointer-events-auto left-[23.6%] -translate-x-1/2 top-[59%] md:left-[clamp(2rem,6vw,10rem)] md:top-[clamp(15.5rem,68%,18rem)] md:translate-x-0"
           >
             <motion.button
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
               onClick={(e) => handleCategoryClick(currentBanner.category, e)}
-              className="rounded-lg bg-[#E30613] px-3 py-1.5 md:px-8 md:py-3.5 lg:px-9 text-[10px] md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
+              className="rounded-lg bg-[#E30613] px-2.5 py-1 md:px-8 md:py-3.5 lg:px-9 text-[9px] md:text-base font-bold uppercase tracking-wider text-white shadow-2xl transition-all hover:bg-[#C20510] hover:shadow-[0_10px_40px_rgba(227,6,19,0.5)] hover:scale-[1.03] active:scale-[0.98]"
             >
               Comprar Ahora
             </motion.button>
