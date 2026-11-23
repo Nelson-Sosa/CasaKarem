@@ -84,7 +84,7 @@ export default function PublicLayout() {
   return (
     <div className="min-h-screen bg-background-secondary w-full max-w-full overflow-x-hidden">
       <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md w-full">
-        <div className="mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-2 sm:px-3 md:px-6 lg:px-8 w-full">
+        <div className="relative mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-2 sm:px-3 md:px-6 lg:px-8 w-full">
           
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 min-w-0">
             <button

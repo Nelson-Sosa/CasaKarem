@@ -129,11 +129,11 @@ export default function BrandLogo({
       {!noIcon && emblem}
 
       {!isOnlyIcon && (
-        <div className="flex flex-col leading-none select-none justify-center whitespace-nowrap min-w-0 shrink-0">
+        <div className="flex flex-col items-center text-center md:items-start md:text-left leading-none select-none justify-center whitespace-nowrap min-w-0 shrink-0 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
           {/* Línea 1: CASA KAREM */}
           <span
             className={[
-              "uppercase transition-all duration-300 select-none tracking-[0.14em] sm:tracking-[0.16em] [text-rendering:optimizeLegibility]",
+              "block w-full text-center md:text-left md:w-auto uppercase transition-all duration-300 select-none tracking-[0.14em] sm:tracking-[0.16em] [text-rendering:optimizeLegibility]",
               size === "footer"
                 ? "text-xl sm:text-2xl font-bold"
                 : size === "sm"
@@ -155,7 +155,7 @@ export default function BrandLogo({
             <>
               <span
                 className={[
-                  "uppercase font-bold tracking-[0.12em] sm:tracking-[0.16em] transition-colors mt-[2px] sm:mt-[3px]",
+                  "block w-full text-center md:text-left md:w-auto uppercase font-bold tracking-[0.12em] sm:tracking-[0.16em] transition-colors mt-[2px] sm:mt-[3px]",
                   size === "footer"
                     ? "text-[10px] sm:text-xs"
                     : size === "sm"
