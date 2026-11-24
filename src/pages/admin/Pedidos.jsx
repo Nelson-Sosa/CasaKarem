@@ -745,8 +745,8 @@ export default function Pedidos() {
   const { user } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastDoc, setLastDoc] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [summary, setSummary] = useState(null);
   
@@ -765,7 +765,7 @@ export default function Pedidos() {
   const [deleting, setDeleting] = useState(false);
 
   const loadPedidos = useCallback(
-    async (reset = false, cursor = null) => {
+    async () => {
       setLoading(true);
       try {
         const result = await pedidoService.getPedidos({
@@ -773,17 +773,12 @@ export default function Pedidos() {
           dateFrom: dateFrom ? new Date(dateFrom) : null,
           dateTo: dateTo ? new Date(dateTo + "T23:59:59.999") : null,
           pageSize: PAGE_SIZE,
-          lastDoc: cursor,
+          lastDoc: null, // Siempre cargar desde el inicio
         });
-        if (reset) {
-          setPedidos(result.pedidos);
-        } else {
-          setPedidos((prev) => [...prev, ...result.pedidos]);
-        }
-        setLastDoc(result.lastDoc);
-        setHasMore(result.hasMore);
+        setPedidos(result.pedidos);
+        setTotalCount(result.pedidos.length); // Guardamos el total
       } catch (err) {
-        console.error("Error de Firestore:", err); // Asegura que el link del índice se muestre en consola
+        console.error("Error de Firestore:", err);
         const msg = err?.message || "";
         if (msg.includes("requires an index")) {
           toast.error("Se necesita crear un índice en Firebase. Revisá la consola del navegador.", { duration: 8000 });
@@ -807,10 +802,15 @@ export default function Pedidos() {
     }
   }, []);
 
-  useEffect(() => { loadPedidos(true); }, [loadPedidos]);
+  useEffect(() => { loadPedidos(); }, [loadPedidos]);
   useEffect(() => { loadSummary(); }, [loadSummary]);
 
-  // Búsqueda en cliente (no en Firestore) - por nombre de cliente o ID de pedido
+  // Reset página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, dateFrom, dateTo, searchQuery]);
+
+  // Búsqueda y filtrado en cliente
   const filteredPedidos = useMemo(() => {
     let result = pedidos;
     
@@ -842,8 +842,49 @@ export default function Pedidos() {
     return result;
   }, [pedidos, statusFilter, searchQuery]);
 
+  // Calcular paginación
+  const totalPages = Math.ceil(filteredPedidos.length / PAGE_SIZE);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const paginatedPedidos = filteredPedidos.slice(startIndex, endIndex);
+  
+  // Generar números de página para mostrar
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    
+    // Scroll suave al inicio de la sección
+    setTimeout(() => {
+      const pedidosSection = document.querySelector('[data-pedidos-list]');
+      if (pedidosSection) {
+        pedidosSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
+
   function refresh() {
-    loadPedidos(true);
+    loadPedidos();
     loadSummary();
   }
 
@@ -852,12 +893,7 @@ export default function Pedidos() {
     setDateTo("");
     setSearchQuery("");
     setStatusFilter("all");
-  }
-
-  function handleLoadMore() {
-    if (hasMore && lastDoc) {
-      loadPedidos(false, lastDoc);
-    }
+    setCurrentPage(1);
   }
 
   async function handleStatusChange(pedido, newStatus) {
@@ -1074,7 +1110,7 @@ export default function Pedidos() {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border lg:block">
+      <div className="hidden overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border lg:block" data-pedidos-list>
         {loading && pedidos.length === 0 ? (
           <div className="flex items-center justify-center py-20">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -1086,32 +1122,33 @@ export default function Pedidos() {
             description="Los pedidos que crees aparecerían acá"
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-border bg-gray-50/50">
-                  {["Fecha", "Productos", "Cliente", "Total", "Estado", "Acciones"].map((h) => (
-                    <th key={h} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredPedidos.map((pedido) => {
-                  const isActive = pedido.status === "pending" || pedido.status === "in_progress";
-                  const isPending = pedido.status === "pending";
-                  return (
-                    <tr key={pedido.id} className="transition-colors hover:bg-gray-50/50">
-                      <td className="whitespace-nowrap px-4 py-3 text-gray-600 text-xs">{formatDate(pedido.createdAt)}</td>
-                      <td className="max-w-[180px] truncate px-4 py-3 text-gray-800" title={pedido.items?.map((i) => i.name).join(", ")}>
-                        {productsSummary(pedido.items)}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3 text-gray-600">
-                        {pedido.clientName || <span className="text-gray-400">General</span>}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3 font-semibold text-gray-900">
-                        {formatCurrency(pedido.total)}
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-gray-50/50">
+                    {["Fecha", "Productos", "Cliente", "Total", "Estado", "Acciones"].map((h) => (
+                      <th key={h} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {paginatedPedidos.map((pedido) => {
+                    const isActive = pedido.status === "pending" || pedido.status === "in_progress";
+                    const isPending = pedido.status === "pending";
+                    return (
+                      <tr key={pedido.id} className="transition-colors hover:bg-gray-50/50">
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-600 text-xs">{formatDate(pedido.createdAt)}</td>
+                        <td className="max-w-[180px] truncate px-4 py-3 text-gray-800" title={pedido.items?.map((i) => i.name).join(", ")}>
+                          {productsSummary(pedido.items)}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-gray-600">
+                          {pedido.clientName || <span className="text-gray-400">General</span>}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 font-semibold text-gray-900">
+                          {formatCurrency(pedido.total)}
                       </td>
                       <td className="whitespace-nowrap px-4 py-3">
                         <StatusBadge status={pedido.status} />
@@ -1160,19 +1197,80 @@ export default function Pedidos() {
               </tbody>
             </table>
           </div>
-        )}
 
-        {filteredPedidos.length > 0 && hasMore && (
-          <div className="flex items-center justify-center border-t border-border px-4 py-4">
-            <button onClick={handleLoadMore} className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark">
-              Cargar más pedidos
-            </button>
-          </div>
+            {/* Paginación Desktop */}
+            {totalPages > 1 && (
+              <div className="border-t border-border px-6 py-4">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+                  {/* Información de rango actual */}
+                  <p className="text-sm text-gray-600">
+                    Mostrando <span className="font-semibold text-gray-900">{startIndex + 1}</span> a{" "}
+                    <span className="font-semibold text-gray-900">{Math.min(endIndex, filteredPedidos.length)}</span> de{" "}
+                    <span className="font-semibold text-gray-900">{filteredPedidos.length}</span> pedidos
+                  </p>
+
+                  {/* Controles de paginación */}
+                  <div className="flex items-center gap-2">
+                    {/* Botón Anterior */}
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-primary/60 hover:bg-primary-light/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
+                      aria-label="Página anterior"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      <span className="hidden sm:inline">Anterior</span>
+                    </button>
+
+                    {/* Números de página */}
+                    <div className="flex items-center gap-1">
+                      {getPageNumbers().map((page, index) => {
+                        if (page === '...') {
+                          return (
+                            <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
+                              ...
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`min-w-[40px] rounded-lg px-3 py-2 text-sm font-medium transition-all ${
+                              currentPage === page
+                                ? "bg-primary text-white shadow-sm ring-1 ring-primary"
+                                : "border border-gray-200 bg-white text-gray-700 hover:border-primary/60 hover:bg-primary-light/30"
+                            }`}
+                            aria-label={`Ir a página ${page}`}
+                            aria-current={currentPage === page ? "page" : undefined}
+                          >
+                            {page}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Botón Siguiente */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-primary/60 hover:bg-primary-light/30 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-gray-200 disabled:hover:bg-white"
+                      aria-label="Página siguiente"
+                    >
+                      <span className="hidden sm:inline">Siguiente</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
       {/* Mobile cards */}
-      <div className="space-y-3 lg:hidden">
+      <div className="space-y-3 lg:hidden" data-pedidos-list>
         {loading && pedidos.length === 0 ? (
           <div className="flex justify-center py-20">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -1180,62 +1278,120 @@ export default function Pedidos() {
         ) : filteredPedidos.length === 0 ? (
           <EmptyState icon={ClipboardList} title="No hay pedidos" description="Creá tu primer pedido" />
         ) : (
-          filteredPedidos.map((pedido) => {
-            const isActive = pedido.status === "pending" || pedido.status === "in_progress";
-            const isPending = pedido.status === "pending";
-            return (
-              <div key={pedido.id} className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-border">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-sm font-bold text-gray-900">{formatCurrency(pedido.total)}</span>
-                      <StatusBadge status={pedido.status} />
+          <>
+            {paginatedPedidos.map((pedido) => {
+              const isActive = pedido.status === "pending" || pedido.status === "in_progress";
+              const isPending = pedido.status === "pending";
+              return (
+                <div key={pedido.id} className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-border">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-sm font-bold text-gray-900">{formatCurrency(pedido.total)}</span>
+                        <StatusBadge status={pedido.status} />
+                      </div>
+                      <p className="mt-0.5 text-xs text-gray-500">{formatDateShort(pedido.createdAt)}</p>
                     </div>
-                    <p className="mt-0.5 text-xs text-gray-500">{formatDateShort(pedido.createdAt)}</p>
+                    <div className="flex shrink-0 items-center gap-0.5">
+                      <button onClick={() => setSelectedPedido(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-primary-light hover:text-primary">
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      {isPending && (
+                        <button onClick={() => handleStatusChange(pedido, "in_progress")} className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600">
+                          <Loader2 className="h-4 w-4" />
+                        </button>
+                      )}
+                      {isActive && (
+                        <button onClick={() => setDeliverTarget(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600">
+                          <Truck className="h-4 w-4" />
+                        </button>
+                      )}
+                      {isActive && (
+                        <button onClick={() => setCancelTarget(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-danger/10 hover:text-danger">
+                          <Ban className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-0.5">
-                    <button onClick={() => setSelectedPedido(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-primary-light hover:text-primary">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    {isPending && (
-                      <button onClick={() => handleStatusChange(pedido, "in_progress")} className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 hover:text-blue-600">
-                        <Loader2 className="h-4 w-4" />
-                      </button>
-                    )}
-                    {isActive && (
-                      <button onClick={() => setDeliverTarget(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600">
-                        <Truck className="h-4 w-4" />
-                      </button>
-                    )}
-                    {isActive && (
-                      <button onClick={() => setCancelTarget(pedido)} className="rounded-lg p-1.5 text-gray-400 hover:bg-danger/10 hover:text-danger">
-                        <Ban className="h-4 w-4" />
-                      </button>
-                    )}
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+                    <span className="flex items-center gap-1">
+                      <Package className="h-3.5 w-3.5 text-gray-400" />
+                      {pedido.items?.length || 0} producto{(pedido.items?.length || 0) !== 1 ? "s" : ""}
+                    </span>
+                    <span>{pedido.clientName || "General"}</span>
                   </div>
-                </div>
-                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
-                  <span className="flex items-center gap-1">
-                    <Package className="h-3.5 w-3.5 text-gray-400" />
-                    {pedido.items?.length || 0} producto{(pedido.items?.length || 0) !== 1 ? "s" : ""}
-                  </span>
-                  <span>{pedido.clientName || "General"}</span>
-                </div>
                 {pedido.items?.length > 0 && (
                   <p className="mt-1 text-xs text-gray-500 truncate">{productsSummary(pedido.items)}</p>
                 )}
               </div>
             );
-          })
-        )}
+          })}
 
-        {/* Mobile pagination */}
-        {filteredPedidos.length > 0 && hasMore && (
-          <div className="flex items-center justify-center pt-4 pb-2">
-            <button onClick={handleLoadMore} className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-dark">
-              Cargar más
-            </button>
-          </div>
+          {/* Paginación Mobile */}
+          {totalPages > 1 && (
+            <div className="mt-6 flex flex-col items-center gap-3">
+              {/* Información de rango actual */}
+              <p className="text-sm text-gray-600">
+                Mostrando <span className="font-semibold text-gray-900">{startIndex + 1}</span> a{" "}
+                <span className="font-semibold text-gray-900">{Math.min(endIndex, filteredPedidos.length)}</span> de{" "}
+                <span className="font-semibold text-gray-900">{filteredPedidos.length}</span> pedidos
+              </p>
+
+              {/* Controles de paginación */}
+              <div className="flex items-center gap-2">
+                {/* Botón Anterior */}
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-primary/60 hover:bg-primary-light/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label="Página anterior"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
+                </button>
+
+                {/* Números de página (solo algunos en móvil) */}
+                <div className="flex items-center gap-1">
+                  {getPageNumbers().slice(0, 5).map((page, index) => {
+                    if (page === '...') {
+                      return (
+                        <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`min-w-[36px] rounded-lg px-2.5 py-2 text-sm font-medium transition-all ${
+                          currentPage === page
+                            ? "bg-primary text-white"
+                            : "border border-gray-200 bg-white text-gray-700 hover:border-primary/60 hover:bg-primary-light/30"
+                        }`}
+                        aria-label={`Ir a página ${page}`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Botón Siguiente */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-all hover:border-primary/60 hover:bg-primary-light/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label="Página siguiente"
+                >
+                  Siguiente
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
         )}
       </div>
 
