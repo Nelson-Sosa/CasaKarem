@@ -8,8 +8,6 @@ import {
   Loader2,
   Package,
   AlertTriangle,
-  Banknote,
-  CreditCard,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -96,27 +94,6 @@ function StatusBadge({ status }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Payment Badge
-// ─────────────────────────────────────────────────────────────
-function PaymentBadge({ method }) {
-  if (!method) return <span className="text-gray-400 text-xs">—</span>;
-  if (method === "transfer") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-primary-light px-2.5 py-0.5 text-[11px] font-medium text-primary">
-        <CreditCard className="h-3 w-3" />
-        Transferencia
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700">
-      <Banknote className="h-3 w-3" />
-      Efectivo
-    </span>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
 //  Detail Modal
 // ─────────────────────────────────────────────────────────────
 function PedidoDetailModal({ pedido, onClose, onDelete, deleting, onUpdate }) {
@@ -174,10 +151,6 @@ function PedidoDetailModal({ pedido, onClose, onDelete, deleting, onUpdate }) {
             <div>
               <p className="text-gray-500">Estado</p>
               <StatusBadge status={pedido.status} />
-            </div>
-            <div>
-              <p className="text-gray-500">Método de pago</p>
-              <PaymentBadge method={pedido.paymentMethod} />
             </div>
             <div>
               <p className="text-gray-500">Cliente</p>
@@ -306,14 +279,13 @@ function PedidoDetailModal({ pedido, onClose, onDelete, deleting, onUpdate }) {
 //  Confirm Delivery Modal
 // ─────────────────────────────────────────────────────────────
 function DeliverConfirmModal({ pedido, onConfirm, onClose, delivering }) {
-  const [paymentMethod, setPaymentMethod] = useState(pedido?.paymentMethod || "cash");
   const [stockErrors, setStockErrors] = useState(null);
 
   if (!pedido) return null;
 
   function handleConfirm() {
     setStockErrors(null);
-    onConfirm(paymentMethod, (err) => {
+    onConfirm(null, (err) => {
       const errors = parseStockError(err?.message || "");
       if (errors) setStockErrors(errors);
     });
@@ -329,7 +301,7 @@ function DeliverConfirmModal({ pedido, onConfirm, onClose, delivering }) {
           </div>
           <h3 className="mt-4 text-lg font-bold text-gray-800">Confirmar entrega</h3>
           <p className="mt-2 text-sm text-gray-600 leading-relaxed">
-            Esta acción descontará el stock definitivamente y generará una venta registrada.
+            Esta acción descontará el stock definitivamente.
           </p>
         </div>
 
@@ -339,37 +311,6 @@ function DeliverConfirmModal({ pedido, onConfirm, onClose, delivering }) {
           {pedido.clientName && (
             <p className="mt-0.5 text-xs text-gray-500">Cliente: {pedido.clientName}</p>
           )}
-        </div>
-
-        {/* Payment method selection */}
-        <div className="mt-4">
-          <p className="mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Método de pago</p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPaymentMethod("cash")}
-              disabled={delivering}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-medium transition-all ${
-                paymentMethod === "cash"
-                  ? "border-primary bg-primary-light text-primary"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
-              }`}
-            >
-              <Banknote className="h-4 w-4" />
-              Efectivo
-            </button>
-            <button
-              onClick={() => setPaymentMethod("transfer")}
-              disabled={delivering}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-medium transition-all ${
-                paymentMethod === "transfer"
-                  ? "border-primary bg-primary-light text-primary"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
-              }`}
-            >
-              <CreditCard className="h-4 w-4" />
-              Transfer.
-            </button>
-          </div>
         </div>
 
         {/* Stock validation errors */}
@@ -471,7 +412,6 @@ function CreatePedidoModal({ onClose, onCreated, userId }) {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState([]);
   const [selectedClientId, setSelectedClientId] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [discountType, setDiscountType] = useState("none");
   const [discountValue, setDiscountValue] = useState("");
   const [notes, setNotes] = useState("");
@@ -568,7 +508,7 @@ function CreatePedidoModal({ onClose, onCreated, userId }) {
         discountValue: discountType === "none" ? 0 : parseFloat(discountValue) || 0,
         discount,
         total,
-        paymentMethod: paymentMethod || null,
+        paymentMethod: null,
         clientId: selectedClientId || null,
         clientName: selectedClient?.name || null,
         notes: notes || null,
@@ -699,20 +639,6 @@ function CreatePedidoModal({ onClose, onCreated, userId }) {
                     >
                       <option value="">Cliente general</option>
                       {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                  </div>
-
-                  {/* Payment method (optional) */}
-                  <div>
-                    <label className="text-xs font-medium text-gray-500">Método de pago (opcional)</label>
-                    <select
-                      value={paymentMethod}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:border-primary focus:outline-none"
-                    >
-                      <option value="">Definir al entregar</option>
-                      <option value="cash">Efectivo</option>
-                      <option value="transfer">Transferencia</option>
                     </select>
                   </div>
 
@@ -952,12 +878,12 @@ export default function Pedidos() {
     setDelivering(true);
     try {
       await pedidoService.updatePedidoStatus(deliverTarget.id, "delivered", {
-        paymentMethod,
+        paymentMethod: null,
         userId: user?.uid,
       });
       toast.success("Pedido entregado ✓ — Venta registrada correctamente");
       setPedidos((prev) =>
-        prev.map((p) => p.id === deliverTarget.id ? { ...p, status: "delivered", paymentMethod } : p),
+        prev.map((p) => p.id === deliverTarget.id ? { ...p, status: "delivered", paymentMethod: null } : p),
       );
       setDeliverTarget(null);
       loadSummary();
@@ -965,8 +891,6 @@ export default function Pedidos() {
       const msg = err?.message || "";
       if (msg.includes("INSUFFICIENT_STOCK")) {
         onError(err);
-      } else if (msg === "MISSING_PAYMENT_METHOD") {
-        toast.error("Seleccioná el método de pago");
       } else {
         toast.error("Error al procesar la entrega");
         console.error(err);
@@ -1166,7 +1090,7 @@ export default function Pedidos() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-border bg-gray-50/50">
-                  {["Fecha", "Productos", "Cliente", "Pago", "Total", "Estado", "Acciones"].map((h) => (
+                  {["Fecha", "Productos", "Cliente", "Total", "Estado", "Acciones"].map((h) => (
                     <th key={h} className="whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                       {h}
                     </th>
@@ -1185,9 +1109,6 @@ export default function Pedidos() {
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 text-gray-600">
                         {pedido.clientName || <span className="text-gray-400">General</span>}
-                      </td>
-                      <td className="whitespace-nowrap px-4 py-3">
-                        <PaymentBadge method={pedido.paymentMethod} />
                       </td>
                       <td className="whitespace-nowrap px-4 py-3 font-semibold text-gray-900">
                         {formatCurrency(pedido.total)}
@@ -1298,7 +1219,6 @@ export default function Pedidos() {
                     <Package className="h-3.5 w-3.5 text-gray-400" />
                     {pedido.items?.length || 0} producto{(pedido.items?.length || 0) !== 1 ? "s" : ""}
                   </span>
-                  <PaymentBadge method={pedido.paymentMethod} />
                   <span>{pedido.clientName || "General"}</span>
                 </div>
                 {pedido.items?.length > 0 && (

@@ -311,8 +311,6 @@ async function _cancelPedido(pedidoId, userId) {
 //  7. UPDATE client     → orderCount++, totalSpent += total
 // ─────────────────────────────────────────────────────────────
 async function _deliverPedido(pedidoId, paymentMethod, userId) {
-  if (!paymentMethod) throw new Error("MISSING_PAYMENT_METHOD");
-
   const pedidoRef = doc(db, PEDIDOS_COLLECTION, pedidoId);
   const newOrderRef = doc(collection(db, ORDERS_COLLECTION));
 
