@@ -370,15 +370,18 @@ export default function Footer() {
 
       {/* Bottom Bar — Separada con línea dorada sutil sobre fondo blanco */}
       <div className="relative z-10 border-t border-[#B88B35]/25 bg-white">
-        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 px-4 py-3.5 md:py-5 md:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 px-4 py-4 md:py-6 md:flex-row sm:px-6 lg:px-8">
           
-          <div className="text-center md:text-left">
-            <p className="text-xs sm:text-sm text-gray-600 font-normal">
+          <div className="text-center md:text-left max-w-4xl space-y-1.5 sm:space-y-2">
+            <p className="text-xs sm:text-sm text-gray-700 font-normal">
               &copy; {new Date().getFullYear()} <span className="font-semibold text-[#9C7428]">{BRAND.name}</span>. Todos los derechos reservados.
+            </p>
+            <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed font-normal">
+              Las fotos son para fines ilustrativos. Los precios de los productos en oferta son válidos exclusivamente para la compra vía internet. Las especificaciones técnicas y descripciones están sujetas a cambios sin previo aviso.
             </p>
           </div>
 
-          <div className="hidden items-center gap-2 text-sm text-[#9C7428] font-semibold md:flex">
+          <div className="hidden items-center gap-2 text-sm text-[#9C7428] font-semibold md:flex shrink-0 self-start md:self-center">
              <ShieldCheck size={19} className="text-[#9C7428]" />
              <span>Sitio 100% protegido por SSL</span>
           </div>
