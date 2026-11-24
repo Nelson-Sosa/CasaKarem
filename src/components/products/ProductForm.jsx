@@ -310,7 +310,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="prod-purchase" className="block text-sm font-medium text-gray-700">
-                Precio de compra <span className="text-danger">*</span>
+                Precio de compra <span className="text-gray-400 font-normal">(opcional)</span>
               </label>
               <input
                 id="prod-purchase"
