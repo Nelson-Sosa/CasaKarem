@@ -27,14 +27,6 @@ const FacebookIcon = ({ size = 22 }) => (
   </svg>
 );
 
-/** WhatsApp – logo oficial relleno */
-const WhatsAppIcon = ({ size = 22 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-    <path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.826L.057 23.886a.5.5 0 0 0 .615.611l6.218-1.635A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.016-1.378l-.36-.214-3.73.981.998-3.642-.234-.374A9.818 9.818 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
-  </svg>
-);
-
 /** Instagram – logo oficial relleno */
 const InstagramIcon = ({ size = 22 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -198,22 +190,6 @@ export default function Footer() {
                 <FacebookIcon size={19} />
               </motion.a>
 
-              {/* WhatsApp */}
-              <motion.a
-                href="https://wa.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-                style={{ backgroundColor: "#25D366" }}
-                className="relative flex items-center justify-center rounded-full p-2 md:p-2.5 text-white shadow-md overflow-hidden"
-                whileHover={{ scale: 1.18, boxShadow: "0 0 16px 4px #25D36688" }}
-                whileTap={{ scale: 0.93 }}
-                animate={{ boxShadow: ["0 0 0px 0px #25D36600", "0 0 8px 2px #25D36644", "0 0 0px 0px #25D36600"] }}
-                transition={{ boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }, scale: { type: "spring", stiffness: 350, damping: 15 } }}
-              >
-                <WhatsAppIcon size={19} />
-              </motion.a>
-
               {/* Instagram */}
               <motion.a
                 href="https://www.instagram.com/casakaremsrl?dmpr=enF2dWY3bjI1cXZ5&utm_source=qr"
@@ -298,7 +274,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-2.5 md:gap-3">
               <li>
                 <a
-                  href="https://wa.me/"
+                  href={`https://wa.me/${(import.meta.env.VITE_WHATSAPP_NUMBER || "+595987158146").replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-2 text-sm text-gray-700 font-medium transition-all hover:text-[#9C7428] hover:translate-x-1 duration-150"

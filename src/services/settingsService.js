@@ -15,14 +15,18 @@ export async function getBusinessSettings() {
     const snap = await getDoc(doc(db, SETTINGS_DOC, BUSINESS_DOC));
     if (snap.exists()) {
       const data = snap.data();
-      setCache(CACHE_KEY_SETTINGS, data);
-      return data;
+      const merged = {
+        ...data,
+        whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || data.whatsappNumber || "+595987158146",
+      };
+      setCache(CACHE_KEY_SETTINGS, merged);
+      return merged;
     }
   } catch {
     // Firestore read failed, fall through to defaults
   }
   const defaultSettings = {
-    whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || "",
+    whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || "+595987158146",
     businessName: BRAND.name,
   };
   setCache(CACHE_KEY_SETTINGS, defaultSettings);
