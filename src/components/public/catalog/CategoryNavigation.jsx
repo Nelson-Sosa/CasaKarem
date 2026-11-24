@@ -48,9 +48,9 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="hide-scrollbar flex items-center gap-2.5 sm:gap-4 lg:gap-6 overflow-x-auto py-2">
           
-          {/* Botón blanco 'Categorías' */}
+          {/* Botón blanco 'Categorías' (solo visible en desktop/notebook) */}
           <div
-            className="relative shrink-0"
+            className="hidden lg:block relative shrink-0"
             onMouseEnter={() => handleMouseEnter("all")}
             onMouseLeave={handleMouseLeave}
             ref={(el) => { buttonRefs.current["all"] = el; }}
