@@ -69,7 +69,13 @@ export default function ProductTable({ products, onEdit, onToggleStatus, onDelet
                   <span className="truncate text-gray-600">{prod.categoryName}</span>
                 </td>
                 <td className="px-4 py-3.5 font-medium text-gray-800">
-                  {formatCurrency(prod.salePrice)}
+                  {Number(prod.salePrice) > 0 ? (
+                    formatCurrency(prod.salePrice)
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                      Sin precio
+                    </span>
+                  )}
                 </td>
                 <td className="px-4 py-3.5">
                   <div className="flex items-center gap-2">

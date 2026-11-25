@@ -114,17 +114,19 @@ export default function WishlistCard({ product, isSelected, onSelectToggle }) {
             </h3>
             
             {/* Precio */}
-            <div className="mt-2.5 flex items-end gap-2">
-              <span className="text-lg font-bold text-gray-900">
-                {formatCurrency(product.salePrice)}
-              </span>
-              {/* Si hay precio original (futuro) */}
-              {product.originalPrice && product.originalPrice > product.salePrice && (
-                <span className="text-xs text-gray-400 line-through mb-0.5">
-                  {formatCurrency(product.originalPrice)}
+            {Number(product.salePrice) > 0 && (
+              <div className="mt-2.5 flex items-end gap-2">
+                <span className="text-lg font-bold text-gray-900">
+                  {formatCurrency(product.salePrice)}
                 </span>
-              )}
-            </div>
+                {/* Si hay precio original (futuro) */}
+                {product.originalPrice && product.originalPrice > product.salePrice && (
+                  <span className="text-xs text-gray-400 line-through mb-0.5">
+                    {formatCurrency(product.originalPrice)}
+                  </span>
+                )}
+              </div>
+            )}
           </Link>
           
           <div className="mt-3 text-[11px] text-gray-400">

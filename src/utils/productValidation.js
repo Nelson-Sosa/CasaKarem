@@ -27,9 +27,10 @@ export function validatePurchasePrice(price) {
 }
 
 export function validateSalePrice(price) {
+  if (price === "" || price === null || price === undefined) return null;
   const num = Number(price);
   if (isNaN(num)) return "El precio de venta debe ser un número válido.";
-  if (num <= 0) return "El precio de venta debe ser mayor que cero.";
+  if (num < 0) return "El precio de venta no puede ser negativo.";
   return null;
 }
 
@@ -174,8 +175,8 @@ export function validateProduct(data, categories) {
       categoryId: data.categoryId,
       subcategoryId: data.subcategoryId || null,
       sku: data.sku ? sanitizeText(data.sku) : "",
-      purchasePrice: Number(data.purchasePrice),
-      salePrice: Number(data.salePrice),
+      purchasePrice: Number(data.purchasePrice) || 0,
+      salePrice: Number(data.salePrice) || 0,
       stock: Number(data.stock) || 0,
       minimumStock: Number(data.minimumStock) || 0,
       status: data.status || "active",

@@ -44,9 +44,15 @@ export default function ProductCard({ product, onEdit, onToggleStatus, onDelete,
           </div>
           <p className="mt-0.5 truncate text-xs text-gray-500">{product.categoryName}</p>
           <div className="mt-2 flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-800">
-              {formatCurrency(product.salePrice)}
-            </span>
+            {Number(product.salePrice) > 0 ? (
+              <span className="text-sm font-semibold text-gray-800">
+                {formatCurrency(product.salePrice)}
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-full bg-amber-50 border border-amber-200/80 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                Sin precio
+              </span>
+            )}
             <span
               className={`text-xs font-medium ${
                 isOutOfStock

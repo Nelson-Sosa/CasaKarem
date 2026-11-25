@@ -32,23 +32,49 @@ export default function CartPublic() {
     if (!waPhone) return "#";
     const phone = waPhone.replace(/\D/g, "");
 
+    const allUnpriced = cartItems.every((item) => (Number(item.salePrice) || 0) <= 0);
+    const hasUnpriced = cartItems.some((item) => (Number(item.salePrice) || 0) <= 0);
+
     const lines = cartItems.map((item) => {
       const price = Number(item.salePrice) || 0;
+      if (price <= 0) {
+        return `• ${item.name} x${item.quantity} — *(Consultar precio)*`;
+      }
       const subtotal = price * item.quantity;
       return `• ${item.name} x${item.quantity} = ${formatCurrency(subtotal)}`;
     });
 
     const codeSection = orderCode ? [`📋 *Código de pedido: ${orderCode}*`, ""] : [];
 
+    const header = allUnpriced
+      ? "💬 *Hola Casa Karem, quiero consultar por los siguientes productos:*"
+      : hasUnpriced
+      ? "🛒 *Hola Casa Karem, quiero realizar el siguiente pedido / consulta:*"
+      : "🛒 *Hola Casa Karem, quiero realizar el siguiente pedido:*";
+
+    const totalSection = allUnpriced
+      ? []
+      : [
+          "",
+          hasUnpriced
+            ? `*Subtotal productos con precio: ${formatCurrency(cartTotal)}*`
+            : `*Total: ${formatCurrency(cartTotal)}*`,
+        ];
+
+    const footer = allUnpriced
+      ? "Por favor, confírmenme el precio y disponibilidad. ¡Gracias! 😊"
+      : hasUnpriced
+      ? "Por favor, confírmenme disponibilidad, precio de los ítems a consultar y forma de pago. ¡Gracias! 😊"
+      : "Por favor, confirmen disponibilidad y forma de pago. ¡Gracias! 😊";
+
     const message = [
-      "🛒 *Hola Casa Karem, quiero realizar el siguiente pedido:*",
+      header,
       "",
       ...codeSection,
       ...lines,
+      ...totalSection,
       "",
-      `*Total: ${formatCurrency(cartTotal)}*`,
-      "",
-      "Por favor, confirmen disponibilidad y forma de pago. ¡Gracias! 😊",
+      footer,
     ].join("\n");
 
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -194,9 +220,15 @@ export default function CartPublic() {
                         {item.categoryName || "Sin categoría"}
                       </p>
                     </div>
-                    <p className="shrink-0 text-sm font-bold text-gray-900 sm:text-base">
-                      {formatCurrency(unitPrice)}
-                    </p>
+                    {unitPrice > 0 ? (
+                      <p className="shrink-0 text-sm font-bold text-gray-900 sm:text-base">
+                        {formatCurrency(unitPrice)}
+                      </p>
+                    ) : (
+                      <span className="shrink-0 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        A consultar
+                      </span>
+                    )}
                   </div>
 
                   {/* Controles + eliminar */}
@@ -234,12 +266,14 @@ export default function CartPublic() {
 
                     {/* Subtotal + Eliminar */}
                     <div className="flex items-center gap-4">
-                      <p className="text-sm text-gray-500">
-                        Subtotal:{" "}
-                        <span className="font-bold text-gray-900">
-                          {formatCurrency(subtotal)}
-                        </span>
-                      </p>
+                      {unitPrice > 0 && (
+                        <p className="text-sm text-gray-500">
+                          Subtotal:{" "}
+                          <span className="font-bold text-gray-900">
+                            {formatCurrency(subtotal)}
+                          </span>
+                        </p>
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -269,7 +303,9 @@ export default function CartPublic() {
             <div className="mt-6 space-y-4 text-sm text-gray-600">
               <div className="flex items-center justify-between">
                 <span>Subtotal</span>
-                <span className="font-semibold text-gray-900">{formatCurrency(cartTotal)}</span>
+                <span className="font-semibold text-gray-900">
+                  {cartTotal > 0 ? formatCurrency(cartTotal) : "A consultar"}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Descuento</span>
@@ -285,7 +321,7 @@ export default function CartPublic() {
               <div className="flex items-center justify-between text-base">
                 <span className="font-bold text-gray-900">Total</span>
                 <span className="text-xl font-extrabold text-primary">
-                  {formatCurrency(cartTotal)}
+                  {cartTotal > 0 ? formatCurrency(cartTotal) : "A consultar"}
                 </span>
               </div>
             </div>

@@ -107,9 +107,11 @@ export default function ProductQuickView({ product, onClose }) {
            </div>
         </div>
 
-        <div className="text-2xl font-bold text-gray-900 mb-4">
-          {formatCurrency(product.salePrice)}
-        </div>
+        {Number(product.salePrice) > 0 && (
+          <div className="text-2xl font-bold text-gray-900 mb-4">
+            {formatCurrency(product.salePrice)}
+          </div>
+        )}
 
         {/* Availability */}
         <div className="mb-6 flex items-center gap-2">

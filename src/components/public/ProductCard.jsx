@@ -16,8 +16,9 @@ function ProductCardBase({ product }) {
       : null;
   const isOutOfStock = product.stock <= 0;
   
-  // Calcular descuento si hay precio de oferta
-  const hasDiscount = product.isOnSale && product.offerPrice && product.offerPrice < product.salePrice;
+  // Calcular descuento si hay precio válido y de oferta
+  const hasPrice = Number(product.salePrice) > 0;
+  const hasDiscount = hasPrice && product.isOnSale && product.offerPrice && product.offerPrice < product.salePrice;
   const discountPercentage = hasDiscount 
     ? Math.round(((product.salePrice - product.offerPrice) / product.salePrice) * 100)
     : 0;
@@ -90,19 +91,21 @@ function ProductCardBase({ product }) {
 
         {/* Precio y botón en la parte inferior */}
         <div className="mt-auto pt-3">
-          {hasDiscount ? (
-            <div className="mb-2.5">
-              <p className="text-xs text-gray-500 line-through">
-                {formatCurrency(product.salePrice)}
-              </p>
-              <p className="text-base font-bold text-[#E30613]">
+          {hasPrice && (
+            hasDiscount ? (
+              <div className="mb-2.5">
+                <p className="text-xs text-gray-500 line-through">
+                  {formatCurrency(product.salePrice)}
+                </p>
+                <p className="text-base font-bold text-[#E30613]">
+                  {formatCurrency(displayPrice)}
+                </p>
+              </div>
+            ) : (
+              <p className="mb-2.5 text-base font-bold text-gray-900">
                 {formatCurrency(displayPrice)}
               </p>
-            </div>
-          ) : (
-            <p className="mb-2.5 text-base font-bold text-gray-900">
-              {formatCurrency(displayPrice)}
-            </p>
+            )
           )}
 
           <button

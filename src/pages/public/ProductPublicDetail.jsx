@@ -298,9 +298,11 @@ export default function ProductPublicDetail() {
             </h1>
 
             {/* Price */}
-            <p className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl tracking-tight">
-              {formatCurrency(product.salePrice)}
-            </p>
+            {Number(product.salePrice) > 0 && (
+              <p className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl tracking-tight">
+                {formatCurrency(product.salePrice)}
+              </p>
+            )}
 
             {/* Badges */}
             <div className="mt-2.5 flex flex-wrap gap-2">
@@ -381,7 +383,7 @@ export default function ProductPublicDetail() {
                 )}
                 <WhatsAppButton
                   productName={product.name}
-                  productPrice={formatCurrency(product.salePrice)}
+                  productPrice={Number(product.salePrice) > 0 ? formatCurrency(product.salePrice) : null}
                   variant="inline"
                   className="w-full"
                 />
@@ -394,7 +396,7 @@ export default function ProductPublicDetail() {
                 )}
                 <WhatsAppButton
                   productName={product.name}
-                  productPrice={formatCurrency(product.salePrice)}
+                  productPrice={Number(product.salePrice) > 0 ? formatCurrency(product.salePrice) : null}
                   variant="inline"
                   className="flex-1"
                 />

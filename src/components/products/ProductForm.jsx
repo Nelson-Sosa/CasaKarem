@@ -43,7 +43,7 @@ function buildInitial(initialData) {
     subcategoryId: initialData.subcategoryId || "",
     sku: initialData.sku || "",
     purchasePrice: initialData.purchasePrice?.toString() || "",
-    salePrice: initialData.salePrice?.toString() || "",
+    salePrice: initialData.salePrice !== undefined && initialData.salePrice !== null ? initialData.salePrice.toString() : "",
     offerPrice: initialData.offerPrice?.toString() || "",
     stock: initialData.stock?.toString() || "0",
     minimumStock: initialData.minimumStock?.toString() || "0",
@@ -185,8 +185,8 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
       name: sanitizeText(form.name),
       description: sanitizeText(form.description),
       sku: form.sku ? sanitizeText(form.sku) : "",
-      purchasePrice: Number(form.purchasePrice),
-      salePrice: Number(form.salePrice),
+      purchasePrice: Number(form.purchasePrice) || 0,
+      salePrice: Number(form.salePrice) || 0,
       offerPrice: form.isOnSale && form.offerPrice ? Number(form.offerPrice) : null,
       stock: Number(form.stock) || 0,
       minimumStock: Number(form.minimumStock) || 0,
@@ -331,12 +331,12 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
             </div>
             <div>
               <label htmlFor="prod-sale" className="block text-sm font-medium text-gray-700">
-                Precio de venta <span className="text-danger">*</span>
+                Precio de venta
               </label>
               <input
                 id="prod-sale"
                 type="number"
-                min="0.01"
+                min="0"
                 step="0.01"
                 value={form.salePrice}
                 onChange={(e) => handleChange("salePrice", e.target.value)}

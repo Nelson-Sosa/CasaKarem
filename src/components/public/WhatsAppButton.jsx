@@ -3,8 +3,11 @@ import { MessageCircle, Loader2 } from "lucide-react";
 import { getWhatsappNumber } from "../../services/settingsService";
 
 function buildWhatsAppUrl(phone, productName, productPrice) {
-  const text = `Hola Casa Karem 👋%0AEstoy interesado en este producto:%0A%0A🛍 Producto: ${encodeURIComponent(productName)}%0A💲 Precio: ${encodeURIComponent(productPrice)}%0A%0A¿Sigue disponible?`;
-  return `https://wa.me/${phone.replace(/\D/g, "")}?text=${text}`;
+  const cleanPhone = phone.replace(/\D/g, "");
+  const text = productPrice
+    ? `Hola Casa Karem 👋%0AEstoy interesado en este producto:%0A%0A🛍 Producto: ${encodeURIComponent(productName)}%0A💲 Precio: ${encodeURIComponent(productPrice)}%0A%0A¿Sigue disponible?`
+    : `Hola Casa Karem 👋%0AEstoy interesado en consultar el precio de este producto:%0A%0A🛍 Producto: ${encodeURIComponent(productName)}%0A%0A¿Me podrían indicar precio y disponibilidad?`;
+  return `https://wa.me/${cleanPhone}?text=${text}`;
 }
 
 export default function WhatsAppButton({ productName, productPrice, variant = "floating", className = "" }) {
