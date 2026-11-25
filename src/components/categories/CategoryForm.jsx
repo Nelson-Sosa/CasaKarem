@@ -148,7 +148,7 @@ export default function CategoryForm({ initialData, parentCategories = [], onSub
             ))}
           </select>
           {form.parentId && (
-            <p className="mt-1 text-xs text-primary">
+            <p className="mt-1 text-xs font-medium text-emerald-600">
               Esta categoría se mostrará como subcategoría de "{availableParents.find(c => c.id === form.parentId)?.name}".
             </p>
           )}
