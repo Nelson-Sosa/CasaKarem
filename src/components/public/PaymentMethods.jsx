@@ -1,10 +1,51 @@
+import { useId } from "react";
+
 /**
  * PaymentMethods — Sección de medios de pago aceptados para el detalle de producto.
  *
  * Muestra los 10 medios de pago oficiales en Paraguay (Bancard, Visa, Mastercard,
  * Dinelco, Cabal, Panal, Credicard, SIP, Tigo Money y Personal Pay) con logos SVG
- * fieles en tarjetas uniformes y diseño responsivo.
+ * fieles en tarjetas uniformes, más la franja de financiación de Banco Continental.
  */
+
+const BancoContinentalLogo = () => {
+  const clipId = useId();
+  return (
+    <svg
+      viewBox="0 0 156 44"
+      className="h-full w-auto"
+      role="img"
+      aria-label="Banco Continental"
+    >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx="127" cy="22" r="11.5" />
+        </clipPath>
+      </defs>
+      <rect width="156" height="44" rx="6" fill="#153E7E" />
+      <text
+        x="61"
+        y="27.5"
+        textAnchor="middle"
+        fill="#FFFFFF"
+        fontFamily="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif"
+        fontWeight="600"
+        fontSize="18.5"
+        letterSpacing="-0.3"
+      >
+        continental
+      </text>
+      {/* Isotipo circular con 3 líneas horizontales blancas detrás y triángulo verde lima */}
+      <g clipPath={`url(#${clipId})`}>
+        <line x1="114" y1="16.5" x2="140" y2="16.5" stroke="#FFFFFF" strokeWidth="2.2" />
+        <line x1="114" y1="22" x2="140" y2="22" stroke="#FFFFFF" strokeWidth="2.2" />
+        <line x1="114" y1="27.5" x2="140" y2="27.5" stroke="#FFFFFF" strokeWidth="2.2" />
+        <polygon points="127,12 117.5,29.5 136.5,29.5" fill="#A4CE39" />
+      </g>
+      <circle cx="127" cy="22" r="12.2" fill="none" stroke="#FFFFFF" strokeWidth="2.2" />
+    </svg>
+  );
+};
 
 const VisaLogo = () => (
   <svg
@@ -379,7 +420,7 @@ export default function PaymentMethods() {
         </div>
       </div>
 
-      {/* Insignias oficiales responsivas */}
+      {/* Insignias oficiales responsivas + Financiación Banco Continental */}
       <div className="px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
           {PAYMENT_METHODS.map((method) => (
@@ -391,6 +432,32 @@ export default function PaymentMethods() {
               {method.render()}
             </div>
           ))}
+        </div>
+
+        {/* Franja de financiación Banco Continental */}
+        <div className="border-t border-gray-100 pt-4 mt-4">
+          <div className="flex flex-col items-start gap-2.5 md:flex-row md:items-center md:justify-between bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5">
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="h-9 sm:h-10 shrink-0">
+                <BancoContinentalLogo />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
+                  Banco Continental
+                </p>
+                <p className="mt-0.5 text-xs text-gray-600 leading-snug">
+                  Financiación disponible con tarjetas de crédito Banco Continental
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center shrink-0">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#153E7E]/10 border border-[#153E7E]/20 px-3 py-1 text-xs font-bold text-[#153E7E]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#84B322]" />
+                Hasta 12 cuotas sin intereses
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
