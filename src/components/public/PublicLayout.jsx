@@ -261,7 +261,14 @@ export default function PublicLayout() {
         onSelectCategory={handleSelectCategory}
       />
 
-      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 py-6 sm:px-6 lg:px-8 lg:py-8 w-full max-w-full overflow-x-hidden">
+      {/* Franja informativa debajo del nav de categorías */}
+      <div className="w-full bg-[#FCF9F2] border-b border-[#B88B35]/25 px-3 py-1.5 text-center">
+        <p className="mx-auto max-w-[1600px] text-[11px] sm:text-xs font-medium tracking-wide text-[#7A591B]">
+          Precios válidos exclusivamente para la tienda online
+        </p>
+      </div>
+
+      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-5 lg:pb-8 w-full max-w-full overflow-x-hidden">
         <Outlet />
       </main>
 
