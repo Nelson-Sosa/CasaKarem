@@ -215,8 +215,8 @@ export default function Catalog() {
   const quickviewId = searchParams.get("quickview");
   const quickviewProduct = useMemo(() => {
     if (!quickviewId) return null;
-    return displayProducts.find(p => p.id === quickviewId) || null;
-  }, [quickviewId, displayProducts]);
+    return allProducts.find(p => p.id === quickviewId) || null;
+  }, [quickviewId, allProducts]);
 
   return (
     <div className="space-y-8 bg-white sm:space-y-10">
@@ -471,8 +471,11 @@ export default function Catalog() {
           <ProductQuickView 
             product={quickviewProduct} 
             onClose={() => {
-              searchParams.delete("quickview");
-              setSearchParams(searchParams);
+              setSearchParams((prev) => {
+                const next = new URLSearchParams(prev);
+                next.delete("quickview");
+                return next;
+              });
             }} 
           />
         )}

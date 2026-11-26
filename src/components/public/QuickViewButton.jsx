@@ -22,8 +22,11 @@ function QuickViewButtonBase({ product, size = "desktop", className = "" }) {
       if (!location.pathname.startsWith("/catalogo")) {
         navigate(`/catalogo?quickview=${product.id}`);
       } else {
-        searchParams.set("quickview", product.id);
-        setSearchParams(searchParams);
+        setSearchParams((prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("quickview", product.id);
+          return next;
+        });
       }
     }, 250);
   };
