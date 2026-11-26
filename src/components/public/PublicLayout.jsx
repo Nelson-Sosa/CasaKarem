@@ -60,8 +60,14 @@ export default function PublicLayout() {
     }
   };
 
+  // Sincronizar input de búsqueda con la URL
+  useEffect(() => {
+    setSearchValue(searchParams.get("q") || "");
+  }, [searchParams]);
+
   const handleSelectCategory = (cat) => {
     if (cat === "all") {
+      setSearchValue("");
       navigate("/catalogo");
     } else {
       navigate(`/catalogo?category=${encodeURIComponent(cat)}`);

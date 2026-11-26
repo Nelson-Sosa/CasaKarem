@@ -25,6 +25,14 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
 
   const isAllActive = !selectedCategory || selectedCategory === "all";
 
+  const handleSelectAll = () => {
+    onSelectCategory("all");
+    const resultsSection = document.getElementById("catalogo-completo");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   // Categorías principales para la barra
   const categoryItems = categoriesGrouped.map((cat) => ({
     id: cat.name,
@@ -46,8 +54,23 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
   return (
     <nav className="sticky top-[64px] md:top-[80px] z-40 bg-[#E30613] shadow-md border-b border-[#c70510]">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
-        <div className="hide-scrollbar flex items-center gap-2.5 sm:gap-4 lg:gap-6 overflow-x-auto py-2">
+        <div className="hide-scrollbar flex items-center gap-2 sm:gap-3 lg:gap-6 overflow-x-auto py-2 whitespace-nowrap [-webkit-overflow-scrolling:touch]">
           
+          {/* Botón 'Todos' (Píldora exclusiva para vista móvil < 768px) */}
+          <div className="block md:hidden shrink-0">
+            <button
+              type="button"
+              onClick={handleSelectAll}
+              className={`flex items-center justify-center px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 select-none cursor-pointer rounded-[4px] ${
+                isAllActive
+                  ? "text-white bg-white/25 shadow-inner"
+                  : "text-white/95 hover:text-white hover:bg-white/15 active:scale-95"
+              }`}
+            >
+              <span>Todos</span>
+            </button>
+          </div>
+
           {/* Botón blanco 'Categorías' (solo visible en desktop/notebook) */}
           <div
             className="hidden lg:block relative shrink-0"
