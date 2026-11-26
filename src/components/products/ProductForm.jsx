@@ -31,6 +31,7 @@ function buildInitial(initialData) {
       minimumStock: "0",
       status: "active",
       isOnSale: false,
+      isBestSeller: false,
       images: [],
       attributes: [],
       specifications: [],
@@ -49,6 +50,7 @@ function buildInitial(initialData) {
     minimumStock: initialData.minimumStock?.toString() || "0",
     status: initialData.status || "active",
     isOnSale: initialData.isOnSale || false,
+    isBestSeller: initialData.isBestSeller || false,
     images: initialData.images || [],
     attributes: initialData.attributes || [],
     specifications: initialData.specifications || [],
@@ -192,6 +194,7 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
       minimumStock: Number(form.minimumStock) || 0,
       subcategoryId: form.subcategoryId || null,
       isOnSale: Boolean(form.isOnSale),
+      isBestSeller: Boolean(form.isBestSeller),
       specifications: cleanedSpecs,
     });
   }
@@ -481,6 +484,26 @@ export default function ProductForm({ initialData, categories, onSubmit, onCance
               </div>
             </div>
           )}
+
+          {/* Switch Producto más vendido */}
+          <div className="pt-2 border-t border-gray-100">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={form.isBestSeller}
+                  onChange={(e) => handleChange("isBestSeller", e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div className="h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-[#B88B35] transition-colors"></div>
+                <div className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-700">Producto más vendido</span>
+                <span className="text-xs text-gray-500">Este producto aparecerá en la sección de productos más vendidos</span>
+              </div>
+            </label>
+          </div>
         </div>
       </div>
 

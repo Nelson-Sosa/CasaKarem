@@ -86,6 +86,7 @@ export async function createProduct(data, userId) {
     specifications: data.specifications || [],
     isOnSale: Boolean(data.isOnSale),
     offerPrice: data.isOnSale && data.offerPrice ? Number(data.offerPrice) : null,
+    isBestSeller: Boolean(data.isBestSeller),
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
     createdBy: userId,
@@ -117,6 +118,7 @@ export async function updateProduct(id, data, userId) {
     specifications: data.specifications || [],
     isOnSale: Boolean(data.isOnSale),
     offerPrice: data.isOnSale && data.offerPrice ? Number(data.offerPrice) : null,
+    isBestSeller: Boolean(data.isBestSeller),
     updatedAt: serverTimestamp(),
     updatedBy: userId,
   });
@@ -152,6 +154,7 @@ export async function duplicateProduct(id, userId) {
     images,
     attributes,
     isOnSale,
+    isBestSeller,
   } = original;
 
   let newName = name + " (copia)";
@@ -172,6 +175,7 @@ export async function duplicateProduct(id, userId) {
     minimumStock,
     isOnSale: Boolean(isOnSale),
     offerPrice: isOnSale && original.offerPrice ? Number(original.offerPrice) : null,
+    isBestSeller: Boolean(isBestSeller),
     status: "inactive",
     images: images || [],
     attributes: attributes || [],

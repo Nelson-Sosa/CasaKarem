@@ -35,6 +35,7 @@ function toPublicProduct(id, data, categoryName, subcategoryName) {
     brand: data.brand || "",
     status: data.status || "active",
     isOnSale: Boolean(data.isOnSale),
+    isBestSeller: Boolean(data.isBestSeller),
     specifications: Array.isArray(data.specifications) ? data.specifications : [],
     attributes: Array.isArray(data.attributes) ? data.attributes : [],
     createdAt: data.createdAt || null,
