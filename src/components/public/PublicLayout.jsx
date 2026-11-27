@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { User, LogOut, ShoppingCart, Heart, Search, LayoutDashboard } from "lucide-react";
+import { User, LogOut, ShoppingCart, Heart, Search, LayoutDashboard, Tag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useCart } from "../../context/CartContext";
@@ -268,9 +268,10 @@ export default function PublicLayout() {
       />
 
       {/* Franja informativa debajo del nav de categorías */}
-      <div className="w-full bg-[#FCF9F2] border-b border-[#B88B35]/25 px-3 py-1.5 text-center">
-        <p className="mx-auto max-w-[1600px] text-[11px] sm:text-xs font-medium tracking-wide text-[#7A591B]">
-          Precios válidos exclusivamente para la tienda online
+      <div className="w-full bg-gradient-to-r from-[#FDF8EC] via-[#FAF0D7] to-[#FDF8EC] border-b border-[#B88B35]/35 px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
+        <p className="mx-auto flex max-w-[1600px] items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold tracking-wide text-[#6E4F15]">
+          <Tag className="h-3.5 w-3.5 shrink-0 text-[#B88B35]" strokeWidth={2.2} />
+          <span>Precios válidos exclusivamente para la tienda online</span>
         </p>
       </div>
 
