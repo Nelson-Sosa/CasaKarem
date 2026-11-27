@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { User, LogOut, ShoppingCart, Heart, Search, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 import { useAuth } from "../../context/AuthContext";
@@ -88,7 +88,7 @@ export default function PublicLayout() {
     : "U";
   
   return (
-    <div className="min-h-screen bg-background-secondary w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-background-secondary w-full max-w-full overflow-x-clip">
       <header className="sticky top-0 z-50 border-b border-border bg-white shadow-sm backdrop-blur-md w-full">
         <div className="relative mx-auto flex h-16 md:h-20 max-w-[1600px] items-center justify-between px-2 sm:px-3 md:px-6 lg:px-8 w-full">
           
@@ -274,8 +274,16 @@ export default function PublicLayout() {
         </p>
       </div>
 
-      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-5 lg:pb-8 w-full max-w-full overflow-x-hidden">
-        <Outlet />
+      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-5 lg:pb-8 w-full max-w-full overflow-x-clip">
+        <Suspense
+          fallback={
+            <div className="flex min-h-[50vh] items-center justify-center">
+              <div className="h-9 w-9 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
 
       <WhatsappFloat />

@@ -13,7 +13,7 @@ export default function ScrollToTop() {
   useEffect(() => {
     // Si el pathname cambió y no hay hash, scrollear al inicio
     if (prevPathname.current !== pathname && !hash) {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      window.scrollTo(0, 0);
     }
     prevPathname.current = pathname;
   }, [pathname, hash]);
