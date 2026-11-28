@@ -269,8 +269,8 @@ export default function PublicLayout() {
       />
 
       {/* Franja informativa debajo del nav de categorías */}
-      <div className="w-full bg-[#F8F9FA] border-b border-[#E5E7EB] px-3 py-2 text-center">
-        <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+      <div className="w-full bg-[#F8F9FA] border-b border-[#E5E7EB] px-2 sm:px-3 py-2 text-center">
+        <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-3">
           {/* Texto principal */}
           <p className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold tracking-wide text-[#374151]">
             <Tag className="h-3.5 w-3.5 shrink-0 text-[#E30613]" strokeWidth={2.2} />
@@ -279,8 +279,8 @@ export default function PublicLayout() {
           {/* Separador solo en desktop */}
           <span className="hidden sm:block text-[#D1D5DB] font-light select-none">|</span>
           {/* Monedas aceptadas */}
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            <span className="text-[10px] sm:text-xs text-[#6B7280] font-medium">Aceptamos:</span>
+          <div className="flex items-center gap-1 sm:gap-2 flex-nowrap sm:flex-wrap justify-center max-w-full overflow-x-auto hide-scrollbar">
+            <span className="text-[10px] sm:text-xs text-[#6B7280] font-medium shrink-0">Aceptamos:</span>
             {[
               { Flag: BrazilFlag,    label: "R$",  title: "Real brasileño" },
               { Flag: ParaguayFlag,  label: "₲",   title: "Guaraní paraguayo" },
@@ -291,9 +291,9 @@ export default function PublicLayout() {
               <span
                 key={label}
                 title={title}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#E5E7EB] px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-[#1F2937] select-none shadow-sm"
+                className="inline-flex shrink-0 items-center gap-1 sm:gap-1.5 rounded-full bg-white border border-[#E5E7EB] px-1.5 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-[#1F2937] select-none shadow-sm"
               >
-                <Flag className="h-[11px] w-[16px] sm:h-[12px] sm:w-[18px] rounded-[2px] ring-1 ring-black/15" />
+                <Flag className="h-[9px] w-[13.5px] sm:h-[12px] sm:w-[18px] rounded-[2px] ring-1 ring-black/15" />
                 <span>{label}</span>
               </span>
             ))}
