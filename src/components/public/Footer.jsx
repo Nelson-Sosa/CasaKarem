@@ -17,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BRAND } from "../../config/brand";
+import BrandLogo from "../ui/BrandLogo";
 
 /* ── Iconos SVG oficiales ─────────────────────────────────────────── */
 
@@ -150,21 +151,15 @@ export default function Footer() {
           
           {/* 1. Brand & Socials */}
           <div className="flex flex-col items-center text-center md:items-start md:text-left gap-4 md:gap-6 md:col-span-1">
-            <div className="flex flex-col items-center md:items-start gap-1.5">
-              <Link
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <BrandLogo
+                size="footer"
+                noIcon
+                goldText
+                staticLayout
                 to="/catalogo"
                 onClick={handleNav("/catalogo")}
-                className="text-2xl sm:text-3xl font-black uppercase tracking-[0.16em] bg-gradient-to-r from-[#8A641E] via-[#B88B35] to-[#8A641E] bg-clip-text text-transparent hover:brightness-110 transition-all select-none drop-shadow-xs"
-              >
-                Casa Karem
-              </Link>
-              
-              {/* Placa elegante dorada 'Electrónica • Perfumes' */}
-              <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#FCF9F2] border border-[#B88B35]/60 shadow-xs">
-                <span className="text-[10.5px] font-semibold tracking-[0.24em] text-[#8F6820] uppercase select-none">
-                  Electrónica • Perfumes
-                </span>
-              </div>
+              />
 
               <p className="mt-1.5 text-xs sm:text-sm text-gray-500 max-w-xs font-normal">
                 Tecnología, productos y soluciones para vos.

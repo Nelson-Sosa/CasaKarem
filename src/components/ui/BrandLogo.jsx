@@ -89,11 +89,13 @@ export default function BrandLogo({
   className = "",
   noLink = false,
   to = "/",
+  onClick,
   dark = false,
   onlyIcon = false,
   noIcon = false,
   goldText = false,
   showDetails = true,
+  staticLayout = false,
   textClassName = "",
 }) {
   const isOnlyIcon = onlyIcon || size === "sidebar-collapsed";
@@ -129,7 +131,11 @@ export default function BrandLogo({
       {!noIcon && emblem}
 
       {!isOnlyIcon && (
-        <div className="flex flex-col items-center text-center md:items-start md:text-left leading-none select-none justify-center whitespace-nowrap min-w-0 shrink-0 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+        <div
+          className={`flex flex-col items-center text-center md:items-start md:text-left leading-none select-none justify-center whitespace-nowrap min-w-0 shrink-0 ${
+            staticLayout ? "" : "absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0"
+          }`}
+        >
           {/* Línea 1: CASA KAREM */}
           <span
             className={[
@@ -203,6 +209,7 @@ export default function BrandLogo({
   return (
     <Link
       to={to}
+      onClick={onClick}
       aria-label="Casa Karem"
       className={`group inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg transition-opacity hover:opacity-95 ${className}`}
     >
