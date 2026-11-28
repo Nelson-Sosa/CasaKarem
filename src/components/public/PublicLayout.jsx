@@ -10,6 +10,7 @@ import WhatsappFloat from "./WhatsappFloat";
 import CategoryNavigation from "./catalog/CategoryNavigation";
 import MobileMenuDrawer from "./catalog/MobileMenuDrawer";
 import BrandLogo from "../ui/BrandLogo";
+import { BrazilFlag, ParaguayFlag, ArgentinaFlag, USFlag, EUFlag } from "../ui/CountryFlags";
 import Footer from "./Footer";
 
 export default function PublicLayout() {
@@ -281,18 +282,18 @@ export default function PublicLayout() {
           <div className="flex items-center gap-2 flex-wrap justify-center">
             <span className="text-[10px] sm:text-xs text-[#6B7280] font-medium">Aceptamos:</span>
             {[
-              { flag: "🇧🇷", label: "R$",  title: "Real brasileño" },
-              { flag: "🇵🇾", label: "₲",   title: "Guaraní paraguayo" },
-              { flag: "🇦🇷", label: "$",   title: "Peso argentino" },
-              { flag: "🇺🇸", label: "USD", title: "Dólar estadounidense" },
-              { flag: "🇪🇺", label: "EUR", title: "Euro" },
-            ].map(({ flag, label, title }) => (
+              { Flag: BrazilFlag,    label: "R$",  title: "Real brasileño" },
+              { Flag: ParaguayFlag,  label: "₲",   title: "Guaraní paraguayo" },
+              { Flag: ArgentinaFlag, label: "$",   title: "Peso argentino" },
+              { Flag: USFlag,        label: "USD", title: "Dólar estadounidense" },
+              { Flag: EUFlag,        label: "EUR", title: "Euro" },
+            ].map(({ Flag, label, title }) => (
               <span
                 key={label}
                 title={title}
-                className="inline-flex items-center gap-1 rounded-full bg-white border border-[#E5E7EB] px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-[#1F2937] select-none shadow-sm"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#E5E7EB] px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-[#1F2937] select-none shadow-sm"
               >
-                <span>{flag}</span>
+                <Flag className="h-[11px] w-[16px] sm:h-[12px] sm:w-[18px] rounded-[2px] ring-1 ring-black/15" />
                 <span>{label}</span>
               </span>
             ))}
