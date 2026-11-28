@@ -85,7 +85,7 @@ function ProductCardBase({ product }) {
           </div>
         )}
 
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-800">
+        <h3 className="line-clamp-2 font-semibold text-gray-800 text-[12.5px] sm:text-[13px] leading-[1.25]">
           {product.name}
         </h3>
 
