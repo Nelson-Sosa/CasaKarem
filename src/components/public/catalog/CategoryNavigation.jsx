@@ -1,8 +1,6 @@
 import { memo, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { getIconForCategory } from "../../../utils/categoryIcons";
-
 function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSelectCategory }) {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [dropdownPos, setDropdownPos] = useState({ left: 0, top: 0 });
@@ -165,26 +163,22 @@ function CategoryNavigationBase({ categoriesGrouped = [], selectedCategory, onSe
             <div className="mx-3 my-1 border-t border-slate-100" />
             
             {/* Listado de subcategorías */}
-            {hoveredNavItem.subcategories.map((sub) => {
-              const SubIcon = getIconForCategory(sub.name);
-              return (
-                <button
-                  key={sub.id || sub.name}
-                  onClick={() => {
-                    onSelectCategory(sub.name);
-                    setHoveredItem(null);
-                  }}
-                  className={`flex w-full items-center gap-2 px-4 py-2 text-left text-xs sm:text-sm transition-colors hover:bg-red-50/70 hover:text-[#E30613] ${
-                    selectedCategory === sub.name
-                      ? "font-bold text-[#E30613] bg-red-50"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <SubIcon className="h-3.5 w-3.5 text-gray-400" />
-                  <span>{sub.name}</span>
-                </button>
-              );
-            })}
+            {hoveredNavItem.subcategories.map((sub) => (
+              <button
+                key={sub.id || sub.name}
+                onClick={() => {
+                  onSelectCategory(sub.name);
+                  setHoveredItem(null);
+                }}
+                className={`flex w-full items-center px-4 py-2 text-left text-xs sm:text-sm transition-colors hover:bg-red-50/70 hover:text-[#E30613] ${
+                  selectedCategory === sub.name
+                    ? "font-bold text-[#E30613] bg-red-50"
+                    : "text-gray-700"
+                }`}
+              >
+                <span>{sub.name}</span>
+              </button>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
