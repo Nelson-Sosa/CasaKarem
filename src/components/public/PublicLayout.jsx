@@ -268,11 +268,36 @@ export default function PublicLayout() {
       />
 
       {/* Franja informativa debajo del nav de categorías */}
-      <div className="w-full bg-gradient-to-r from-[#FDF8EC] via-[#FAF0D7] to-[#FDF8EC] border-b border-[#B88B35]/35 px-3 py-2 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]">
-        <p className="mx-auto flex max-w-[1600px] items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold tracking-wide text-[#6E4F15]">
-          <Tag className="h-3.5 w-3.5 shrink-0 text-[#B88B35]" strokeWidth={2.2} />
-          <span>Precios válidos exclusivamente para la tienda online</span>
-        </p>
+      <div className="w-full bg-[#F8F9FA] border-b border-[#E5E7EB] px-3 py-2 text-center">
+        <div className="mx-auto flex max-w-[1600px] flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+          {/* Texto principal */}
+          <p className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold tracking-wide text-[#374151]">
+            <Tag className="h-3.5 w-3.5 shrink-0 text-[#E30613]" strokeWidth={2.2} />
+            <span>Precios válidos exclusivamente para la tienda online</span>
+          </p>
+          {/* Separador solo en desktop */}
+          <span className="hidden sm:block text-[#D1D5DB] font-light select-none">|</span>
+          {/* Monedas aceptadas */}
+          <div className="flex items-center gap-2 flex-wrap justify-center">
+            <span className="text-[10px] sm:text-xs text-[#6B7280] font-medium">Aceptamos:</span>
+            {[
+              { flag: "🇧🇷", label: "R$",  title: "Real brasileño" },
+              { flag: "🇵🇾", label: "₲",   title: "Guaraní paraguayo" },
+              { flag: "🇦🇷", label: "$",   title: "Peso argentino" },
+              { flag: "🇺🇸", label: "USD", title: "Dólar estadounidense" },
+              { flag: "🇪🇺", label: "EUR", title: "Euro" },
+            ].map(({ flag, label, title }) => (
+              <span
+                key={label}
+                title={title}
+                className="inline-flex items-center gap-1 rounded-full bg-white border border-[#E5E7EB] px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-[#1F2937] select-none shadow-sm"
+              >
+                <span>{flag}</span>
+                <span>{label}</span>
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
       <main className="mx-auto max-w-[1600px] px-3 sm:px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-5 lg:pb-8 w-full max-w-full overflow-x-clip">
